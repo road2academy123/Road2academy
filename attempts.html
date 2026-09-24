@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+>
+
+<title>My Attempts | Road to Academy</title>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background: #f4f6fa;
+    color: #111827;
+}
+
+header {
+    background: #071a3d;
+    color: white;
+    padding: 18px 25px;
+    display: flex;
+    justify-content: space-between;
+}
+
+.logo {
+    color: #f5c542;
+    font-weight: bold;
+    font-size: 22px;
+}
+
+.back {
+    color: white;
+    text-decoration: none;
+}
+
+.container {
+    max-width: 1000px;
+    margin: 35px auto;
+    padding: 0 20px;
+}
+
+h1 {
+    color: #071a3d;
+    margin-bottom: 25px;
+}
+
+.attempt {
+    background: white;
+    padding: 22px;
+    margin-bottom: 15px;
+    border-radius: 12px;
+    box-shadow: 0 3px 12px rgba(0,0,0,0.07);
+}
+
+.attempt h2 {
+    color: #071a3d;
+    margin-bottom: 12px;
+}
+
+.details {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+    color: #555;
+    margin-bottom: 15px;
+}
+
+.view {
+    display: inline-block;
+    background: #071a3d;
+    color: white;
+    text-decoration: none;
+    padding: 9px 15px;
+    border-radius: 7px;
+}
+
+.empty {
+    background: white;
+    padding: 40px;
+    border-radius: 12px;
+    text-align: center;
+    color: #666;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<header>
+
+    <div class="logo">
+        ROAD TO ACADEMY
+    </div>
+
+    <a
+        href="dashboard.html"
+        class="back"
+    >
+        ← Dashboard
+    </a>
+
+</header>
+
+<div class="container">
+
+    <h1>My Attempts</h1>
+
+    <div id="attempts">
+
+        <div class="empty">
+            Loading attempts...
+        </div>
+
+    </div>
+
+</div>
+
+
+<script>
+
+const SUPABASE_URL =
+    "https://egjrkxdyehwbzgoppiqk.supabase.co";
+
+const SUPABASE_KEY =
+    "sb_publishable_nc_Xv85AMQrmgIlDEWD8CA_aSeMk-yv";
+
+const supabaseClient =
+    supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_KEY
+    );
+
+
+async function loadAttempts() {
+
+    const {
+        data: { session }
+    } = await supabaseClient.auth.getSession();
+
+    if (!session) {
+
+        window.location.href =
+            "login.html";
+
+        return;
+
+    }
+
+
+    const {
+        data: attempts,
+        error
+    } = await supabaseClient
+
+        .from("attempts")
+
+        .select(`
+            id,
+            test_id,
+            score,
+            correct_answers,
+            wrong_answers,
+            unanswered,
+            total_questions,
+            accuracy,
+            time_taken_seconds,
+            submitted_at,
+            tests (
+                title,
+                exam,
+                subject
+            )
+        `)
+
+        .eq("user_id", session.user.id)
+
+        .order("submitted_at", {
+            ascending: false
+        });
+
+
+    const container =
+        document.getElementById("attempts");
+
+
+    if (error) {
+
+        console.error(error);
+
+        container.innerHTML = `
+            <div class="empty">
+                Unable to load attempts.
+            </div>
+        `;
+
+        return;
+
+    }
+
+
+    if (!attempts || attempts.length === 0) {
+
+        container.innerHTML = `
+            <div class="empty">
+                You haven't completed any tests yet.
+            </div>
+        `;
+
+        return;
+
+    }
+
+
+    container.innerHTML = "";
+
+
+    attempts.forEach(attempt => {
+
+        const test =
+            attempt.tests;
+
+
+        const date =
+            attempt.submitted_at
+                ? new Date(
+                    attempt.submitted_at
+                  ).toLocaleString()
+                : "Unknown";
+
+
+        const card =
+            document.createElement("div");
+
+        card.className = "attempt";
+
+
+        card.innerHTML = `
+
+            <h2>
+                ${escapeHTML(
+                    test?.title || "Test"
+                )}
+            </h2>
+
+            <div class="details">
+
+                <span>
+                    Score:
+                    <strong>
+                        ${attempt.score}
+                    </strong>
+                </span>
+
+                <span>
+                    Accuracy:
+                    <strong>
+                        ${attempt.accuracy}%
+                    </strong>
+                </span>
+
+                <span>
+                    Correct:
+                    ${attempt.correct_answers}
+                </span>
+
+                <span>
+                    Wrong:
+                    ${attempt.wrong_answers}
+                </span>
+
+                <span>
+                    ${date}
+                </span>
+
+            </div>
+
+            <a
+                class="view"
+                href="result.html?attempt=${attempt.id}"
+            >
+                View Result
+            </a>
+
+        `;
+
+
+        container.appendChild(card);
+
+    });
+
+}
+
+
+function escapeHTML(value) {
+
+    return String(value)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+
+}
+
+
+loadAttempts();
+
+</script>
+
+</body>
+
+</html>

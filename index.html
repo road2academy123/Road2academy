@@ -1,0 +1,1020 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Road to Academy | NDA & CDS Test Series</title>
+
+<style>
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Arial,Helvetica,sans-serif;
+}
+
+html{
+    scroll-behavior:smooth;
+}
+
+body{
+    background:#f5f7fa;
+    color:#172033;
+}
+
+/* NAVBAR */
+
+nav{
+    height:72px;
+    background:#fff;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:0 7%;
+    box-shadow:0 2px 15px rgba(0,0,0,.08);
+    position:sticky;
+    top:0;
+    z-index:1000;
+}
+
+.logo{
+    font-size:23px;
+    font-weight:800;
+    color:#123b7a;
+}
+
+.logo span{
+    color:#d89b22;
+}
+
+.nav-links{
+    display:flex;
+    gap:30px;
+    list-style:none;
+}
+
+.nav-links a{
+    text-decoration:none;
+    color:#374151;
+    font-weight:600;
+}
+
+.nav-links a:hover{
+    color:#123b7a;
+}
+
+.login{
+    background:#123b7a;
+    color:white !important;
+    padding:11px 20px;
+    border-radius:8px;
+}
+
+/* HERO */
+
+.hero{
+    min-height:650px;
+    display:flex;
+    align-items:center;
+    padding:80px 8%;
+    background:
+    linear-gradient(135deg,#071d3b,#123b7a);
+    color:white;
+}
+
+.hero-left{
+    width:55%;
+}
+
+.badge{
+    display:inline-block;
+    background:rgba(255,255,255,.12);
+    border:1px solid rgba(255,255,255,.2);
+    padding:9px 16px;
+    border-radius:30px;
+    font-size:14px;
+    margin-bottom:22px;
+}
+
+.hero h1{
+    font-size:58px;
+    line-height:1.08;
+    margin-bottom:20px;
+}
+
+.hero h1 span{
+    color:#e3ad3b;
+}
+
+.hero p{
+    font-size:18px;
+    line-height:1.7;
+    color:#d9e2f0;
+    max-width:620px;
+    margin-bottom:30px;
+}
+
+.hero-buttons{
+    display:flex;
+    gap:15px;
+}
+
+.btn-primary{
+    background:#d99d25;
+    color:#111;
+    padding:15px 25px;
+    border-radius:8px;
+    text-decoration:none;
+    font-weight:bold;
+}
+
+.btn-secondary{
+    border:1px solid rgba(255,255,255,.5);
+    color:white;
+    padding:14px 24px;
+    border-radius:8px;
+    text-decoration:none;
+    font-weight:bold;
+}
+
+/* HERO CARD */
+
+.hero-right{
+    width:45%;
+    display:flex;
+    justify-content:center;
+}
+
+.dashboard-card{
+    width:350px;
+    background:white;
+    color:#172033;
+    padding:28px;
+    border-radius:20px;
+    box-shadow:0 25px 70px rgba(0,0,0,.3);
+}
+
+.dashboard-card h3{
+    margin-bottom:20px;
+    color:#123b7a;
+}
+
+.subject{
+    padding:15px;
+    background:#f3f5f8;
+    border-radius:10px;
+    margin:10px 0;
+}
+
+.subject strong{
+    display:block;
+    margin-bottom:5px;
+}
+
+.bar{
+    height:8px;
+    background:#ddd;
+    border-radius:10px;
+    margin-top:8px;
+}
+
+.bar div{
+    height:100%;
+    border-radius:10px;
+    background:#123b7a;
+}
+
+/* STATS */
+
+.stats{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    background:#fff;
+    box-shadow:0 3px 15px rgba(0,0,0,.06);
+}
+
+.stat{
+    text-align:center;
+    padding:30px;
+    border-right:1px solid #eee;
+}
+
+.stat h2{
+    color:#123b7a;
+    font-size:30px;
+}
+
+.stat p{
+    color:#667085;
+    margin-top:5px;
+}
+
+/* SECTION */
+
+section{
+    padding:80px 8%;
+}
+
+.section-title{
+    text-align:center;
+    margin-bottom:45px;
+}
+
+.section-title h2{
+    font-size:38px;
+    margin-bottom:10px;
+}
+
+.section-title p{
+    color:#667085;
+}
+
+/* EXAMS */
+
+.exam-grid{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:25px;
+}
+
+.exam-card{
+    background:white;
+    padding:35px;
+    border-radius:18px;
+    box-shadow:0 8px 30px rgba(0,0,0,.07);
+    border-top:4px solid #123b7a;
+}
+
+.exam-card.cds{
+    border-top-color:#d99d25;
+}
+
+.exam-icon{
+    font-size:40px;
+    margin-bottom:15px;
+}
+
+.exam-card h3{
+    font-size:25px;
+    margin-bottom:12px;
+}
+
+.exam-card p{
+    color:#667085;
+    line-height:1.6;
+    margin-bottom:20px;
+}
+
+.exam-list{
+    list-style:none;
+    margin-bottom:25px;
+}
+
+.exam-list li{
+    margin:10px 0;
+}
+
+.exam-btn{
+    display:inline-block;
+    background:#123b7a;
+    color:white;
+    padding:12px 20px;
+    border-radius:8px;
+    text-decoration:none;
+    font-weight:bold;
+}
+
+.cds .exam-btn{
+    background:#b47b12;
+}
+
+/* FEATURES */
+
+.features{
+    background:white;
+}
+
+.feature-grid{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:25px;
+}
+
+.feature{
+    padding:28px;
+    border:1px solid #e5e7eb;
+    border-radius:15px;
+}
+
+.feature-icon{
+    font-size:30px;
+    margin-bottom:12px;
+}
+
+.feature h3{
+    margin-bottom:10px;
+}
+
+.feature p{
+    color:#667085;
+    line-height:1.6;
+}
+
+/* TEST SERIES */
+
+.test-grid{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:25px;
+}
+
+.test-card{
+    background:white;
+    padding:25px;
+    border-radius:15px;
+    box-shadow:0 7px 25px rgba(0,0,0,.07);
+}
+
+.test-card h3{
+    margin:15px 0 10px;
+}
+
+.test-card p{
+    color:#667085;
+    line-height:1.5;
+}
+
+.test-tag{
+    display:inline-block;
+    padding:6px 10px;
+    background:#eaf0ff;
+    color:#123b7a;
+    border-radius:5px;
+    font-size:12px;
+    font-weight:bold;
+}
+
+.test-btn{
+    display:block;
+    text-align:center;
+    background:#123b7a;
+    color:white;
+    text-decoration:none;
+    padding:12px;
+    border-radius:8px;
+    margin-top:20px;
+}
+
+/* CTA */
+
+.cta{
+    margin:50px 8%;
+    padding:70px 20px;
+    border-radius:22px;
+    text-align:center;
+    background:linear-gradient(135deg,#071d3b,#123b7a);
+    color:white;
+}
+
+.cta h2{
+    font-size:40px;
+    margin-bottom:15px;
+}
+
+.cta p{
+    color:#d9e2f0;
+    margin-bottom:25px;
+}
+
+.cta a{
+    display:inline-block;
+    background:#e0a32d;
+    color:#111;
+    padding:14px 25px;
+    border-radius:8px;
+    text-decoration:none;
+    font-weight:bold;
+}
+
+/* FOOTER */
+
+footer{
+    background:#0b1424;
+    color:white;
+    padding:50px 8% 20px;
+}
+
+.footer-grid{
+    display:grid;
+    grid-template-columns:2fr 1fr 1fr;
+    gap:40px;
+    margin-bottom:35px;
+}
+
+footer h3{
+    margin-bottom:15px;
+}
+
+footer p,
+footer li{
+    color:#9ca3af;
+    line-height:1.7;
+}
+
+footer ul{
+    list-style:none;
+}
+
+footer a{
+    color:#9ca3af;
+    text-decoration:none;
+}
+
+.copyright{
+    text-align:center;
+    border-top:1px solid #273449;
+    padding-top:20px;
+    color:#718096;
+}
+
+/* MOBILE */
+
+@media(max-width:800px){
+
+    nav{
+        padding:0 5%;
+    }
+
+    .nav-links{
+        display:none;
+    }
+
+    .hero{
+        flex-direction:column;
+        text-align:center;
+        padding:60px 6%;
+    }
+
+    .hero-left,
+    .hero-right{
+        width:100%;
+    }
+
+    .hero h1{
+        font-size:42px;
+    }
+
+    .hero-buttons{
+        justify-content:center;
+    }
+
+    .hero-right{
+        margin-top:45px;
+    }
+
+    .stats{
+        grid-template-columns:repeat(2,1fr);
+    }
+
+    .exam-grid,
+    .feature-grid,
+    .test-grid{
+        grid-template-columns:1fr;
+    }
+
+    .footer-grid{
+        grid-template-columns:1fr;
+    }
+
+    .cta{
+        margin:30px 5%;
+    }
+
+    .cta h2{
+        font-size:30px;
+    }
+}
+
+</style>
+</head>
+
+
+<body>
+
+
+<!-- NAVBAR -->
+
+<nav>
+
+<div class="logo">
+Road to <span>Academy</span>
+</div>
+
+<ul class="nav-links">
+
+<li>
+<a href="#home">Home</a>
+</li>
+
+<li>
+<a href="dashboard.html">NDA / CDS</a>
+</li>
+
+<li>
+<a href="#tests">Test Series</a>
+</li>
+
+<li>
+<a href="#features">Features</a>
+</li>
+
+<li>
+<a href="#login" class="login">Login</a>
+</li>
+
+</ul>
+
+</nav>
+
+
+<!-- HERO -->
+
+<section class="hero" id="home">
+
+<div class="hero-left">
+
+<div class="badge">
+🇮🇳 Prepare • Practice • Perform
+</div>
+
+<h1>
+Your <span>Road</span><br>
+to Defence Begins Here.
+</h1>
+
+<p>
+Prepare for NDA and CDS with structured test series,
+exam-level questions, detailed solutions and performance
+analysis — all in one place.
+</p>
+
+<div class="hero-buttons">
+
+<a href="#tests" class="btn-primary">
+Explore Test Series
+</a>
+
+<a href="#exams" class="btn-secondary">
+Explore NDA & CDS
+</a>
+
+</div>
+
+</div>
+
+
+<div class="hero-right">
+
+<div class="dashboard-card">
+
+<h3>📊 Performance Dashboard</h3>
+
+<div class="subject">
+
+<strong>Mathematics</strong>
+<span>86% Accuracy</span>
+
+<div class="bar">
+<div style="width:86%"></div>
+</div>
+
+</div>
+
+<div class="subject">
+
+<strong>English</strong>
+<span>91% Accuracy</span>
+
+<div class="bar">
+<div style="width:91%"></div>
+</div>
+
+</div>
+
+<div class="subject">
+
+<strong>General Knowledge</strong>
+<span>78% Accuracy</span>
+
+<div class="bar">
+<div style="width:78%"></div>
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</section>
+
+
+<!-- STATS -->
+
+<div class="stats">
+
+<div class="stat">
+<h2>100+</h2>
+<p>Mock Tests</p>
+</div>
+
+<div class="stat">
+<h2>10K+</h2>
+<p>Questions</p>
+</div>
+
+<div class="stat">
+<h2>NDA</h2>
+<p>Preparation</p>
+</div>
+
+<div class="stat">
+<h2>CDS</h2>
+<p>Preparation</p>
+</div>
+
+</div>
+
+
+<!-- NDA / CDS -->
+
+<section id="exams">
+
+<div class="section-title">
+
+<h2>Choose Your Examination</h2>
+
+<p>
+Focused preparation for India's defence entrance examinations.
+</p>
+
+</div>
+
+
+<div class="exam-grid">
+
+
+<!-- NDA -->
+
+<div class="exam-card">
+
+<div class="exam-icon">🎖️</div>
+
+<h3>NDA</h3>
+
+<p>
+Prepare for the National Defence Academy examination
+with focused practice and mock tests.
+</p>
+
+<ul class="exam-list">
+
+<li>✓ Mathematics</li>
+<li>✓ General Ability Test</li>
+<li>✓ English</li>
+<li>✓ General Knowledge</li>
+
+</ul>
+
+<a href="#tests" class="exam-btn">
+Explore NDA Tests →
+</a>
+
+</div>
+
+
+<!-- CDS -->
+
+<div class="exam-card cds">
+
+<div class="exam-icon">🪖</div>
+
+<h3>CDS</h3>
+
+<p>
+Build your preparation for the Combined Defence Services
+examination through regular testing.
+</p>
+
+<ul class="exam-list">
+
+<li>✓ English</li>
+<li>✓ General Knowledge</li>
+<li>✓ Elementary Mathematics</li>
+<li>✓ Full-Length Mock Tests</li>
+
+</ul>
+
+<a href="#tests" class="exam-btn">
+Explore CDS Tests →
+</a>
+
+</div>
+
+</div>
+
+</section>
+
+
+<!-- FEATURES -->
+
+<section class="features" id="features">
+
+<div class="section-title">
+
+<h2>Everything You Need</h2>
+
+<p>
+Designed around consistent practice and measurable improvement.
+</p>
+
+</div>
+
+
+<div class="feature-grid">
+
+
+<div class="feature">
+
+<div class="feature-icon">📝</div>
+
+<h3>Exam-Level Tests</h3>
+
+<p>
+Practice with carefully structured questions
+and timed mock examinations.
+</p>
+
+</div>
+
+
+<div class="feature">
+
+<div class="feature-icon">⏱️</div>
+
+<h3>Real Exam Timer</h3>
+
+<p>
+Practice under realistic time limits to improve
+speed and time management.
+</p>
+
+</div>
+
+
+<div class="feature">
+
+<div class="feature-icon">📊</div>
+
+<h3>Performance Analysis</h3>
+
+<p>
+Track marks, accuracy, attempts and improvement
+after every test.
+</p>
+
+</div>
+
+
+<div class="feature">
+
+<div class="feature-icon">💡</div>
+
+<h3>Detailed Solutions</h3>
+
+<p>
+Understand the correct approach instead of simply
+checking the answer.
+</p>
+
+</div>
+
+
+<div class="feature">
+
+<div class="feature-icon">🏆</div>
+
+<h3>Leaderboard</h3>
+
+<p>
+Compare your performance with other students
+and track your rank.
+</p>
+
+</div>
+
+
+<div class="feature">
+
+<div class="feature-icon">📱</div>
+
+<h3>Study Anywhere</h3>
+
+<p>
+Take your tests from your mobile, tablet or computer.
+</p>
+
+</div>
+
+</div>
+
+</section>
+
+
+<!-- TEST SERIES -->
+
+<section id="tests">
+
+<div class="section-title">
+
+<h2>Test Series</h2>
+
+<p>
+Start practicing with Road to Academy.
+</p>
+
+</div>
+
+
+<div class="test-grid">
+
+
+<div class="test-card">
+
+<span class="test-tag">
+NDA
+</span>
+
+<h3>NDA Mathematics</h3>
+
+<p>
+Topic-wise and full-length mathematics
+practice tests.
+</p>
+
+<a href="#" class="test-btn">
+View Series
+</a>
+
+</div>
+
+
+<div class="test-card">
+
+<span class="test-tag">
+NDA
+</span>
+
+<h3>NDA GAT</h3>
+
+<p>
+English, Science, History, Geography,
+Polity and Current Affairs.
+</p>
+
+<a href="#" class="test-btn">
+View Series
+</a>
+
+</div>
+
+
+<div class="test-card">
+
+<span class="test-tag">
+CDS
+</span>
+
+<h3>CDS Full Mock</h3>
+
+<p>
+Full-length CDS-style mock tests for
+complete examination practice.
+</p>
+
+<a href="#" class="test-btn">
+View Series
+</a>
+
+</div>
+
+</div>
+
+</section>
+
+
+<!-- CTA -->
+
+<div class="cta">
+
+<h2>
+Ready to Start Your Road?
+</h2>
+
+<p>
+Create your account and begin your preparation.
+</p>
+
+<a href="#login">
+Create Free Account
+</a>
+
+</div>
+
+
+<!-- FOOTER -->
+
+<footer>
+
+<div class="footer-grid">
+
+<div>
+
+<h3>
+Road to Academy
+</h3>
+
+<p>
+A dedicated test-series platform for NDA and CDS
+aspirants. Practice consistently. Analyze your
+performance. Keep moving forward.
+</p>
+
+</div>
+
+
+<div>
+
+<h3>
+Examinations
+</h3>
+
+<ul>
+
+<li>
+<a href="#exams">NDA</a>
+</li>
+
+<li>
+<a href="#exams">CDS</a>
+</li>
+
+<li>
+<a href="#tests">Test Series</a>
+</li>
+
+</ul>
+
+</div>
+
+
+<div>
+
+<h3>
+Platform
+</h3>
+
+<ul>
+
+<li>
+<a href="#features">Features</a>
+</li>
+
+<li>
+<a href="#login">Login</a>
+</li>
+
+<li>
+<a href="#home">Home</a>
+</li>
+
+</ul>
+
+</div>
+
+</div>
+
+
+<div class="copyright">
+
+© 2026 Road to Academy. All Rights Reserved.
+
+</div>
+
+</footer>
+
+
+</body>
+</html>

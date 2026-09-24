@@ -1,0 +1,666 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Test Result | Road to Academy</title>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f6fa;
+            color: #17213a;
+        }
+
+        header {
+            background: #17356f;
+            color: white;
+            padding: 18px 25px;
+
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+
+            gap: 15px;
+        }
+
+        header h1 {
+            font-size: 21px;
+        }
+
+        .container {
+            max-width: 1050px;
+            margin: 30px auto;
+            padding: 0 18px;
+        }
+
+        .test-title {
+            background: white;
+            padding: 25px;
+            border-radius: 14px;
+            margin-bottom: 20px;
+
+            box-shadow: 0 4px 15px rgba(0,0,0,0.06);
+        }
+
+        .test-title h2 {
+            color: #17356f;
+            margin-bottom: 7px;
+        }
+
+        .test-title p {
+            color: #667085;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns:
+                repeat(4, 1fr);
+
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .stat {
+            background: white;
+            padding: 22px;
+            border-radius: 12px;
+
+            text-align: center;
+
+            box-shadow: 0 4px 15px rgba(0,0,0,0.06);
+        }
+
+        .stat h3 {
+            font-size: 28px;
+            margin-bottom: 7px;
+            color: #17356f;
+        }
+
+        .stat p {
+            color: #667085;
+        }
+
+        .actions {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+        }
+
+        button {
+            border: none;
+            padding: 12px 18px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .primary {
+            background: #17356f;
+            color: white;
+        }
+
+        .secondary {
+            background: #e9edf5;
+            color: #17356f;
+        }
+
+        .review {
+            background: white;
+            padding: 25px;
+            border-radius: 14px;
+
+            box-shadow: 0 4px 15px rgba(0,0,0,0.06);
+        }
+
+        .review h2 {
+            color: #17356f;
+            margin-bottom: 20px;
+        }
+
+        .question {
+            border: 1px solid #e0e4ea;
+            border-radius: 12px;
+
+            padding: 20px;
+            margin-bottom: 18px;
+        }
+
+        .question-number {
+            font-weight: bold;
+            color: #17356f;
+            margin-bottom: 10px;
+        }
+
+        .question-text {
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+
+        .answer-box {
+            padding: 12px;
+            border-radius: 8px;
+            margin-top: 8px;
+        }
+
+        .your-answer {
+            background: #f4f6fa;
+        }
+
+        .correct-answer {
+            background: #e8f7ee;
+            color: #18733d;
+        }
+
+        .wrong {
+            background: #fdecec;
+            color: #a51d2d;
+        }
+
+        .unanswered {
+            background: #fff6df;
+            color: #8a5a00;
+        }
+
+        .explanation {
+            margin-top: 15px;
+            padding: 14px;
+            background: #f7f8fa;
+            border-radius: 8px;
+
+            line-height: 1.6;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 50px;
+            color: #667085;
+        }
+
+        .error {
+            background: #fdecec;
+            color: #a51d2d;
+            padding: 18px;
+            border-radius: 10px;
+        }
+
+        @media(max-width: 700px) {
+
+            .stats {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+        }
+
+    </style>
+</head>
+
+<body>
+
+<header>
+
+    <h1>Road to Academy</h1>
+
+    <button
+        class="secondary"
+        onclick="window.location.href='dashboard.html'"
+    >
+        Dashboard
+    </button>
+
+</header>
+
+
+<div class="container">
+
+    <div id="loading" class="loading">
+        Loading result...
+    </div>
+
+
+    <div id="content" style="display:none;">
+
+        <div class="test-title">
+
+            <h2 id="testTitle"></h2>
+
+            <p id="testInfo"></p>
+
+        </div>
+
+
+        <div class="stats">
+
+            <div class="stat">
+
+                <h3 id="score">0</h3>
+
+                <p>Score</p>
+
+            </div>
+
+
+            <div class="stat">
+
+                <h3 id="correct">0</h3>
+
+                <p>Correct</p>
+
+            </div>
+
+
+            <div class="stat">
+
+                <h3 id="wrong">0</h3>
+
+                <p>Wrong</p>
+
+            </div>
+
+
+            <div class="stat">
+
+                <h3 id="accuracy">0%</h3>
+
+                <p>Accuracy</p>
+
+            </div>
+
+        </div>
+
+
+        <div class="actions">
+
+            <button
+                class="primary"
+                onclick="window.location.href='attempts.html'"
+            >
+                📊 My Attempts
+            </button>
+
+            <button
+                class="secondary"
+                onclick="window.location.href='tests.html'"
+            >
+                📝 More Tests
+            </button>
+
+        </div>
+
+
+        <div class="review">
+
+            <h2>📖 Solution Review</h2>
+
+            <div id="questions"></div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<script>
+
+const SUPABASE_URL = "https://egjrkxdyehwbzgoppiqk.supabase.co";
+const SUPABASE_ANON_KEY = "sb_publishable_nc_Xv85AMQrmgIlDEWD8CA_aSeMk-yv";
+
+const supabaseClient =
+    supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_ANON_KEY
+    );
+
+
+const params =
+    new URLSearchParams(
+        window.location.search
+    );
+
+const attemptId =
+    params.get("attempt");
+
+
+async function loadResult() {
+
+    if (!attemptId) {
+
+        showError("No attempt ID was provided.");
+
+        return;
+    }
+
+
+    const {
+        data: { session }
+    } =
+        await supabaseClient.auth.getSession();
+
+
+    if (!session) {
+
+        window.location.href =
+            "login.html";
+
+        return;
+    }
+
+
+    const { data, error } =
+        await supabaseClient.rpc(
+            "get_attempt_review",
+            {
+                p_attempt_id:
+                    Number(attemptId)
+            }
+        );
+
+
+    if (error) {
+
+        showError(error.message);
+
+        return;
+    }
+
+
+    if (!data || !data.attempt) {
+
+        showError("Result not found.");
+
+        return;
+    }
+
+
+    renderResult(data);
+
+}
+
+
+function renderResult(data) {
+
+    const attempt =
+        data.attempt;
+
+    const test =
+        data.test;
+
+
+    document.getElementById(
+        "testTitle"
+    ).textContent =
+        test.title;
+
+
+    document.getElementById(
+        "testInfo"
+    ).textContent =
+        `${test.exam} • ${
+            test.subject || "General"
+        } • ${
+            test.total_marks
+        } marks`;
+
+
+    document.getElementById(
+        "score"
+    ).textContent =
+        Number(attempt.score)
+            .toFixed(2);
+
+
+    document.getElementById(
+        "correct"
+    ).textContent =
+        attempt.correct_answers;
+
+
+    document.getElementById(
+        "wrong"
+    ).textContent =
+        attempt.wrong_answers;
+
+
+    document.getElementById(
+        "accuracy"
+    ).textContent =
+        `${Number(attempt.accuracy)
+            .toFixed(2)}%`;
+
+
+    renderQuestions(
+        data.questions || []
+    );
+
+
+    document.getElementById(
+        "loading"
+    ).style.display =
+        "none";
+
+
+    document.getElementById(
+        "content"
+    ).style.display =
+        "block";
+
+}
+
+
+function renderQuestions(questions) {
+
+    const container =
+        document.getElementById(
+            "questions"
+        );
+
+
+    if (!questions.length) {
+
+        container.innerHTML =
+            "<p>No question review available.</p>";
+
+        return;
+    }
+
+
+    container.innerHTML =
+        questions.map(q => {
+
+            let statusClass =
+                "unanswered";
+
+            let statusText =
+                "Unanswered";
+
+            if (q.is_correct) {
+
+                statusClass =
+                    "correct-answer";
+
+                statusText =
+                    "Correct";
+
+            }
+            else if (q.selected_answer) {
+
+                statusClass =
+                    "wrong";
+
+                statusText =
+                    "Wrong";
+
+            }
+
+
+            const selected =
+                q.selected_answer
+                ? q.selected_answer
+                : "Not answered";
+
+
+            return `
+
+                <div class="question">
+
+                    <div class="question-number">
+
+                        Question ${q.question_number}
+
+                        — ${statusText}
+
+                    </div>
+
+
+                    <div class="question-text">
+
+                        ${escapeHtml(
+                            q.question_text
+                        )}
+
+                    </div>
+
+
+                    <div class="answer-box your-answer">
+
+                        <b>Your answer:</b>
+
+                        ${escapeHtml(
+                            selected
+                        )}
+
+                    </div>
+
+
+                    <div class="answer-box correct-answer">
+
+                        <b>Correct answer:</b>
+
+                        ${escapeHtml(
+                            q.correct_answer
+                        )}
+
+                    </div>
+
+
+                    <div class="answer-box">
+
+                        <b>Marks awarded:</b>
+
+                        ${Number(
+                            q.marks_awarded || 0
+                        ).toFixed(2)}
+
+                    </div>
+
+
+                    ${
+                        q.explanation
+                        ?
+                        `
+                        <div class="explanation">
+
+                            <b>Explanation:</b><br>
+
+                            ${escapeHtml(
+                                q.explanation
+                            )}
+
+                        </div>
+                        `
+                        :
+                        ""
+                    }
+
+                </div>
+
+            `;
+
+        }).join("");
+
+}
+
+
+function escapeHtml(value) {
+
+    if (
+        value === null ||
+        value === undefined
+    ) {
+        return "";
+    }
+
+
+    return String(value)
+
+        .replace(
+            /&/g,
+            "&amp;"
+        )
+
+        .replace(
+            /</g,
+            "&lt;"
+        )
+
+        .replace(
+            />/g,
+            "&gt;"
+        )
+
+        .replace(
+            /"/g,
+            "&quot;"
+        )
+
+        .replace(
+            /'/g,
+            "&#039;"
+        );
+
+}
+
+
+function showError(message) {
+
+    document.getElementById(
+        "loading"
+    ).innerHTML = `
+
+        <div class="error">
+
+            <b>Something went wrong:</b><br><br>
+
+            ${escapeHtml(message)}
+
+        </div>
+
+    `;
+
+}
+
+
+loadResult();
+
+</script>
+
+</body>
+
+</html>

@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+>
+
+<title>Students — Road to Academy</title>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #f4f6fb;
+    color: #071a3d;
+}
+
+header {
+    background: #071a3d;
+    color: white;
+    padding: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+header h1 {
+    margin: 0;
+    font-size: 21px;
+}
+
+.header-buttons {
+    display: flex;
+    gap: 10px;
+}
+
+button {
+    border: none;
+    border-radius: 10px;
+    padding: 11px 16px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.back-btn {
+    background: #dce5f7;
+    color: #071a3d;
+}
+
+.logout-btn {
+    background: #e74c3c;
+    color: white;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 30px auto;
+    padding: 0 18px;
+}
+
+.top-card {
+    background: white;
+    border-radius: 18px;
+    padding: 25px;
+    margin-bottom: 22px;
+    box-shadow: 0 8px 25px rgba(0,0,0,.06);
+}
+
+.top-card h2 {
+    margin-top: 0;
+}
+
+.search {
+    width: 100%;
+    padding: 14px;
+    border: 1px solid #d9dfeb;
+    border-radius: 10px;
+    font-size: 15px;
+}
+
+.table-card {
+    background: white;
+    border-radius: 18px;
+    padding: 22px;
+    box-shadow: 0 8px 25px rgba(0,0,0,.06);
+}
+
+.table-wrapper {
+    overflow-x: auto;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 850px;
+}
+
+th,
+td {
+    padding: 14px;
+    border-bottom: 1px solid #e5e9f0;
+    text-align: left;
+}
+
+th {
+    background: #f3f6fb;
+}
+
+.student-name {
+    font-weight: bold;
+}
+
+.email {
+    color: #69758c;
+    font-size: 13px;
+    margin-top: 4px;
+}
+
+.badge {
+    display: inline-block;
+    padding: 5px 9px;
+    border-radius: 8px;
+    background: #e8eefc;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+.loading,
+.error,
+.empty {
+    text-align: center;
+    padding: 35px;
+}
+
+.error {
+    color: #c0392b;
+}
+
+.summary {
+    color: #69758c;
+    margin-top: 5px;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<header>
+
+    <h1>👥 ROAD 2 ACADEMY — STUDENTS</h1>
+
+    <div class="header-buttons">
+
+        <button
+            class="back-btn"
+            onclick="location.href='admin.html'"
+        >
+            ← Admin Panel
+        </button>
+
+        <button
+            class="logout-btn"
+            onclick="logout()"
+        >
+            Logout
+        </button>
+
+    </div>
+
+</header>
+
+
+<div class="container">
+
+    <div class="top-card">
+
+        <h2>👥 Student Management</h2>
+
+        <div
+            id="summary"
+            class="summary"
+        >
+            Loading students...
+        </div>
+
+        <br>
+
+        <input
+            id="search"
+            class="search"
+            type="text"
+            placeholder="Search by name or email..."
+            oninput="filterStudents()"
+        >
+
+    </div>
+
+
+    <div class="table-card">
+
+        <div
+            id="loading"
+            class="loading"
+        >
+            Loading students...
+        </div>
+
+        <div
+            id="error"
+            class="error"
+            style="display:none;"
+        ></div>
+
+        <div
+            id="empty"
+            class="empty"
+            style="display:none;"
+        >
+            No students found.
+        </div>
+
+        <div
+            id="tableArea"
+            class="table-wrapper"
+            style="display:none;"
+        >
+
+            <table>
+
+                <thead>
+
+                    <tr>
+                        <th>Student</th>
+                        <th>Joined</th>
+                        <th>Tests Taken</th>
+                        <th>Average Score</th>
+                        <th>Best Score</th>
+                        <th>Accuracy</th>
+                    </tr>
+
+                </thead>
+
+                <tbody id="studentTable"></tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<script>
+
+const SUPABASE_URL =
+    "https://egjrkxdyehwbzgoppiqk.supabase.co";
+
+const SUPABASE_ANON_KEY =
+    "sb_publishable_nc_Xv85AMQrmgIlDEWD8CA_aSeMk-yv";
+
+
+const supabaseClient =
+    supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_ANON_KEY
+    );
+
+
+let students = [];
+
+
+async function logout() {
+
+    await supabaseClient.auth.signOut();
+
+    window.location.href = "login.html";
+
+}
+
+
+async function loadStudents() {
+
+    const {
+        data: {
+            session
+        }
+    } = await supabaseClient.auth.getSession();
+
+
+    if (!session) {
+
+        window.location.href = "login.html";
+
+        return;
+
+    }
+
+
+    const {
+        data,
+        error
+    } =
+        await supabaseClient.rpc(
+            "get_admin_students"
+        );
+
+
+    if (error) {
+
+        console.error(error);
+
+        document.getElementById(
+            "loading"
+        ).style.display = "none";
+
+        const errorBox =
+            document.getElementById("error");
+
+        errorBox.style.display = "block";
+
+        errorBox.innerText =
+            "Student loading error: " +
+            error.message;
+
+        return;
+
+    }
+
+
+    students = data || [];
+
+    document.getElementById(
+        "loading"
+    ).style.display = "none";
+
+
+    document.getElementById(
+        "tableArea"
+    ).style.display = "block";
+
+
+    document.getElementById(
+        "summary"
+    ).innerText =
+        `${students.length} registered student${
+            students.length === 1 ? "" : "s"
+        }`;
+
+
+    renderStudents(students);
+
+}
+
+
+function renderStudents(list) {
+
+    const table =
+        document.getElementById("studentTable");
+
+    table.innerHTML = "";
+
+
+    if (list.length === 0) {
+
+        document.getElementById(
+            "tableArea"
+        ).style.display = "none";
+
+        document.getElementById(
+            "empty"
+        ).style.display = "block";
+
+        return;
+
+    }
+
+
+    document.getElementById(
+        "empty"
+    ).style.display = "none";
+
+
+    document.getElementById(
+        "tableArea"
+    ).style.display = "block";
+
+
+    list.forEach(student => {
+
+        const joined =
+            new Date(
+                student.joined_at
+            ).toLocaleDateString();
+
+
+        table.innerHTML += `
+
+            <tr>
+
+                <td>
+
+                    <div
+    class="student-name"
+    style="cursor:pointer;"
+    onclick="viewStudent('${student.user_id}')"
+>
+    ${escapeHtml(student.name)}
+</div>
+
+                    <div class="email">
+                        ${escapeHtml(student.email || "")}
+                    </div>
+
+                </td>
+
+                <td>
+                    ${joined}
+                </td>
+
+                <td>
+                    <span class="badge">
+                        ${student.tests_taken}
+                    </span>
+                </td>
+
+                <td>
+                    ${student.average_score}
+                </td>
+
+                <td>
+                    ${student.best_score}
+                </td>
+
+                <td>
+                    ${student.average_accuracy}%
+                </td>
+
+            </tr>
+
+        `;
+
+    });
+
+}
+
+
+function filterStudents() {
+
+    const query =
+        document
+            .getElementById("search")
+            .value
+            .toLowerCase()
+            .trim();
+
+
+    const filtered =
+        students.filter(student => {
+
+            const name =
+                String(
+                    student.name || ""
+                ).toLowerCase();
+
+            const email =
+                String(
+                    student.email || ""
+                ).toLowerCase();
+
+            return (
+                name.includes(query) ||
+                email.includes(query)
+            );
+
+        });
+
+
+    renderStudents(filtered);
+
+}
+
+function viewStudent(userId) {
+
+    window.location.href =
+        `admin-student.html?user=${encodeURIComponent(userId)}`;
+
+}
+
+function escapeHtml(value) {
+
+    return String(value ?? "")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+
+}
+
+
+loadStudents();
+
+</script>
+
+</body>
+
+</html>

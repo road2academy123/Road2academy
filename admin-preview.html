@@ -1,0 +1,887 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Test Preview - Road to Academy</title>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #f4f7fb;
+    color: #17233c;
+}
+
+header {
+    background: #071a3d;
+    color: white;
+    padding: 18px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 15px;
+}
+
+header h1 {
+    margin: 0;
+    font-size: 22px;
+}
+
+.back-btn {
+    background: white;
+    color: #071a3d;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.container {
+    max-width: 1000px;
+    margin: 25px auto;
+    padding: 0 15px;
+}
+
+.card {
+    background: white;
+    border-radius: 14px;
+    padding: 22px;
+    margin-bottom: 20px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.07);
+}
+
+.test-title {
+    font-size: 28px;
+    font-weight: bold;
+    margin-bottom: 8px;
+}
+
+.description {
+    color: #667085;
+    line-height: 1.6;
+}
+
+.badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 18px;
+}
+
+.badge {
+    background: #eef3ff;
+    color: #173b78;
+    padding: 8px 12px;
+    border-radius: 20px;
+    font-size: 14px;
+    font-weight: bold;
+}
+
+.stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    margin-top: 20px;
+}
+
+.stat {
+    background: #f7f9fc;
+    padding: 15px;
+    border-radius: 10px;
+    text-align: center;
+}
+
+.stat strong {
+    display: block;
+    font-size: 22px;
+    margin-bottom: 5px;
+}
+
+.stat span {
+    color: #667085;
+    font-size: 13px;
+}
+
+.question {
+    border: 1px solid #e4e7ec;
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 15px;
+}
+
+.question-header {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    margin-bottom: 12px;
+}
+
+.q-number {
+    font-weight: bold;
+    color: #071a3d;
+}
+
+.q-marks {
+    font-size: 13px;
+    color: #667085;
+}
+
+.q-text {
+    font-size: 17px;
+    font-weight: 600;
+    line-height: 1.5;
+    margin-bottom: 15px;
+}
+
+.options {
+    display: grid;
+    gap: 9px;
+}
+
+.option {
+    padding: 11px 13px;
+    background: #f8fafc;
+    border-radius: 8px;
+}
+
+.correct {
+    background: #eaf8ef;
+    border: 1px solid #91d5a8;
+}
+
+.correct-label {
+    color: #16803c;
+    font-size: 12px;
+    font-weight: bold;
+    margin-left: 5px;
+}
+
+.explanation {
+    margin-top: 14px;
+    padding: 12px;
+    background: #fff9e8;
+    border-radius: 8px;
+    color: #664d03;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+.actions {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-top: 25px;
+}
+
+button {
+    border: none;
+    border-radius: 9px;
+    padding: 12px 18px;
+    font-weight: bold;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.edit-btn {
+    background: #eef2f7;
+    color: #17233c;
+}
+
+.publish-btn {
+    background: #071a3d;
+    color: white;
+}
+
+.unpublish-btn {
+    background: #b42318;
+    color: white;
+}
+
+.status {
+    margin-top: 15px;
+    padding: 12px;
+    border-radius: 8px;
+    display: none;
+}
+
+.success {
+    background: #eaf8ef;
+    color: #16733a;
+}
+
+.error {
+    background: #fdecec;
+    color: #b42318;
+}
+
+.loading {
+    text-align: center;
+    padding: 50px;
+    color: #667085;
+}
+
+.empty {
+    text-align: center;
+    padding: 40px;
+    color: #667085;
+}
+
+@media (max-width: 700px) {
+    .stats {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .test-title {
+        font-size: 23px;
+    }
+
+    .question-header {
+        flex-direction: column;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+    <h1>📝 Test Preview</h1>
+    <button class="back-btn" onclick="goBack()">← Back</button>
+</header>
+
+<div class="container">
+
+    <div id="loading" class="loading">
+        Loading test...
+    </div>
+
+    <div id="content" style="display:none;">
+
+        <div class="card">
+
+            <div class="test-title" id="title"></div>
+
+            <div class="description" id="description"></div>
+
+            <div class="badges">
+                <div class="badge" id="exam"></div>
+                <div class="badge" id="subject"></div>
+                <div class="badge" id="statusBadge"></div>
+            </div>
+
+            <div class="stats">
+
+                <div class="stat">
+                    <strong id="questionCount">0</strong>
+                    <span>Questions</span>
+                </div>
+
+                <div class="stat">
+                    <strong id="totalMarks">0</strong>
+                    <span>Total Marks</span>
+                </div>
+
+                <div class="stat">
+                    <strong id="duration">0</strong>
+                    <span>Minutes</span>
+                </div>
+
+                <div class="stat">
+                    <strong id="negativeMarks">0</strong>
+                    <span>Negative / Question</span>
+                </div>
+
+            </div>
+
+            <div class="actions">
+
+                <button
+                    class="edit-btn"
+                    onclick="editQuestions()">
+                    ✏️ Edit Questions
+                </button>
+
+                <button
+                    id="publishBtn"
+                    class="publish-btn"
+                    onclick="togglePublish()">
+                    🚀 Publish Test
+                </button>
+
+            </div>
+
+            <div id="statusMessage" class="status"></div>
+
+        </div>
+
+        <div class="card">
+
+            <h2>Questions Preview</h2>
+
+            <div id="questions"></div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+
+const SUPABASE_URL =
+    "https://egjrkxdyehwbzgoppiqk.supabase.co";
+
+const SUPABASE_KEY =
+    "sb_publishable_nc_Xv85AMQrmgIlDEWD8CA_aSeMk-yv";
+
+const supabaseClient =
+    window.supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_KEY
+    );
+
+const params =
+    new URLSearchParams(window.location.search);
+
+const testId =
+    params.get("test");
+
+let test = null;
+let questions = [];
+
+
+/* =========================
+   AUTH + ADMIN CHECK
+========================= */
+
+async function checkAdmin() {
+
+    const {
+        data: { session }
+    } = await supabaseClient.auth.getSession();
+
+    if (!session) {
+        window.location.href = "login.html";
+        return false;
+    }
+
+    const { data: role, error } =
+        await supabaseClient
+            .from("user_roles")
+            .select("role")
+            .eq("user_id", session.user.id)
+            .single();
+
+    if (error || !role || role.role !== "admin") {
+
+        alert("Admin access required.");
+
+        window.location.href =
+            "dashboard.html";
+
+        return false;
+    }
+
+    return true;
+}
+
+
+/* =========================
+   LOAD TEST
+========================= */
+
+async function loadTest() {
+
+    if (!testId) {
+
+        showError("No test ID provided.");
+
+        return;
+    }
+
+    const {
+        data,
+        error
+    } = await supabaseClient
+        .from("tests")
+        .select("*")
+        .eq("id", testId)
+        .single();
+
+    if (error || !data) {
+
+        showError("Test could not be found.");
+
+        return;
+    }
+
+    test = data;
+
+    const {
+        data: qData,
+        error: qError
+    } = await supabaseClient
+        .from("questions")
+        .select("*")
+        .eq("test_id", testId)
+        .order("question_number", {
+            ascending: true
+        });
+
+    if (qError) {
+
+        showError(
+            "Could not load questions: " +
+            qError.message
+        );
+
+        return;
+    }
+
+    questions = qData || [];
+
+    renderTest();
+
+}
+
+
+/* =========================
+   RENDER TEST
+========================= */
+
+function renderTest() {
+
+    document.getElementById("loading")
+        .style.display = "none";
+
+    document.getElementById("content")
+        .style.display = "block";
+
+
+    document.getElementById("title")
+        .textContent = test.title || "Untitled Test";
+
+    document.getElementById("description")
+        .textContent =
+        test.description ||
+        "No description provided.";
+
+    document.getElementById("exam")
+        .textContent =
+        "Exam: " + (test.exam || "—");
+
+    document.getElementById("subject")
+        .textContent =
+        "Subject: " + (test.subject || "—");
+
+    document.getElementById("statusBadge")
+        .textContent =
+        test.is_published
+            ? "🟢 Published"
+            : "⚪ Draft";
+
+
+    document.getElementById("questionCount")
+        .textContent =
+        questions.length;
+
+
+    const calculatedMarks =
+        questions.reduce(
+            (sum, q) =>
+                sum + Number(q.marks || 0),
+            0
+        );
+
+    document.getElementById("totalMarks")
+        .textContent =
+        calculatedMarks ||
+        test.total_marks ||
+        0;
+
+
+    document.getElementById("duration")
+        .textContent =
+        test.duration_minutes || 0;
+
+
+    document.getElementById("negativeMarks")
+        .textContent =
+        questions.length
+            ? Number(
+                questions[0].negative_marks || 0
+              )
+            : Number(
+                test.negative_marks || 0
+              );
+
+
+    renderQuestions();
+
+
+    const publishBtn =
+        document.getElementById("publishBtn");
+
+    if (test.is_published) {
+
+        publishBtn.textContent =
+            "🔴 Unpublish Test";
+
+        publishBtn.className =
+            "unpublish-btn";
+
+    } else {
+
+        publishBtn.textContent =
+            "🚀 Publish Test";
+
+        publishBtn.className =
+            "publish-btn";
+    }
+}
+
+
+/* =========================
+   RENDER QUESTIONS
+========================= */
+
+function renderQuestions() {
+
+    const container =
+        document.getElementById("questions");
+
+    if (!questions.length) {
+
+        container.innerHTML = `
+            <div class="empty">
+                No questions have been added yet.
+            </div>
+        `;
+
+        return;
+    }
+
+    container.innerHTML =
+        questions.map((q, index) => {
+
+            const correct =
+                String(q.correct_answer || "")
+                    .toUpperCase();
+
+            return `
+                <div class="question">
+
+                    <div class="question-header">
+
+                        <div class="q-number">
+                            Question ${q.question_number}
+                        </div>
+
+                        <div class="q-marks">
+                            +${q.marks || 0}
+                            &nbsp; | &nbsp;
+                            -${q.negative_marks || 0}
+                        </div>
+
+                    </div>
+
+                    <div class="q-text">
+                        ${escapeHtml(q.question_text)}
+                    </div>
+
+                    <div class="options">
+
+                        ${renderOption(
+                            "A",
+                            q.option_a,
+                            correct
+                        )}
+
+                        ${renderOption(
+                            "B",
+                            q.option_b,
+                            correct
+                        )}
+
+                        ${renderOption(
+                            "C",
+                            q.option_c,
+                            correct
+                        )}
+
+                        ${renderOption(
+                            "D",
+                            q.option_d,
+                            correct
+                        )}
+
+                    </div>
+
+                    ${
+                        q.explanation
+                        ? `
+                            <div class="explanation">
+                                <strong>
+                                    Explanation:
+                                </strong><br>
+                                ${escapeHtml(
+                                    q.explanation
+                                )}
+                            </div>
+                        `
+                        : ""
+                    }
+
+                </div>
+            `;
+
+        }).join("");
+}
+
+
+function renderOption(letter, text, correct) {
+
+    const isCorrect =
+        letter === correct;
+
+    return `
+        <div class="option ${
+            isCorrect ? "correct" : ""
+        }">
+
+            <strong>${letter}.</strong>
+            ${escapeHtml(text || "")}
+
+            ${
+                isCorrect
+                ? `
+                    <span class="correct-label">
+                        ✓ Correct Answer
+                    </span>
+                `
+                : ""
+            }
+
+        </div>
+    `;
+}
+
+
+/* =========================
+   PUBLISH / UNPUBLISH
+========================= */
+
+async function togglePublish() {
+
+    if (!test) return;
+
+
+    if (!test.is_published) {
+
+        if (!questions.length) {
+
+            showMessage(
+                "You cannot publish a test without questions.",
+                true
+            );
+
+            return;
+        }
+
+
+        const numbers =
+            questions.map(q =>
+                Number(q.question_number)
+            );
+
+        const unique =
+            new Set(numbers);
+
+        if (unique.size !== numbers.length) {
+
+            showMessage(
+                "Duplicate question numbers found. Fix them before publishing.",
+                true
+            );
+
+            return;
+        }
+
+
+        const missingCorrect =
+            questions.some(q =>
+                !["A","B","C","D"]
+                    .includes(
+                        String(q.correct_answer)
+                            .toUpperCase()
+                    )
+            );
+
+        if (missingCorrect) {
+
+            showMessage(
+                "One or more questions have an invalid correct answer.",
+                true
+            );
+
+            return;
+        }
+
+
+        const confirmed =
+            confirm(
+                "Publish this test?\n\n" +
+                "Students will be able to see and attempt it."
+            );
+
+        if (!confirmed) return;
+
+    } else {
+
+        const confirmed =
+            confirm(
+                "Unpublish this test?\n\n" +
+                "Students will no longer see it in the published test list."
+            );
+
+        if (!confirmed) return;
+    }
+
+
+    const {
+        error
+    } = await supabaseClient
+        .from("tests")
+        .update({
+            is_published:
+                !test.is_published
+        })
+        .eq("id", test.id);
+
+
+    if (error) {
+
+        showMessage(
+            "Update failed: " +
+            error.message,
+            true
+        );
+
+        return;
+    }
+
+
+    test.is_published =
+        !test.is_published;
+
+    renderTest();
+
+
+    showMessage(
+        test.is_published
+            ? "Test published successfully! 🚀"
+            : "Test unpublished successfully."
+    );
+}
+
+
+/* =========================
+   NAVIGATION
+========================= */
+
+function editQuestions() {
+
+    window.location.href =
+        `admin-questions.html?test=${encodeURIComponent(testId)}`;
+}
+
+
+function goBack() {
+
+    window.location.href =
+        `admin-questions.html?test=${encodeURIComponent(testId)}`;
+}
+
+
+/* =========================
+   HELPERS
+========================= */
+
+function escapeHtml(value) {
+
+    return String(value ?? "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+}
+
+
+function showMessage(message, error = false) {
+
+    const box =
+        document.getElementById(
+            "statusMessage"
+        );
+
+    box.textContent = message;
+
+    box.className =
+        "status " +
+        (error ? "error" : "success");
+
+    box.style.display = "block";
+
+    setTimeout(() => {
+
+        box.style.display = "none";
+
+    }, 5000);
+}
+
+
+function showError(message) {
+
+    document.getElementById("loading")
+        .innerHTML = `
+            <div style="
+                background:#fdecec;
+                color:#b42318;
+                padding:20px;
+                border-radius:10px;
+            ">
+                ${escapeHtml(message)}
+            </div>
+        `;
+}
+
+
+/* =========================
+   START
+========================= */
+
+(async function () {
+
+    const isAdmin =
+        await checkAdmin();
+
+    if (!isAdmin) return;
+
+    await loadTest();
+
+})();
+
+</script>
+
+</body>
+</html>

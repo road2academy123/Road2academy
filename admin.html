@@ -1,0 +1,1910 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Admin Dashboard | Road to Academy</title>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+
+*{
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
+}
+
+body{
+    font-family:Arial,sans-serif;
+    background:#f4f6fa;
+    color:#111827;
+}
+
+/* HEADER */
+
+header{
+    background:#071a3d;
+    color:white;
+    padding:16px 25px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:15px;
+}
+
+.logo{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    color:#f5c542;
+    font-size:21px;
+    font-weight:bold;
+}
+
+.header-actions{
+    display:flex;
+    align-items:center;
+    gap:9px;
+    flex-wrap:wrap;
+}
+
+.header-btn{
+    border:none;
+    padding:9px 13px;
+    border-radius:7px;
+    cursor:pointer;
+    font-weight:bold;
+    text-decoration:none;
+}
+
+.analytics-btn{
+    background:#d4af37;
+    color:#071a3d;
+}
+
+.students-btn{
+    background:#e8eefc;
+    color:#071a3d;
+}
+
+.logout{
+    background:#d62828;
+    color:white;
+}
+
+/* CONTAINER */
+
+.container{
+    max-width:1150px;
+    margin:30px auto;
+    padding:0 20px;
+}
+
+h1{
+    color:#071a3d;
+    margin-bottom:8px;
+}
+
+.subtitle{
+    color:#667085;
+    margin-bottom:25px;
+}
+
+/* STATS */
+
+.stats{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:15px;
+    margin-bottom:25px;
+}
+
+.stat{
+    background:white;
+    padding:20px;
+    border-radius:13px;
+    box-shadow:0 4px 15px rgba(0,0,0,.06);
+}
+
+.stat-icon{
+    font-size:24px;
+    margin-bottom:10px;
+}
+
+.stat h2{
+    color:#071a3d;
+    font-size:28px;
+    margin-bottom:5px;
+}
+
+.stat p{
+    color:#667085;
+    font-size:14px;
+}
+
+/* QUICK ACTIONS */
+
+.card{
+    background:white;
+    padding:25px;
+    border-radius:14px;
+    margin-bottom:25px;
+    box-shadow:0 4px 15px rgba(0,0,0,.07);
+}
+
+.card h2{
+    color:#071a3d;
+    margin-bottom:20px;
+}
+
+.quick-grid{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:12px;
+}
+
+.quick-btn{
+    display:block;
+    text-align:center;
+    padding:14px 10px;
+    border-radius:9px;
+    text-decoration:none;
+    font-weight:bold;
+    background:#e8eefc;
+    color:#071a3d;
+}
+
+.quick-btn:hover{
+    background:#dce5fa;
+}
+
+/* CREATE TEST */
+
+.form-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:15px;
+}
+
+.field{
+    display:flex;
+    flex-direction:column;
+}
+
+.field.full{
+    grid-column:1 / -1;
+}
+
+label{
+    font-weight:bold;
+    margin-bottom:7px;
+    color:#374151;
+}
+
+input,
+select,
+textarea{
+    width:100%;
+    padding:12px;
+    border:1px solid #d1d5db;
+    border-radius:8px;
+    font-size:15px;
+}
+
+textarea{
+    min-height:90px;
+    resize:vertical;
+}
+
+.create-btn{
+    margin-top:20px;
+    background:#071a3d;
+    color:white;
+    border:none;
+    padding:13px 22px;
+    border-radius:8px;
+    cursor:pointer;
+    font-weight:bold;
+}
+
+.create-btn:hover{
+    background:#102c61;
+}
+
+/* MESSAGE */
+
+.message{
+    margin-top:15px;
+    padding:12px;
+    border-radius:8px;
+    display:none;
+}
+
+.success{
+    display:block;
+    background:#e9f8ef;
+    color:#176b36;
+}
+
+.error{
+    display:block;
+    background:#fff0f0;
+    color:#b00020;
+}
+
+/* TEST */
+
+.test{
+    border:1px solid #e1e5eb;
+    border-radius:10px;
+    padding:18px;
+    margin-bottom:12px;
+}
+
+.test h3{
+    color:#071a3d;
+    margin-bottom:8px;
+}
+
+.test-details{
+    color:#666;
+    font-size:14px;
+    margin-bottom:12px;
+    line-height:1.5;
+}
+
+.status{
+    display:inline-block;
+    padding:4px 8px;
+    border-radius:6px;
+    font-size:12px;
+    font-weight:bold;
+}
+
+.status-published{
+    background:#e9f8ef;
+    color:#176b36;
+}
+
+.status-draft{
+    background:#fff4d6;
+    color:#8a6500;
+}
+
+.actions{
+    display:flex;
+    gap:8px;
+    flex-wrap:wrap;
+}
+
+.actions button{
+    border:none;
+    padding:9px 13px;
+    border-radius:7px;
+    cursor:pointer;
+    font-weight:bold;
+}
+
+.questions-btn{
+    background:#071a3d;
+    color:white;
+}
+
+.publish-btn{
+    background:#f5c542;
+    color:#071a3d;
+}
+
+.unpublish-btn{
+    background:#ddd;
+    color:#333;
+}
+
+.delete-btn{
+    background:#d62828;
+    color:white;
+}
+
+.edit-btn{
+    background:#e8eefc;
+    color:#071a3d;
+}
+
+/* RECENT ATTEMPTS */
+
+.attempt{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:15px;
+    padding:14px 0;
+    border-bottom:1px solid #e8ebef;
+}
+
+.attempt:last-child{
+    border-bottom:0;
+}
+
+.attempt-title{
+    font-weight:bold;
+    margin-bottom:5px;
+}
+
+.attempt-info{
+    color:#667085;
+    font-size:13px;
+}
+
+.attempt-score{
+    font-size:18px;
+    font-weight:bold;
+    color:#071a3d;
+}
+
+/* EMPTY */
+
+.empty{
+    color:#667085;
+    text-align:center;
+    padding:25px;
+}
+
+.loading{
+    color:#667085;
+}
+
+/* MOBILE */
+
+@media(max-width:850px){
+
+    .stats{
+        grid-template-columns:1fr 1fr;
+    }
+
+    .quick-grid{
+        grid-template-columns:1fr 1fr;
+    }
+
+}
+
+@media(max-width:700px){
+
+    header{
+        align-items:flex-start;
+        flex-direction:column;
+    }
+
+    .form-grid{
+        grid-template-columns:1fr;
+    }
+
+    .field.full{
+        grid-column:auto;
+    }
+
+    .attempt{
+        align-items:flex-start;
+        flex-direction:column;
+    }
+
+}
+
+@media(max-width:450px){
+
+    .stats{
+        grid-template-columns:1fr;
+    }
+
+    .quick-grid{
+        grid-template-columns:1fr;
+    }
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+
+<!-- HEADER -->
+
+<header>
+
+    <div class="logo">
+        🛡️ ROAD TO ACADEMY — ADMIN
+    </div>
+
+    <div class="header-actions">
+
+        <a
+            href="admin-analytics.html"
+            class="header-btn analytics-btn"
+        >
+            📊 Analytics
+        </a>
+
+        <a
+            href="admin-students.html"
+            class="header-btn students-btn"
+        >
+            👥 Students
+        </a>
+
+        <button
+            class="header-btn logout"
+            onclick="logout()"
+        >
+            Logout
+        </button>
+
+    </div>
+
+</header>
+
+
+
+<div class="container">
+
+
+    <h1>
+        Admin Dashboard
+    </h1>
+
+    <p class="subtitle">
+        Manage tests, students and platform performance.
+    </p>
+
+
+
+    <!-- ================================
+         STATISTICS
+    ================================= -->
+
+    <div class="stats">
+
+
+        <div class="stat">
+
+            <div class="stat-icon">
+                👥
+            </div>
+
+            <h2 id="totalStudents">
+                —
+            </h2>
+
+            <p>
+                Total Students
+            </p>
+
+        </div>
+
+
+
+        <div class="stat">
+
+            <div class="stat-icon">
+                📝
+            </div>
+
+            <h2 id="totalTests">
+                —
+            </h2>
+
+            <p>
+                Total Tests
+            </p>
+
+        </div>
+
+
+
+        <div class="stat">
+
+            <div class="stat-icon">
+                🌐
+            </div>
+
+            <h2 id="publishedTests">
+                —
+            </h2>
+
+            <p>
+                Published Tests
+            </p>
+
+        </div>
+
+
+
+        <div class="stat">
+
+            <div class="stat-icon">
+                ❓
+            </div>
+
+            <h2 id="totalQuestions">
+                —
+            </h2>
+
+            <p>
+                Total Questions
+            </p>
+
+        </div>
+
+
+
+        <div class="stat">
+
+            <div class="stat-icon">
+                🎯
+            </div>
+
+            <h2 id="totalAttempts">
+                —
+            </h2>
+
+            <p>
+                Total Attempts
+            </p>
+
+        </div>
+
+
+
+        <div class="stat">
+
+            <div class="stat-icon">
+                📈
+            </div>
+
+            <h2 id="averageScore">
+                —
+            </h2>
+
+            <p>
+                Average Score
+            </p>
+
+        </div>
+
+
+
+        <div class="stat">
+
+            <div class="stat-icon">
+                🎯
+            </div>
+
+            <h2 id="averageAccuracy">
+                —
+            </h2>
+
+            <p>
+                Average Accuracy
+            </p>
+
+        </div>
+
+
+
+        <div class="stat">
+
+            <div class="stat-icon">
+                🚀
+            </div>
+
+            <h2 id="platformStatus">
+                LIVE
+            </h2>
+
+            <p>
+                Platform Status
+            </p>
+
+        </div>
+
+
+    </div>
+
+
+
+    <!-- ================================
+         QUICK ACTIONS
+    ================================= -->
+
+    <div class="card">
+
+        <h2>
+            ⚡ Quick Actions
+        </h2>
+
+
+        <div class="quick-grid">
+
+
+            <a
+                href="#createTest"
+                class="quick-btn"
+            >
+                ➕ Create Test
+            </a>
+
+
+            <a
+                href="admin-analytics.html"
+                class="quick-btn"
+            >
+                📊 Analytics
+            </a>
+
+
+            <a
+                href="admin-students.html"
+                class="quick-btn"
+            >
+                👥 Students
+            </a>
+
+
+            <a
+                href="leaderboard.html"
+                class="quick-btn"
+            >
+                🏆 Leaderboard
+            </a>
+
+
+        </div>
+
+    </div>
+
+
+
+    <!-- ================================
+         RECENT ATTEMPTS
+    ================================= -->
+
+    <div class="card">
+
+        <h2>
+            🆕 Recent Student Attempts
+        </h2>
+
+
+        <div id="recentAttempts">
+
+            <div class="loading">
+                Loading recent attempts...
+            </div>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- ================================
+         CREATE TEST
+    ================================= -->
+
+    <div
+        class="card"
+        id="createTest"
+    >
+
+        <h2>
+            ➕ Create New Test
+        </h2>
+
+
+        <form id="testForm">
+
+
+            <div class="form-grid">
+
+
+                <div class="field">
+
+                    <label>
+                        Test Title
+                    </label>
+
+                    <input
+                        id="title"
+                        type="text"
+                        placeholder="NDA Mathematics Test 03"
+                        required
+                    >
+
+                </div>
+
+
+
+                <div class="field">
+
+                    <label>
+                        Exam
+                    </label>
+
+                    <select
+                        id="exam"
+                        required
+                    >
+
+                        <option value="NDA">
+                            NDA
+                        </option>
+
+                        <option value="CDS">
+                            CDS
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+
+                <div class="field">
+
+                    <label>
+                        Subject
+                    </label>
+
+                    <input
+                        id="subject"
+                        type="text"
+                        placeholder="Mathematics"
+                    >
+
+                </div>
+
+
+
+                <div class="field">
+
+                    <label>
+                        Duration (minutes)
+                    </label>
+
+                    <input
+                        id="duration"
+                        type="number"
+                        min="1"
+                        value="30"
+                        required
+                    >
+
+                </div>
+
+
+
+                <div class="field">
+
+                    <label>
+                        Total Marks
+                    </label>
+
+                    <input
+                        id="marks"
+                        type="number"
+                        min="1"
+                        value="100"
+                        required
+                    >
+
+                </div>
+
+
+
+                <div class="field">
+
+                    <label>
+                        Negative Marks
+                    </label>
+
+                    <input
+                        id="negative"
+                        type="number"
+                        min="0"
+                        step="0.01"
+                        value="0.25"
+                        required
+                    >
+
+                </div>
+
+
+
+                <div class="field full">
+
+                    <label>
+                        Description
+                    </label>
+
+                    <textarea
+                        id="description"
+                        placeholder="Enter test description..."
+                    ></textarea>
+
+                </div>
+
+
+            </div>
+
+
+            <button
+                type="submit"
+                class="create-btn"
+            >
+                + Create Test
+            </button>
+
+
+            <div
+                id="message"
+                class="message"
+            ></div>
+
+
+        </form>
+
+    </div>
+
+
+
+    <!-- ================================
+         TEST LIST
+    ================================= -->
+
+    <div class="card">
+
+        <h2>
+            📝 Manage Tests
+        </h2>
+
+
+        <div id="testList">
+
+            <div class="empty">
+                Loading tests...
+            </div>
+
+        </div>
+
+    </div>
+
+
+</div>
+
+
+
+<script>
+
+
+/* ======================================
+   SUPABASE
+====================================== */
+
+const SUPABASE_URL =
+    "https://egjrkxdyehwbzgoppiqk.supabase.co";
+
+const SUPABASE_KEY =
+    "sb_publishable_nc_Xv85AMQrmgIlDEWD8CA_aSeMk-yv";
+
+
+const supabaseClient =
+    supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_KEY
+    );
+
+
+
+/* ======================================
+   ADMIN CHECK
+====================================== */
+
+async function checkAdmin(){
+
+    const {
+        data:{session},
+        error
+    } =
+    await supabaseClient.auth.getSession();
+
+
+    if(error){
+
+        console.error(error);
+
+        alert(
+            "Session error: " +
+            error.message
+        );
+
+        return false;
+    }
+
+
+    if(!session){
+
+        window.location.href =
+            "login.html";
+
+        return false;
+    }
+
+
+    const user =
+        session.user;
+
+
+    const {
+        data:roleData,
+        error:roleError
+    } =
+    await supabaseClient
+
+        .from("user_roles")
+
+        .select("role")
+
+        .eq(
+            "user_id",
+            user.id
+        )
+
+        .maybeSingle();
+
+
+    if(roleError){
+
+        console.error(
+            "ROLE ERROR:",
+            roleError
+        );
+
+        document.getElementById(
+            "testList"
+        ).innerHTML =
+
+            `<p style="color:red;">
+                Admin check failed:
+                ${escapeHTML(roleError.message)}
+            </p>`;
+
+        return false;
+    }
+
+
+    if(
+        !roleData ||
+        roleData.role !== "admin"
+    ){
+
+        alert(
+            "You are not an admin."
+        );
+
+        window.location.href =
+            "dashboard.html";
+
+        return false;
+    }
+
+
+    console.log(
+        "ADMIN VERIFIED:",
+        user.id
+    );
+
+
+    return true;
+
+}
+
+
+
+/* ======================================
+   LOAD ADMIN DASHBOARD
+====================================== */
+
+async function loadAdminDashboard(){
+
+    const {
+        data,
+        error
+    } =
+    await supabaseClient.rpc(
+        "get_admin_analytics",
+        {
+            p_request:"dashboard"
+        }
+    );
+
+
+    if(error){
+
+        console.error(
+            "ADMIN ANALYTICS ERROR:",
+            error
+        );
+
+        return;
+    }
+
+
+    console.log(
+        "ADMIN ANALYTICS:",
+        data
+    );
+
+
+    /*
+       Your existing RPC returns the
+       dashboard statistics.
+    */
+
+    if(!data){
+        return;
+    }
+
+
+    document.getElementById(
+        "totalStudents"
+    ).textContent =
+        data.students ?? 0;
+
+
+    document.getElementById(
+        "totalTests"
+    ).textContent =
+        data.tests ?? 0;
+
+
+    document.getElementById(
+        "publishedTests"
+    ).textContent =
+        data.published_tests ?? 0;
+
+
+    document.getElementById(
+        "totalQuestions"
+    ).textContent =
+        data.questions ?? 0;
+
+
+    document.getElementById(
+        "totalAttempts"
+    ).textContent =
+        data.attempts ?? 0;
+
+
+    document.getElementById(
+        "averageScore"
+    ).textContent =
+        Number(
+            data.average_score ?? 0
+        ).toFixed(2);
+
+
+    document.getElementById(
+        "averageAccuracy"
+    ).textContent =
+        Number(
+            data.average_accuracy ?? 0
+        ).toFixed(1)
+        + "%";
+
+
+    renderRecentAttempts(
+        data.recent_attempts || []
+    );
+
+}
+
+
+
+/* ======================================
+   RECENT ATTEMPTS
+====================================== */
+
+function renderRecentAttempts(
+    attempts
+){
+
+    const container =
+        document.getElementById(
+            "recentAttempts"
+        );
+
+
+    if(
+        !attempts ||
+        !attempts.length
+    ){
+
+        container.innerHTML = `
+
+            <div class="empty">
+                No student attempts yet.
+            </div>
+
+        `;
+
+        return;
+    }
+
+
+    container.innerHTML =
+
+        attempts
+        .slice(0,5)
+        .map(
+            attempt => {
+
+
+                const name =
+                    attempt.name ||
+                    attempt.full_name ||
+                    attempt.email ||
+                    "Student";
+
+
+                const title =
+                    attempt.test_title ||
+                    attempt.title ||
+                    "Test";
+
+
+                const score =
+                    Number(
+                        attempt.score || 0
+                    ).toFixed(2);
+
+
+                const accuracy =
+                    Number(
+                        attempt.accuracy || 0
+                    ).toFixed(1);
+
+
+                const dateValue =
+                    attempt.submitted_at ||
+                    attempt.created_at;
+
+
+                const date =
+                    dateValue
+                    ?
+                    new Date(
+                        dateValue
+                    ).toLocaleDateString()
+                    :
+                    "—";
+
+
+                return `
+
+                    <div class="attempt">
+
+                        <div>
+
+                            <div class="attempt-title">
+
+                                ${escapeHTML(
+                                    name
+                                )}
+
+                            </div>
+
+                            <div class="attempt-info">
+
+                                ${escapeHTML(
+                                    title
+                                )}
+
+                                •
+
+                                ${date}
+
+                            </div>
+
+                        </div>
+
+
+                        <div>
+
+                            <div class="attempt-score">
+
+                                ${score}
+
+                            </div>
+
+                            <div class="attempt-info">
+
+                                ${accuracy}% accuracy
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                `;
+
+            }
+        )
+        .join("");
+
+}
+
+
+
+/* ======================================
+   CREATE TEST
+====================================== */
+
+document
+.getElementById("testForm")
+.addEventListener(
+    "submit",
+    async function(event){
+
+        event.preventDefault();
+
+
+        const message =
+            document.getElementById(
+                "message"
+            );
+
+
+        message.className =
+            "message";
+
+
+        message.textContent =
+            "Creating test...";
+
+
+        message.style.display =
+            "block";
+
+
+        const title =
+            document
+            .getElementById("title")
+            .value
+            .trim();
+
+
+        const exam =
+            document
+            .getElementById("exam")
+            .value;
+
+
+        const subject =
+            document
+            .getElementById("subject")
+            .value
+            .trim();
+
+
+        const description =
+            document
+            .getElementById("description")
+            .value
+            .trim();
+
+
+        const duration =
+            Number(
+                document
+                .getElementById("duration")
+                .value
+            );
+
+
+        const marks =
+            Number(
+                document
+                .getElementById("marks")
+                .value
+            );
+
+
+        const negative =
+            Number(
+                document
+                .getElementById("negative")
+                .value
+            );
+
+
+        const {
+            data,
+            error
+        } =
+        await supabaseClient
+
+            .from("tests")
+
+            .insert({
+
+                title:title,
+
+                exam:exam,
+
+                subject:subject,
+
+                description:description,
+
+                duration_minutes:duration,
+
+                total_marks:marks,
+
+                negative_marks:negative,
+
+                is_published:false
+
+            })
+
+            .select()
+
+            .single();
+
+
+        if(error){
+
+            console.error(error);
+
+
+            message.className =
+                "message error";
+
+
+            message.textContent =
+                error.message;
+
+
+            return;
+        }
+
+
+        message.className =
+            "message success";
+
+
+        message.textContent =
+            `Test created successfully! Test ID: ${data.id}`;
+
+
+        document
+        .getElementById("testForm")
+        .reset();
+
+
+        loadTests();
+
+
+        loadAdminDashboard();
+
+    }
+);
+
+
+
+/* ======================================
+   LOAD TESTS
+====================================== */
+
+async function loadTests(){
+
+    const {
+        data:tests,
+        error
+    } =
+    await supabaseClient
+
+        .from("tests")
+
+        .select("*")
+
+        .order(
+            "id",
+            {
+                ascending:false
+            }
+        );
+
+
+    const container =
+        document.getElementById(
+            "testList"
+        );
+
+
+    if(error){
+
+        console.error(
+            "TEST LOAD ERROR:",
+            error
+        );
+
+
+        container.innerHTML =
+
+            `<p style="color:red;">
+                Failed to load tests:
+                ${escapeHTML(error.message)}
+            </p>`;
+
+        return;
+    }
+
+
+    if(
+        !tests ||
+        !tests.length
+    ){
+
+        container.innerHTML = `
+
+            <div class="empty">
+                No tests created yet.
+            </div>
+
+        `;
+
+        return;
+    }
+
+
+    container.innerHTML = "";
+
+
+    tests.forEach(
+        test => {
+
+
+            const div =
+                document.createElement(
+                    "div"
+                );
+
+
+            div.className =
+                "test";
+
+
+            const statusClass =
+                test.is_published
+                ?
+                "status-published"
+                :
+                "status-draft";
+
+
+            const statusText =
+                test.is_published
+                ?
+                "Published"
+                :
+                "Draft";
+
+
+            div.innerHTML = `
+
+                <h3>
+
+                    ${escapeHTML(
+                        test.title
+                    )}
+
+                </h3>
+
+
+                <div class="test-details">
+
+                    ${escapeHTML(
+                        test.exam
+                    )}
+
+                    •
+
+                    ${escapeHTML(
+                        test.subject ||
+                        "General"
+                    )}
+
+                    •
+
+                    ${test.duration_minutes}
+                    min
+
+                    •
+
+                    ${test.total_marks}
+                    marks
+
+                    <br><br>
+
+                    Status:
+
+                    <span
+                        class="status ${statusClass}"
+                    >
+                        ${statusText}
+                    </span>
+
+                </div>
+
+
+                <div class="actions">
+
+
+                    <button
+                        class="edit-btn"
+                        onclick="editTest(${test.id})"
+                    >
+                        ✏️ Edit Test
+                    </button>
+
+<button class="btn-blue" onclick="duplicateTest(${test.id})">
+    Duplicate
+</button>
+
+                    <button
+                        class="questions-btn"
+                        onclick="manageQuestions(${test.id})"
+                    >
+                        📝 Questions
+                    </button>
+
+
+                    <button
+                        class="${
+                            test.is_published
+                            ?
+                            "unpublish-btn"
+                            :
+                            "publish-btn"
+                        }"
+                        onclick="togglePublish(
+                            ${test.id},
+                            ${test.is_published}
+                        )"
+                    >
+
+                        ${
+                            test.is_published
+                            ?
+                            "Unpublish"
+                            :
+                            "Publish"
+                        }
+
+                    </button>
+
+
+                    <button
+                        class="delete-btn"
+                        onclick="deleteTest(${test.id})"
+                    >
+                        Delete
+                    </button>
+
+
+                </div>
+
+            `;
+
+
+            container.appendChild(
+                div
+            );
+
+        }
+    );
+
+}
+
+
+
+/* ======================================
+   PUBLISH / UNPUBLISH
+====================================== */
+
+async function togglePublish(
+    id,
+    currentlyPublished
+){
+
+    const {
+        error
+    } =
+    await supabaseClient
+
+        .from("tests")
+
+        .update({
+
+            is_published:
+                !currentlyPublished
+
+        })
+
+        .eq(
+            "id",
+            id
+        );
+
+
+    if(error){
+
+        alert(
+            error.message
+        );
+
+        return;
+    }
+
+
+    await loadTests();
+
+    await loadAdminDashboard();
+
+}
+
+
+
+/* ======================================
+   DELETE TEST
+====================================== */
+
+async function deleteTest(id){
+
+    const confirmed =
+        confirm(
+            "Delete this test and all its questions?"
+        );
+
+
+    if(!confirmed){
+        return;
+    }
+
+
+    const {
+        error
+    } =
+    await supabaseClient
+
+        .from("tests")
+
+        .delete()
+
+        .eq(
+            "id",
+            id
+        );
+
+
+    if(error){
+
+        alert(
+            error.message
+        );
+
+        return;
+    }
+
+
+    await loadTests();
+
+    await loadAdminDashboard();
+
+}
+
+
+
+/* ======================================
+   EDIT TEST
+====================================== */
+
+function editTest(id){
+
+    window.location.href =
+        `admin-edit.html?test=${id}`;
+
+}
+
+
+
+/* ======================================
+   MANAGE QUESTIONS
+====================================== */
+
+function manageQuestions(id){
+
+    window.location.href =
+        `admin-questions.html?test=${id}`;
+
+}
+
+
+
+/* ======================================
+   LOGOUT
+====================================== */
+
+async function logout(){
+
+    await supabaseClient
+        .auth
+        .signOut();
+
+
+    window.location.href =
+        "login.html";
+
+}
+
+
+
+/* ======================================
+   ESCAPE HTML
+====================================== */
+
+function escapeHTML(value){
+
+    return String(
+        value ?? ""
+    )
+
+    .replaceAll(
+        "&",
+        "&amp;"
+    )
+
+    .replaceAll(
+        "<",
+        "&lt;"
+    )
+
+    .replaceAll(
+        ">",
+        "&gt;"
+    )
+
+    .replaceAll(
+        '"',
+        "&quot;"
+    )
+
+    .replaceAll(
+        "'",
+        "&#039;"
+    );
+
+}
+
+
+
+/* ======================================
+   START
+====================================== */
+
+(async function(){
+
+    const allowed =
+        await checkAdmin();
+
+
+    if(!allowed){
+        return;
+    }
+
+
+    await loadAdminDashboard();
+
+    await loadTests();
+
+})();
+async function duplicateTest(testId) {
+
+    const {
+        data: sourceTest,
+        error: fetchError
+    } = await supabaseClient
+        .from("tests")
+        .select("title")
+        .eq("id", testId)
+        .single();
+
+    if (fetchError) {
+
+        alert(
+            "Could not load test:\n\n" +
+            fetchError.message
+        );
+
+        return;
+    }
+
+    const newTitle = prompt(
+        "Enter the title for the duplicated test:",
+        sourceTest.title + " - Copy"
+    );
+
+    if (!newTitle || !newTitle.trim()) {
+        return;
+    }
+
+    const confirmed = confirm(
+        `Duplicate "${sourceTest.title}"?\n\n` +
+        `New test:\n${newTitle.trim()}\n\n` +
+        `All questions will be copied.\n` +
+        `Attempts and results will NOT be copied.\n` +
+        `The new test will remain UNPUBLISHED.`
+    );
+
+    if (!confirmed) {
+        return;
+    }
+
+    try {
+
+        const {
+            data,
+            error
+        } = await supabaseClient.rpc(
+            "duplicate_test",
+            {
+                p_test_id: Number(testId),
+                p_new_title: newTitle.trim()
+            }
+        );
+
+        if (error) {
+            throw error;
+        }
+
+        alert(
+            "✅ Test duplicated successfully!\n\n" +
+            "New Test ID: " + data
+        );
+
+        await loadTests();
+        await loadAdminDashboard();
+
+    } catch (error) {
+
+        console.error(
+            "DUPLICATE TEST ERROR:",
+            error
+        );
+
+        alert(
+            "❌ Duplicate failed:\n\n" +
+            error.message
+        );
+    }
+}
+
+</script>
+
+</body>
+
+</html>

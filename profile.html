@@ -1,0 +1,1268 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>My Profile | Road 2 Academy</title>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+
+*{
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
+}
+
+body{
+    font-family:Arial,sans-serif;
+    background:#f4f6fa;
+    color:#17213a;
+}
+
+/* HEADER */
+
+header{
+    background:#17356f;
+    color:white;
+
+    padding:18px 25px;
+
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+}
+
+.logo{
+    font-size:21px;
+    font-weight:bold;
+}
+
+.back{
+    background:white;
+    color:#17356f;
+
+    border:0;
+    border-radius:8px;
+
+    padding:10px 16px;
+
+    font-weight:bold;
+    cursor:pointer;
+}
+
+/* CONTAINER */
+
+.container{
+    max-width:1100px;
+
+    margin:30px auto;
+
+    padding:0 18px;
+}
+
+/* PROFILE */
+
+.profile-card{
+
+    background:white;
+
+    border-radius:16px;
+
+    padding:25px;
+
+    display:flex;
+
+    align-items:center;
+
+    gap:20px;
+
+    box-shadow:0 4px 18px rgba(0,0,0,.06);
+
+    margin-bottom:25px;
+}
+
+.avatar{
+
+    width:75px;
+    height:75px;
+
+    border-radius:50%;
+
+    background:#17356f;
+
+    color:white;
+
+    display:flex;
+
+    align-items:center;
+    justify-content:center;
+
+    font-size:30px;
+
+    font-weight:bold;
+}
+
+.profile-info h1{
+    font-size:25px;
+
+    margin-bottom:7px;
+}
+
+.profile-info p{
+    color:#667085;
+
+    margin-bottom:4px;
+}
+
+/* TITLES */
+
+.section-title{
+
+    margin:28px 0 15px;
+
+    color:#17356f;
+
+    font-size:22px;
+}
+
+/* STAT GRID */
+
+.stats{
+
+    display:grid;
+
+    grid-template-columns:
+        repeat(4,1fr);
+
+    gap:15px;
+}
+
+.stat-card{
+
+    background:white;
+
+    padding:20px;
+
+    border-radius:13px;
+
+    box-shadow:0 4px 15px rgba(0,0,0,.05);
+}
+
+.stat-icon{
+    font-size:24px;
+
+    margin-bottom:10px;
+}
+
+.stat-value{
+
+    font-size:25px;
+
+    font-weight:bold;
+
+    color:#17356f;
+
+    margin-bottom:5px;
+}
+
+.stat-label{
+
+    color:#667085;
+
+    font-size:14px;
+}
+
+/* EXAM CARDS */
+
+.exam-grid{
+
+    display:grid;
+
+    grid-template-columns:
+        repeat(2,1fr);
+
+    gap:18px;
+}
+
+.exam-card{
+
+    background:white;
+
+    padding:22px;
+
+    border-radius:14px;
+
+    box-shadow:0 4px 15px rgba(0,0,0,.05);
+}
+
+.exam-card h3{
+
+    color:#17356f;
+
+    margin-bottom:18px;
+
+    font-size:20px;
+}
+
+.exam-stat{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    padding:10px 0;
+
+    border-bottom:1px solid #edf0f4;
+}
+
+.exam-stat:last-child{
+    border-bottom:0;
+}
+
+.exam-stat span:first-child{
+    color:#667085;
+}
+
+.exam-stat span:last-child{
+    font-weight:bold;
+}
+
+/* ATTEMPTS */
+
+.attempts{
+
+    background:white;
+
+    border-radius:14px;
+
+    overflow:hidden;
+
+    box-shadow:0 4px 15px rgba(0,0,0,.05);
+}
+
+.attempt{
+
+    padding:18px 20px;
+
+    border-bottom:1px solid #edf0f4;
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    gap:15px;
+}
+
+.attempt:last-child{
+    border-bottom:0;
+}
+
+.attempt-title{
+
+    font-weight:bold;
+
+    margin-bottom:6px;
+}
+
+.attempt-meta{
+
+    color:#667085;
+
+    font-size:13px;
+}
+
+.attempt-score{
+
+    text-align:right;
+
+    font-weight:bold;
+
+    color:#17356f;
+}
+
+.attempt-score small{
+
+    display:block;
+
+    color:#667085;
+
+    font-weight:normal;
+
+    margin-top:4px;
+}
+
+.view-btn{
+
+    margin-top:7px;
+
+    border:0;
+
+    background:#17356f;
+
+    color:white;
+
+    padding:7px 11px;
+
+    border-radius:6px;
+
+    cursor:pointer;
+
+    font-size:12px;
+}
+
+.empty{
+
+    padding:35px;
+
+    text-align:center;
+
+    color:#667085;
+}
+
+.loading{
+
+    padding:40px;
+
+    text-align:center;
+
+    color:#667085;
+}
+
+.error{
+
+    padding:30px;
+
+    background:white;
+
+    color:#b42318;
+
+    border-radius:12px;
+
+}
+
+/* RESPONSIVE */
+
+@media(max-width:850px){
+
+    .stats{
+        grid-template-columns:
+            repeat(2,1fr);
+    }
+
+}
+
+@media(max-width:600px){
+
+    header{
+
+        flex-direction:column;
+
+        align-items:flex-start;
+
+        gap:12px;
+    }
+
+    .profile-card{
+
+        align-items:flex-start;
+    }
+
+    .stats{
+
+        grid-template-columns:1fr;
+    }
+
+    .exam-grid{
+
+        grid-template-columns:1fr;
+    }
+
+    .attempt{
+
+        flex-direction:column;
+
+        align-items:flex-start;
+    }
+
+    .attempt-score{
+
+        text-align:left;
+    }
+
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<header>
+
+   <div class="logo" style="display: flex; align-items: center; gap: 10px;">
+    <img src="https://road2academy.neocities.org/Road2academy.png" alt="Logo" style="height: 40px; width: 40px; border-radius: 50%; object-fit: cover;">
+    <span>Road 2 Academy</span>
+</div>
+
+    <button
+        class="back"
+        onclick="window.location.href='dashboard.html'"
+    >
+        ← Dashboard
+    </button>
+
+</header>
+
+
+<div class="container">
+
+
+    <!-- PROFILE -->
+
+    <div
+        id="profileCard"
+        class="profile-card"
+    >
+
+        <div
+            id="avatar"
+            class="avatar"
+        >
+            ?
+        </div>
+
+        <div class="profile-info">
+
+            <h1 id="studentName">
+                Loading...
+            </h1>
+
+            <p id="studentEmail">
+                Loading...
+            </p>
+
+            <p id="joinedDate">
+                Loading...
+            </p>
+
+        </div>
+
+    </div>
+
+
+    <!-- OVERALL -->
+
+    <h2 class="section-title">
+        📊 Overall Performance
+    </h2>
+
+
+    <div class="stats">
+
+
+        <div class="stat-card">
+
+            <div class="stat-icon">
+                📝
+            </div>
+
+            <div
+                id="testsTaken"
+                class="stat-value"
+            >
+                -
+            </div>
+
+            <div class="stat-label">
+                Tests Taken
+            </div>
+
+        </div>
+
+
+        <div class="stat-card">
+
+            <div class="stat-icon">
+                🎯
+            </div>
+
+            <div
+                id="accuracy"
+                class="stat-value"
+            >
+                -
+            </div>
+
+            <div class="stat-label">
+                Average Accuracy
+            </div>
+
+        </div>
+
+
+        <div class="stat-card">
+
+            <div class="stat-icon">
+                🏆
+            </div>
+
+            <div
+                id="bestScore"
+                class="stat-value"
+            >
+                -
+            </div>
+
+            <div class="stat-label">
+                Best Score
+            </div>
+
+        </div>
+
+
+        <div class="stat-card">
+
+            <div class="stat-icon">
+                ⏱️
+            </div>
+
+            <div
+                id="avgTime"
+                class="stat-value"
+            >
+                -
+            </div>
+
+            <div class="stat-label">
+                Average Time
+            </div>
+
+        </div>
+
+
+        <div class="stat-card">
+
+            <div class="stat-icon">
+                📈
+            </div>
+
+            <div
+                id="averageScore"
+                class="stat-value"
+            >
+                -
+            </div>
+
+            <div class="stat-label">
+                Average Score
+            </div>
+
+        </div>
+
+
+        <div class="stat-card">
+
+            <div class="stat-icon">
+                ✅
+            </div>
+
+            <div
+                id="correct"
+                class="stat-value"
+            >
+                -
+            </div>
+
+            <div class="stat-label">
+                Correct Answers
+            </div>
+
+        </div>
+
+
+        <div class="stat-card">
+
+            <div class="stat-icon">
+                ❌
+            </div>
+
+            <div
+                id="wrong"
+                class="stat-value"
+            >
+                -
+            </div>
+
+            <div class="stat-label">
+                Wrong Answers
+            </div>
+
+        </div>
+
+
+        <div class="stat-card">
+
+            <div class="stat-icon">
+                ⭕
+            </div>
+
+            <div
+                id="unanswered"
+                class="stat-value"
+            >
+                -
+            </div>
+
+            <div class="stat-label">
+                Unanswered
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- EXAM PERFORMANCE -->
+
+    <h2 class="section-title">
+        📚 Exam Performance
+    </h2>
+
+
+    <div
+        id="examStats"
+        class="exam-grid"
+    >
+
+        <div class="loading">
+            Loading...
+        </div>
+
+    </div>
+
+
+    <!-- RECENT ATTEMPTS -->
+
+    <h2 class="section-title">
+        📝 Recent Attempts
+    </h2>
+
+
+    <div
+        id="attempts"
+        class="attempts"
+    >
+
+        <div class="loading">
+            Loading...
+        </div>
+
+    </div>
+
+
+</div>
+
+
+<script>
+
+
+/* YOUR SUPABASE DETAILS */
+
+const SUPABASE_URL =
+    "https://egjrkxdyehwbzgoppiqk.supabase.co";
+
+const SUPABASE_ANON_KEY =
+    "sb_publishable_nc_Xv85AMQrmgIlDEWD8CA_aSeMk-yv";
+
+
+const supabaseClient =
+    supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_ANON_KEY
+    );
+
+
+/* INITIALIZE */
+
+async function init(){
+
+    const {
+        data:{session}
+    } =
+    await supabaseClient
+        .auth
+        .getSession();
+
+
+    if(!session){
+
+        window.location.href =
+            "login.html";
+
+        return;
+    }
+
+
+    await loadAnalytics();
+
+}
+
+
+/* LOAD ANALYTICS */
+
+async function loadAnalytics(){
+
+  const {
+    data,
+    error
+} =
+await supabaseClient.rpc(
+    "get_student_analytics_v2",
+    {
+        p_request: "profile"
+    }
+);
+
+    if(error){
+
+        console.error(error);
+
+        document.body.innerHTML += `
+
+            <div style="
+                max-width:900px;
+                margin:20px auto;
+                padding:20px;
+                color:#b42318;
+            ">
+
+                Error loading profile:
+
+                ${escapeHtml(
+                    error.message
+                )}
+
+            </div>
+
+        `;
+
+        return;
+    }
+
+
+    if(!data){
+
+        return;
+    }
+
+
+    renderProfile(
+        data.profile
+    );
+
+
+    renderStats(
+        data.stats
+    );
+
+
+    renderExamStats(
+        data.exam_stats
+    );
+
+
+    renderAttempts(
+        data.recent_attempts
+    );
+
+}
+
+
+/* PROFILE */
+
+function renderProfile(profile){
+
+    const name =
+        profile?.name ||
+        "Student";
+
+
+    document.getElementById(
+        "studentName"
+    ).textContent = name;
+
+
+    document.getElementById(
+        "studentEmail"
+    ).textContent =
+        profile?.email || "";
+
+
+    if(profile?.joined_at){
+
+        const date =
+            new Date(
+                profile.joined_at
+            );
+
+        document.getElementById(
+            "joinedDate"
+        ).textContent =
+            "Joined " +
+            date.toLocaleDateString(
+                "en-IN",
+                {
+                    day:"numeric",
+                    month:"long",
+                    year:"numeric"
+                }
+            );
+
+    }
+
+
+    const firstLetter =
+        name
+            .trim()
+            .charAt(0)
+            .toUpperCase();
+
+
+    document.getElementById(
+        "avatar"
+    ).textContent =
+        firstLetter || "?";
+
+}
+
+
+/* STATS */
+
+function renderStats(stats){
+
+    stats = stats || {};
+
+
+    document.getElementById(
+        "testsTaken"
+    ).textContent =
+        stats.tests_taken || 0;
+
+
+    document.getElementById(
+        "accuracy"
+    ).textContent =
+        Number(
+            stats.average_accuracy || 0
+        ).toFixed(1) + "%";
+
+
+    document.getElementById(
+        "bestScore"
+    ).textContent =
+        Number(
+            stats.best_score || 0
+        ).toFixed(2);
+
+
+    document.getElementById(
+        "averageScore"
+    ).textContent =
+        Number(
+            stats.average_score || 0
+        ).toFixed(2);
+
+
+    document.getElementById(
+        "correct"
+    ).textContent =
+        stats.correct_answers || 0;
+
+
+    document.getElementById(
+        "wrong"
+    ).textContent =
+        stats.wrong_answers || 0;
+
+
+    document.getElementById(
+        "unanswered"
+    ).textContent =
+        stats.unanswered || 0;
+
+
+    const seconds =
+        Number(
+            stats.average_time_seconds || 0
+        );
+
+
+    document.getElementById(
+        "avgTime"
+    ).textContent =
+        formatTime(seconds);
+
+}
+
+
+/* EXAM STATS */
+
+function renderExamStats(exams){
+
+    const container =
+        document.getElementById(
+            "examStats"
+        );
+
+
+    if(!exams || !exams.length){
+
+        container.innerHTML = `
+
+            <div class="empty">
+
+                No exam data yet.
+
+                <br><br>
+
+                Take a test to see your performance here.
+
+            </div>
+
+        `;
+
+        return;
+    }
+
+
+    container.innerHTML =
+        exams.map(
+            exam => `
+
+                <div class="exam-card">
+
+                    <h3>
+                        ${escapeHtml(
+                            exam.exam
+                        )}
+                    </h3>
+
+
+                    <div class="exam-stat">
+
+                        <span>
+                            Tests Taken
+                        </span>
+
+                        <span>
+                            ${exam.tests_taken}
+                        </span>
+
+                    </div>
+
+
+                    <div class="exam-stat">
+
+                        <span>
+                            Average Score
+                        </span>
+
+                        <span>
+                            ${Number(
+                                exam.average_score || 0
+                            ).toFixed(2)}
+                        </span>
+
+                    </div>
+
+
+                    <div class="exam-stat">
+
+                        <span>
+                            Best Score
+                        </span>
+
+                        <span>
+                            ${Number(
+                                exam.best_score || 0
+                            ).toFixed(2)}
+                        </span>
+
+                    </div>
+
+
+                    <div class="exam-stat">
+
+                        <span>
+                            Accuracy
+                        </span>
+
+                        <span>
+                            ${Number(
+                                exam.average_accuracy || 0
+                            ).toFixed(1)}%
+                        </span>
+
+                    </div>
+
+                </div>
+
+            `
+        ).join("");
+
+}
+
+
+/* RECENT ATTEMPTS */
+
+function renderAttempts(attempts){
+
+    const container =
+        document.getElementById(
+            "attempts"
+        );
+
+
+    if(!attempts || !attempts.length){
+
+        container.innerHTML = `
+
+            <div class="empty">
+
+                You haven't attempted any tests yet.
+
+                <br><br>
+
+                Start your first test 🚀
+
+            </div>
+
+        `;
+
+        return;
+    }
+
+
+    container.innerHTML =
+        attempts.map(
+            attempt => {
+
+                const date =
+                    attempt.submitted_at
+                    ? new Date(
+                        attempt.submitted_at
+                    ).toLocaleDateString(
+                        "en-IN",
+                        {
+                            day:"numeric",
+                            month:"short",
+                            year:"numeric"
+                        }
+                    )
+                    : "";
+
+
+                return `
+
+                    <div class="attempt">
+
+                        <div>
+
+                            <div class="attempt-title">
+
+                                ${escapeHtml(
+                                    attempt.title
+                                )}
+
+                            </div>
+
+
+                            <div class="attempt-meta">
+
+                                ${escapeHtml(
+                                    attempt.exam
+                                )}
+
+                                •
+
+                                ${date}
+
+                                •
+
+                                ${attempt.correct}
+                                correct
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="attempt-score">
+
+                            Score:
+                            ${Number(
+                                attempt.score || 0
+                            ).toFixed(2)}
+
+                            <small>
+
+                                Accuracy:
+                                ${Number(
+                                    attempt.accuracy || 0
+                                ).toFixed(1)}%
+
+                            </small>
+
+
+                            <button
+                                class="view-btn"
+                                onclick="
+                                    viewResult(
+                                        ${attempt.attempt_id}
+                                    )
+                                "
+                            >
+
+                                View Result
+
+                            </button>
+
+                        </div>
+
+                    </div>
+
+                `;
+
+            }
+        ).join("");
+
+}
+
+
+/* RESULT */
+
+function viewResult(attemptId){
+
+    window.location.href =
+        "result.html?attempt=" +
+        encodeURIComponent(
+            attemptId
+        );
+
+}
+
+
+/* TIME */
+
+function formatTime(seconds){
+
+    seconds =
+        Math.max(
+            0,
+            Number(seconds) || 0
+        );
+
+
+    const minutes =
+        Math.floor(
+            seconds / 60
+        );
+
+
+    const remaining =
+        seconds % 60;
+
+
+    if(minutes < 60){
+
+        return (
+            minutes +
+            "m " +
+            remaining +
+            "s"
+        );
+
+    }
+
+
+    const hours =
+        Math.floor(
+            minutes / 60
+        );
+
+
+    const mins =
+        minutes % 60;
+
+
+    return (
+        hours +
+        "h " +
+        mins +
+        "m"
+    );
+
+}
+
+
+/* SECURITY */
+
+function escapeHtml(value){
+
+    if(
+        value === null ||
+        value === undefined
+    ){
+
+        return "";
+
+    }
+
+
+    return String(value)
+
+        .replace(
+            /&/g,
+            "&amp;"
+        )
+
+        .replace(
+            /</g,
+            "&lt;"
+        )
+
+        .replace(
+            />/g,
+            "&gt;"
+        )
+
+        .replace(
+            /"/g,
+            "&quot;"
+        )
+
+        .replace(
+            /'/g,
+            "&#039;"
+        );
+
+}
+
+
+init();
+
+</script>
+
+
+</body>
+
+</html>

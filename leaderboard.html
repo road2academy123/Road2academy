@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Leaderboard | Road to Academy</title>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+
+*{
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
+}
+
+body{
+    font-family:Arial,sans-serif;
+    background:#f4f6fa;
+    color:#17213a;
+}
+
+header{
+    background:#17356f;
+    color:white;
+    padding:18px 25px;
+
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+
+    gap:15px;
+}
+
+.logo{
+    font-size:21px;
+    font-weight:bold;
+}
+
+.back{
+    background:white;
+    color:#17356f;
+    border:0;
+
+    padding:10px 16px;
+
+    border-radius:8px;
+
+    cursor:pointer;
+    font-weight:bold;
+}
+
+.container{
+    max-width:1000px;
+    margin:30px auto;
+    padding:0 18px;
+}
+
+.hero{
+    text-align:center;
+    margin-bottom:25px;
+}
+
+.hero h1{
+    font-size:30px;
+    color:#17356f;
+    margin-bottom:8px;
+}
+
+.hero p{
+    color:#667085;
+}
+
+.filters{
+    background:white;
+    padding:18px;
+
+    border-radius:12px;
+
+    display:flex;
+    gap:10px;
+
+    margin-bottom:20px;
+
+    box-shadow:0 4px 15px rgba(0,0,0,.06);
+}
+
+.filter{
+    flex:1;
+
+    padding:11px;
+
+    border:1px solid #d0d5dd;
+    border-radius:8px;
+
+    background:white;
+}
+
+.load-btn{
+    background:#17356f;
+    color:white;
+
+    border:0;
+    border-radius:8px;
+
+    padding:11px 18px;
+
+    cursor:pointer;
+    font-weight:bold;
+}
+
+.table-card{
+    background:white;
+
+    border-radius:14px;
+
+    overflow:hidden;
+
+    box-shadow:0 4px 15px rgba(0,0,0,.06);
+}
+
+.table-header,
+.row{
+
+    display:grid;
+
+    grid-template-columns:
+        80px
+        1fr
+        100px
+        120px
+        120px;
+
+    align-items:center;
+
+    padding:16px 20px;
+
+    gap:10px;
+}
+
+.table-header{
+    background:#17356f;
+    color:white;
+
+    font-weight:bold;
+}
+
+.row{
+    border-bottom:1px solid #e8ebef;
+}
+
+.row:last-child{
+    border-bottom:0;
+}
+
+.rank{
+    font-weight:bold;
+    font-size:18px;
+}
+
+.name{
+    font-weight:bold;
+}
+
+.muted{
+    color:#667085;
+    font-size:14px;
+}
+
+.score{
+    font-weight:bold;
+    color:#17356f;
+}
+
+.me{
+    background:#eef3ff;
+}
+
+.badge{
+    display:inline-block;
+
+    padding:5px 8px;
+
+    border-radius:6px;
+
+    background:#eef1f6;
+
+    font-size:12px;
+}
+
+.loading,
+.empty,
+.error{
+    text-align:center;
+    padding:40px;
+    color:#667085;
+}
+
+.error{
+    color:#a51d2d;
+}
+
+@media(max-width:700px){
+
+    .filters{
+        flex-direction:column;
+    }
+
+    .table-card{
+        overflow-x:auto;
+    }
+
+    .table-header,
+    .row{
+        min-width:700px;
+    }
+
+    header{
+        flex-direction:column;
+        align-items:flex-start;
+    }
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<header>
+
+   <div class="logo" style="display: flex; align-items: center; gap: 10px;">
+    <img src="https://road2academy.neocities.org/Road2academy.png" alt="Logo" style="height: 40px; width: 40px; border-radius: 50%; object-fit: cover;">
+    <span>Road 2 Academy</span>
+</div>
+
+
+    <button
+        class="back"
+        onclick="window.location.href='dashboard.html'"
+    >
+        ← Dashboard
+    </button>
+
+</header>
+
+
+<div class="container">
+
+
+    <div class="hero">
+
+        <h1>🏆 Leaderboard</h1>
+
+        <p>
+            See your performance among Road to Academy students.
+        </p>
+
+    </div>
+
+
+    <div class="filters">
+
+        <select
+            id="examFilter"
+            class="filter"
+        >
+
+            <option value="">
+                All Exams
+            </option>
+
+            <option value="NDA">
+                NDA
+            </option>
+
+            <option value="CDS">
+                CDS
+            </option>
+
+        </select>
+
+
+        <button
+            class="load-btn"
+            onclick="loadLeaderboard()"
+        >
+            Load Leaderboard
+        </button>
+
+    </div>
+
+
+    <div class="table-card">
+
+
+        <div class="table-header">
+
+            <div>Rank</div>
+
+            <div>Student</div>
+
+            <div>Tests</div>
+
+            <div>Best Score</div>
+
+            <div>Avg Accuracy</div>
+
+        </div>
+
+
+        <div id="leaderboard">
+
+            <div class="loading">
+                Loading leaderboard...
+            </div>
+
+        </div>
+
+
+    </div>
+
+</div>
+
+
+<script>
+
+
+const SUPABASE_URL =
+    "https://egjrkxdyehwbzgoppiqk.supabase.co";
+
+const SUPABASE_ANON_KEY =
+    "sb_publishable_nc_Xv85AMQrmgIlDEWD8CA_aSeMk-yv";
+
+
+const supabaseClient =
+    supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_ANON_KEY
+    );
+
+
+let currentUserId = null;
+
+
+async function init(){
+
+    const {
+        data:{session}
+    } =
+    await supabaseClient
+        .auth
+        .getSession();
+
+
+    if(!session){
+
+        window.location.href =
+            "login.html";
+
+        return;
+    }
+
+
+    currentUserId =
+        session.user.id;
+
+
+    await loadLeaderboard();
+
+}
+
+
+async function loadLeaderboard(){
+
+    const exam =
+        document.getElementById(
+            "examFilter"
+        ).value;
+
+
+    const {
+        data,
+        error
+    } =
+    await supabaseClient.rpc(
+        "get_leaderboard",
+        {
+            p_test_id:null,
+
+            p_exam:
+                exam || null
+        }
+    );
+
+
+    if(error){
+
+        console.error(error);
+
+        document.getElementById(
+            "leaderboard"
+        ).innerHTML = `
+
+            <div class="error">
+
+                Unable to load leaderboard.
+
+                <br><br>
+
+                ${escapeHtml(
+                    error.message
+                )}
+
+            </div>
+
+        `;
+
+        return;
+    }
+
+
+    renderLeaderboard(
+        data || []
+    );
+
+}
+
+
+function renderLeaderboard(rows){
+
+    const container =
+        document.getElementById(
+            "leaderboard"
+        );
+
+
+    if(!rows.length){
+
+        container.innerHTML = `
+
+            <div class="empty">
+
+                No submitted tests yet.
+
+                <br><br>
+
+                Be the first one! 🚀
+
+            </div>
+
+        `;
+
+        return;
+    }
+
+
+    container.innerHTML =
+        rows.map(
+            row => {
+
+                const isMe =
+                    row.user_id ===
+                    currentUserId;
+
+
+                let rankDisplay =
+                    row.rank;
+
+
+                if(row.rank === 1)
+                    rankDisplay = "🥇";
+
+                else if(row.rank === 2)
+                    rankDisplay = "🥈";
+
+                else if(row.rank === 3)
+                    rankDisplay = "🥉";
+
+
+                return `
+
+                    <div
+                        class="row ${
+                            isMe
+                            ? "me"
+                            : ""
+                        }"
+                    >
+
+                        <div class="rank">
+
+                            ${rankDisplay}
+
+                        </div>
+
+
+                        <div>
+
+                            <div class="name">
+
+                                ${
+                                    escapeHtml(
+                                        row.student_name
+                                    )
+                                }
+
+                                ${
+                                    isMe
+                                    ? `
+                                    <span class="badge">
+                                        YOU
+                                    </span>
+                                    `
+                                    : ""
+                                }
+
+                            </div>
+
+                        </div>
+
+
+                        <div>
+
+                            ${row.tests_taken}
+
+                        </div>
+
+
+                        <div class="score">
+
+                            ${Number(
+                                row.best_score || 0
+                            ).toFixed(2)}
+
+                        </div>
+
+
+                        <div>
+
+                            ${Number(
+                                row.average_accuracy || 0
+                            ).toFixed(1)}%
+
+                        </div>
+
+                    </div>
+
+                `;
+
+            }
+        ).join("");
+
+}
+
+
+function escapeHtml(value){
+
+    if(
+        value === null ||
+        value === undefined
+    ){
+
+        return "";
+
+    }
+
+
+    return String(value)
+
+        .replace(
+            /&/g,
+            "&amp;"
+        )
+
+        .replace(
+            /</g,
+            "&lt;"
+        )
+
+        .replace(
+            />/g,
+            "&gt;"
+        )
+
+        .replace(
+            /"/g,
+            "&quot;"
+        )
+
+        .replace(
+            /'/g,
+            "&#039;"
+        );
+
+}
+
+
+init();
+
+</script>
+
+</body>
+
+</html>

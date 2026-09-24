@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+>
+
+<title>NDA Test Series | Road to Academy</title>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background: #f4f6fa;
+    color: #111827;
+}
+
+header {
+    background: #071a3d;
+    color: white;
+    padding: 18px 25px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo {
+    color: #f5c542;
+    font-size: 22px;
+    font-weight: bold;
+}
+
+.back {
+    color: white;
+    text-decoration: none;
+}
+
+.container {
+    max-width: 1000px;
+    margin: 35px auto;
+    padding: 0 20px;
+}
+
+.heading {
+    margin-bottom: 25px;
+}
+
+.heading h1 {
+    color: #071a3d;
+    margin-bottom: 8px;
+}
+
+.heading p {
+    color: #666;
+}
+
+.tests {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+}
+
+.test-card {
+    background: white;
+    padding: 24px;
+    border-radius: 14px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+}
+
+.badge {
+    display: inline-block;
+    background: #eef3ff;
+    color: #071a3d;
+    padding: 6px 10px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: bold;
+    margin-bottom: 12px;
+}
+
+.test-card h2 {
+    color: #071a3d;
+    font-size: 20px;
+    margin-bottom: 10px;
+}
+
+.description {
+    color: #666;
+    line-height: 1.5;
+    margin-bottom: 18px;
+}
+
+.details {
+    display: flex;
+    gap: 18px;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+    color: #555;
+    font-size: 14px;
+}
+
+.start {
+    display: block;
+    text-align: center;
+    background: #071a3d;
+    color: white;
+    text-decoration: none;
+    padding: 12px;
+    border-radius: 8px;
+    font-weight: bold;
+}
+
+.start:hover {
+    background: #102c61;
+}
+
+.empty {
+    background: white;
+    padding: 40px;
+    border-radius: 12px;
+    text-align: center;
+    color: #666;
+}
+
+.error {
+    background: #fff0f0;
+    color: #b00020;
+    padding: 20px;
+    border-radius: 10px;
+}
+
+@media(max-width:700px) {
+
+    .tests {
+        grid-template-columns: 1fr;
+    }
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<header>
+
+    <div class="logo">
+        ROAD TO ACADEMY
+    </div>
+
+    <a
+        href="dashboard.html"
+        class="back"
+    >
+        ← Dashboard
+    </a>
+
+</header>
+
+
+<div class="container">
+
+    <div class="heading">
+
+        <h1>NDA Test Series</h1>
+
+        <p>
+            Practice NDA-level tests and track your performance.
+        </p>
+
+    </div>
+
+
+    <div
+        class="tests"
+        id="tests"
+    >
+
+        <div class="empty">
+            Loading tests...
+        </div>
+
+    </div>
+
+</div>
+
+
+<script>
+
+/* ==================================
+   SUPABASE
+================================== */
+
+const SUPABASE_URL =
+    "https://egjrkxdyehwbzgoppiqk.supabase.co";
+
+const SUPABASE_KEY =
+    "sb_publishable_nc_Xv85AMQrmgIlDEWD8CA_aSeMk-yv";
+
+const supabaseClient =
+    supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_KEY
+    );
+
+
+/* ==================================
+   LOAD TESTS
+================================== */
+
+async function loadTests() {
+
+    /* Check login */
+
+    const {
+        data: { session }
+    } = await supabaseClient.auth.getSession();
+
+
+    if (!session) {
+
+        window.location.href =
+            "login.html";
+
+        return;
+
+    }
+
+
+    /* Get published NDA tests */
+
+    const {
+        data: tests,
+        error
+    } = await supabaseClient
+        .from("tests")
+        .select(`
+            id,
+            title,
+            exam,
+            subject,
+            description,
+            duration_minutes,
+            total_marks,
+            negative_marks
+        `)
+        .eq("exam", "NDA")
+        .eq("is_published", true)
+        .order("id", {
+            ascending: true
+        });
+
+
+    const container =
+        document.getElementById("tests");
+
+
+    if (error) {
+
+        console.error(error);
+
+        container.innerHTML = `
+            <div class="error">
+                Unable to load tests.
+                <br><br>
+                ${escapeHTML(error.message)}
+            </div>
+        `;
+
+        return;
+
+    }
+
+
+    if (!tests || tests.length === 0) {
+
+        container.innerHTML = `
+            <div class="empty">
+                No NDA tests are published yet.
+            </div>
+        `;
+
+        return;
+
+    }
+
+
+    /* Clear loading */
+
+    container.innerHTML = "";
+
+
+    /* Create cards */
+
+    tests.forEach(test => {
+
+        const card =
+            document.createElement("div");
+
+        card.className =
+            "test-card";
+
+
+        card.innerHTML = `
+
+            <div class="badge">
+                ${escapeHTML(test.subject || "NDA")}
+            </div>
+
+            <h2>
+                ${escapeHTML(test.title)}
+            </h2>
+
+            <p class="description">
+                ${escapeHTML(
+                    test.description ||
+                    "NDA practice test."
+                )}
+            </p>
+
+            <div class="details">
+
+                <span>
+                    ⏱ ${test.duration_minutes} min
+                </span>
+
+                <span>
+                    📝 ${test.total_marks} marks
+                </span>
+
+                <span>
+                    ➖ ${test.negative_marks} negative
+                </span>
+
+            </div>
+
+            <a
+                class="start"
+                href="test-details.html?test=${encodeURIComponent(test.id)}"
+            >
+                View Test Details →
+            </a>
+
+        `;
+
+
+        container.appendChild(card);
+
+    });
+
+}
+
+
+/* ==================================
+   HTML ESCAPE
+================================== */
+
+function escapeHTML(value) {
+
+    return String(value ?? "")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+
+}
+
+
+/* ==================================
+   START
+================================== */
+
+loadTests();
+
+</script>
+
+</body>
+
+</html>

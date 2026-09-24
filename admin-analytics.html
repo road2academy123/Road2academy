@@ -1,0 +1,716 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+>
+
+<title>Admin Analytics — Road to Academy</title>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #f4f6fb;
+    color: #071a3d;
+}
+
+header {
+    background: #071a3d;
+    color: white;
+    padding: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+header h1 {
+    margin: 0;
+    font-size: 22px;
+}
+
+.header-buttons {
+    display: flex;
+    gap: 10px;
+}
+
+button {
+    border: none;
+    border-radius: 10px;
+    padding: 11px 16px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.back-btn {
+    background: #dce5f7;
+    color: #071a3d;
+}
+
+.logout-btn {
+    background: #e74c3c;
+    color: white;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 30px auto;
+    padding: 0 18px;
+}
+
+.loading,
+.error {
+    background: white;
+    padding: 30px;
+    border-radius: 18px;
+    text-align: center;
+    box-shadow: 0 8px 25px rgba(0,0,0,.06);
+}
+
+.error {
+    color: #c0392b;
+}
+
+.stats-grid {
+    display: grid;
+    grid-template-columns:
+        repeat(auto-fit, minmax(180px, 1fr));
+    gap: 18px;
+    margin-bottom: 30px;
+}
+
+.stat-card {
+    background: white;
+    border-radius: 18px;
+    padding: 22px;
+    box-shadow: 0 8px 25px rgba(0,0,0,.06);
+}
+
+.stat-card h3 {
+    margin: 0 0 10px;
+    color: #65708a;
+    font-size: 14px;
+}
+
+.stat-value {
+    font-size: 32px;
+    font-weight: bold;
+    color: #071a3d;
+}
+
+.section {
+    background: white;
+    border-radius: 18px;
+    padding: 24px;
+    margin-bottom: 25px;
+    box-shadow: 0 8px 25px rgba(0,0,0,.06);
+}
+
+.section h2 {
+    margin-top: 0;
+}
+
+.exam-grid {
+    display: grid;
+    grid-template-columns:
+        repeat(auto-fit, minmax(220px, 1fr));
+    gap: 18px;
+}
+
+.exam-card {
+    border: 1px solid #e1e6ef;
+    border-radius: 14px;
+    padding: 18px;
+}
+
+.exam-card h3 {
+    margin-top: 0;
+}
+
+.exam-stat {
+    margin: 7px 0;
+    color: #4c5870;
+}
+
+.table-wrapper {
+    overflow-x: auto;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 700px;
+}
+
+th,
+td {
+    padding: 13px;
+    text-align: left;
+    border-bottom: 1px solid #e5e9f0;
+}
+
+th {
+    background: #f3f6fb;
+    color: #071a3d;
+}
+
+.small {
+    color: #69758c;
+    font-size: 13px;
+}
+
+.badge {
+    display: inline-block;
+    padding: 5px 9px;
+    border-radius: 8px;
+    background: #e8eefc;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<header>
+
+    <h1>📊 ROAD TO ACADEMY — ANALYTICS</h1>
+
+    <div class="header-buttons">
+
+        <button
+            class="back-btn"
+            onclick="location.href='admin.html'"
+        >
+            ← Admin Panel
+        </button>
+
+        <button
+            class="logout-btn"
+            onclick="logout()"
+        >
+            Logout
+        </button>
+
+    </div>
+
+</header>
+
+
+<div class="container">
+
+    <div id="loading" class="loading">
+        Loading analytics...
+    </div>
+
+    <div
+        id="error"
+        class="error"
+        style="display:none;"
+    ></div>
+
+
+    <div
+        id="dashboard"
+        style="display:none;"
+    >
+
+        <!-- MAIN STATS -->
+
+        <div class="stats-grid">
+
+            <div class="stat-card">
+                <h3>👥 Students</h3>
+                <div
+                    class="stat-value"
+                    id="students"
+                >
+                    0
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <h3>📝 Total Tests</h3>
+                <div
+                    class="stat-value"
+                    id="tests"
+                >
+                    0
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <h3>🟢 Published Tests</h3>
+                <div
+                    class="stat-value"
+                    id="published"
+                >
+                    0
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <h3>📚 Questions</h3>
+                <div
+                    class="stat-value"
+                    id="questions"
+                >
+                    0
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <h3>🎯 Attempts</h3>
+                <div
+                    class="stat-value"
+                    id="attempts"
+                >
+                    0
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <h3>📈 Average Score</h3>
+                <div
+                    class="stat-value"
+                    id="averageScore"
+                >
+                    0
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <h3>🎯 Average Accuracy</h3>
+                <div
+                    class="stat-value"
+                    id="averageAccuracy"
+                >
+                    0%
+                </div>
+            </div>
+
+        </div>
+
+
+        <!-- NDA / CDS -->
+
+        <div class="section">
+
+            <h2>📚 Exam Statistics</h2>
+
+            <div
+                id="examStats"
+                class="exam-grid"
+            ></div>
+
+        </div>
+
+
+        <!-- TEST STATISTICS -->
+
+        <div class="section">
+
+            <h2>📊 Test Performance</h2>
+
+            <div class="table-wrapper">
+
+                <table>
+
+                    <thead>
+
+                        <tr>
+
+                            <th>Test</th>
+                            <th>Exam</th>
+                            <th>Attempts</th>
+                            <th>Avg Score</th>
+                            <th>Avg Accuracy</th>
+
+                        </tr>
+
+                    </thead>
+
+                    <tbody id="testStats"></tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+
+        <!-- RECENT ATTEMPTS -->
+
+        <div class="section">
+
+            <h2>🕐 Recent Attempts</h2>
+
+            <div class="table-wrapper">
+
+                <table>
+
+                    <thead>
+
+                        <tr>
+
+                            <th>Student</th>
+                            <th>Test</th>
+                            <th>Exam</th>
+                            <th>Score</th>
+                            <th>Accuracy</th>
+                            <th>Date</th>
+
+                        </tr>
+
+                    </thead>
+
+                    <tbody id="recentAttempts"></tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<script>
+
+const SUPABASE_URL =
+    "https://egjrkxdyehwbzgoppiqk.supabase.co";
+
+const SUPABASE_ANON_KEY =
+    "sb_publishable_nc_Xv85AMQrmgIlDEWD8CA_aSeMk-yv";
+
+
+const supabaseClient =
+    supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_ANON_KEY
+    );
+
+
+async function logout() {
+
+    await supabaseClient.auth.signOut();
+
+    window.location.href = "login.html";
+
+}
+
+
+async function loadAnalytics() {
+
+    const {
+        data: {
+            session
+        },
+        error: sessionError
+    } =
+        await supabaseClient.auth.getSession();
+
+
+    if (sessionError || !session) {
+
+        window.location.href = "login.html";
+
+        return;
+
+    }
+
+
+    const {
+        data,
+        error
+    } =
+        await supabaseClient.rpc(
+            "get_admin_analytics",
+            {
+                p_request: "dashboard"
+            }
+        );
+
+
+    if (error) {
+
+        console.error(error);
+
+        document.getElementById(
+            "loading"
+        ).style.display = "none";
+
+
+        const errorBox =
+            document.getElementById("error");
+
+        errorBox.style.display = "block";
+
+        errorBox.innerText =
+            "Analytics error: " +
+            error.message;
+
+        return;
+
+    }
+
+
+    console.log("ADMIN ANALYTICS:", data);
+
+
+    renderAnalytics(data);
+
+
+}
+
+
+function renderAnalytics(data) {
+
+    document.getElementById(
+        "students"
+    ).innerText = data.students;
+
+
+    document.getElementById(
+        "tests"
+    ).innerText = data.tests;
+
+
+    document.getElementById(
+        "published"
+    ).innerText = data.published_tests;
+
+
+    document.getElementById(
+        "questions"
+    ).innerText = data.questions;
+
+
+    document.getElementById(
+        "attempts"
+    ).innerText = data.attempts;
+
+
+    document.getElementById(
+        "averageScore"
+    ).innerText = data.average_score;
+
+
+    document.getElementById(
+        "averageAccuracy"
+    ).innerText =
+        data.average_accuracy + "%";
+
+
+    // EXAM STATS
+
+    const examContainer =
+        document.getElementById("examStats");
+
+    examContainer.innerHTML = "";
+
+
+    data.exam_stats.forEach(exam => {
+
+        examContainer.innerHTML += `
+
+            <div class="exam-card">
+
+                <h3>
+                    ${escapeHtml(exam.exam)}
+                </h3>
+
+                <div class="exam-stat">
+                    Tests:
+                    <strong>${exam.tests}</strong>
+                </div>
+
+                <div class="exam-stat">
+                    Attempts:
+                    <strong>${exam.attempts}</strong>
+                </div>
+
+                <div class="exam-stat">
+                    Average Score:
+                    <strong>${exam.average_score}</strong>
+                </div>
+
+                <div class="exam-stat">
+                    Average Accuracy:
+                    <strong>${exam.average_accuracy}%</strong>
+                </div>
+
+            </div>
+
+        `;
+
+    });
+
+
+    // TEST STATS
+
+    const testContainer =
+        document.getElementById("testStats");
+
+    testContainer.innerHTML = "";
+
+
+    data.test_stats.forEach(test => {
+
+        testContainer.innerHTML += `
+
+            <tr>
+
+                <td>
+                    <strong>
+                        ${escapeHtml(test.title)}
+                    </strong>
+                </td>
+
+                <td>
+                    <span class="badge">
+                        ${escapeHtml(test.exam)}
+                    </span>
+                </td>
+
+                <td>
+                    ${test.attempts}
+                </td>
+
+                <td>
+                    ${test.average_score}
+                </td>
+
+                <td>
+                    ${test.average_accuracy}%
+                </td>
+
+            </tr>
+
+        `;
+
+    });
+
+
+    // RECENT ATTEMPTS
+
+    const recentContainer =
+        document.getElementById(
+            "recentAttempts"
+        );
+
+    recentContainer.innerHTML = "";
+
+
+    data.recent_attempts.forEach(attempt => {
+
+        const date =
+            new Date(
+                attempt.submitted_at
+            ).toLocaleString();
+
+
+        recentContainer.innerHTML += `
+
+            <tr>
+
+                <td>
+
+                    <strong>
+                        ${escapeHtml(
+                            attempt.student_name
+                        )}
+                    </strong>
+
+                    <div class="small">
+                        ${escapeHtml(
+                            attempt.email || ""
+                        )}
+                    </div>
+
+                </td>
+
+                <td>
+                    ${escapeHtml(
+                        attempt.title
+                    )}
+                </td>
+
+                <td>
+
+                    <span class="badge">
+                        ${escapeHtml(
+                            attempt.exam
+                        )}
+                    </span>
+
+                </td>
+
+                <td>
+                    ${attempt.score}
+                </td>
+
+                <td>
+                    ${attempt.accuracy}%
+                </td>
+
+                <td>
+                    ${date}
+                </td>
+
+            </tr>
+
+        `;
+
+    });
+
+
+    document.getElementById(
+        "loading"
+    ).style.display = "none";
+
+
+    document.getElementById(
+        "dashboard"
+    ).style.display = "block";
+
+}
+
+
+function escapeHtml(value) {
+
+    return String(value ?? "")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+
+}
+
+
+loadAnalytics();
+
+</script>
+
+</body>
+
+</html>

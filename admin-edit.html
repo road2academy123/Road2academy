@@ -1,0 +1,762 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Edit Test | Road to Academy</title>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+
+*{
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
+}
+
+body{
+    font-family:Arial,sans-serif;
+    background:#f4f6fa;
+    color:#17213a;
+}
+
+header{
+    background:#17356f;
+    color:white;
+    padding:18px 25px;
+
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+}
+
+.logo{
+    font-size:21px;
+    font-weight:bold;
+}
+
+.back{
+    background:white;
+    color:#17356f;
+    border:0;
+    border-radius:8px;
+    padding:10px 15px;
+    font-weight:bold;
+    cursor:pointer;
+}
+
+.container{
+    max-width:850px;
+    margin:30px auto;
+    padding:0 18px;
+}
+
+.card{
+    background:white;
+    padding:25px;
+    border-radius:15px;
+    box-shadow:0 4px 18px rgba(0,0,0,.06);
+    margin-bottom:20px;
+}
+
+h1{
+    color:#17356f;
+    margin-bottom:8px;
+}
+
+.subtitle{
+    color:#667085;
+    margin-bottom:25px;
+}
+
+label{
+    display:block;
+    font-weight:bold;
+    margin-bottom:7px;
+    margin-top:18px;
+}
+
+input,
+select,
+textarea{
+    width:100%;
+    padding:12px;
+
+    border:1px solid #d0d5dd;
+    border-radius:8px;
+
+    font-size:15px;
+    font-family:inherit;
+}
+
+textarea{
+    min-height:100px;
+    resize:vertical;
+}
+
+.grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:15px;
+}
+
+button{
+    border:0;
+    border-radius:8px;
+    padding:12px 18px;
+    cursor:pointer;
+    font-weight:bold;
+}
+
+.save{
+    background:#17356f;
+    color:white;
+    margin-top:25px;
+}
+
+.questions{
+    background:#f0f4ff;
+    color:#17356f;
+    margin-top:10px;
+}
+
+.status{
+    margin-top:15px;
+    padding:12px;
+    border-radius:8px;
+    display:none;
+}
+
+.success{
+    display:block;
+    background:#e8f7ee;
+    color:#167044;
+}
+
+.error{
+    display:block;
+    background:#fdecec;
+    color:#b42318;
+}
+
+.loading{
+    text-align:center;
+    padding:40px;
+    color:#667085;
+}
+
+@media(max-width:650px){
+
+    .grid{
+        grid-template-columns:1fr;
+    }
+
+    header{
+        flex-direction:column;
+        align-items:flex-start;
+        gap:12px;
+    }
+
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<header>
+
+    <div class="logo">
+        🛠️ Road to Academy — Admin
+    </div>
+
+    <button
+        class="back"
+        onclick="window.location.href='admin.html'"
+    >
+        ← Admin Panel
+    </button>
+
+</header>
+
+
+<div class="container">
+
+
+    <div
+        id="loading"
+        class="loading"
+    >
+        Loading test...
+    </div>
+
+
+    <div
+        id="editor"
+        style="display:none;"
+    >
+
+        <div class="card">
+
+            <h1>✏️ Edit Test</h1>
+
+            <p class="subtitle">
+                Update the test information below.
+            </p>
+
+
+            <label>
+                Test Title
+            </label>
+
+            <input
+                id="title"
+                type="text"
+                placeholder="Test title"
+            >
+
+
+            <div class="grid">
+
+                <div>
+
+                    <label>
+                        Exam
+                    </label>
+
+                    <select id="exam">
+
+                        <option value="NDA">
+                            NDA
+                        </option>
+
+                        <option value="CDS">
+                            CDS
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <div>
+
+                    <label>
+                        Subject
+                    </label>
+
+                    <input
+                        id="subject"
+                        type="text"
+                        placeholder="Mathematics"
+                    >
+
+                </div>
+
+            </div>
+
+
+            <label>
+                Description
+            </label>
+
+            <textarea
+                id="description"
+                placeholder="Test description"
+            ></textarea>
+
+
+            <div class="grid">
+
+                <div>
+
+                    <label>
+                        Duration (minutes)
+                    </label>
+
+                    <input
+                        id="duration"
+                        type="number"
+                        min="1"
+                    >
+
+                </div>
+
+
+                <div>
+
+                    <label>
+                        Total Marks
+                    </label>
+
+                    <input
+                        id="totalMarks"
+                        type="number"
+                        step="0.01"
+                        min="0"
+                    >
+
+                </div>
+
+            </div>
+
+
+            <label>
+                Default Negative Marks
+            </label>
+
+            <input
+                id="negativeMarks"
+                type="number"
+                step="0.01"
+                min="0"
+            >
+
+
+            <label>
+                Published
+            </label>
+
+            <select id="published">
+
+                <option value="false">
+                    Draft — Not visible to students
+                </option>
+
+                <option value="true">
+                    Published — Visible to students
+                </option>
+
+            </select>
+
+
+            <button
+                class="save"
+                onclick="saveTest()"
+            >
+                💾 Save Changes
+            </button>
+
+
+            <div
+                id="status"
+                class="status"
+            ></div>
+
+        </div>
+
+
+        <div class="card">
+
+            <h1>📝 Questions</h1>
+
+            <p class="subtitle">
+                Add, edit, or delete questions for this test.
+            </p>
+
+            <button
+                class="questions"
+                onclick="openQuestions()"
+            >
+                Manage Questions →
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<script>
+
+
+const SUPABASE_URL =
+    "https://egjrkxdyehwbzgoppiqk.supabase.co";
+
+const SUPABASE_ANON_KEY =
+    "sb_publishable_nc_Xv85AMQrmgIlDEWD8CA_aSeMk-yv";
+
+
+const supabaseClient =
+    supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_ANON_KEY
+    );
+
+
+const params =
+    new URLSearchParams(
+        window.location.search
+    );
+
+
+const testId =
+    params.get("test");
+
+
+async function init(){
+
+    if(!testId){
+
+        showError(
+            "No test ID was provided."
+        );
+
+        return;
+    }
+
+
+    const {
+        data:{session}
+    } =
+    await supabaseClient
+        .auth
+        .getSession();
+
+
+    if(!session){
+
+        window.location.href =
+            "login.html";
+
+        return;
+    }
+
+
+    /* ADMIN CHECK */
+
+    const {
+        data:role,
+        error:roleError
+    } =
+    await supabaseClient
+        .from("user_roles")
+        .select("role")
+        .eq(
+            "user_id",
+            session.user.id
+        )
+        .maybeSingle();
+
+
+    if(
+        roleError ||
+        !role ||
+        role.role !== "admin"
+    ){
+
+        document.getElementById(
+            "loading"
+        ).textContent =
+            "Access denied. Admins only.";
+
+        return;
+    }
+
+
+    await loadTest();
+
+}
+
+
+async function loadTest(){
+
+    const {
+        data,
+        error
+    } =
+    await supabaseClient
+        .from("tests")
+        .select("*")
+        .eq("id",testId)
+        .single();
+
+
+    if(error){
+
+        console.error(error);
+
+        showError(
+            error.message
+        );
+
+        return;
+    }
+
+
+    document.getElementById(
+        "title"
+    ).value =
+        data.title || "";
+
+
+    document.getElementById(
+        "exam"
+    ).value =
+        data.exam || "NDA";
+
+
+    document.getElementById(
+        "subject"
+    ).value =
+        data.subject || "";
+
+
+    document.getElementById(
+        "description"
+    ).value =
+        data.description || "";
+
+
+    document.getElementById(
+        "duration"
+    ).value =
+        data.duration_minutes || 60;
+
+
+    document.getElementById(
+        "totalMarks"
+    ).value =
+        data.total_marks || 0;
+
+
+    document.getElementById(
+        "negativeMarks"
+    ).value =
+        data.negative_marks || 0;
+
+
+    document.getElementById(
+        "published"
+    ).value =
+        String(
+            data.is_published
+        );
+
+
+    document.getElementById(
+        "loading"
+    ).style.display =
+        "none";
+
+
+    document.getElementById(
+        "editor"
+    ).style.display =
+        "block";
+
+}
+
+
+async function saveTest(){
+
+    const title =
+        document.getElementById(
+            "title"
+        ).value.trim();
+
+
+    if(!title){
+
+        showStatus(
+            "Test title is required.",
+            false
+        );
+
+        return;
+    }
+
+
+    const duration =
+        Number(
+            document.getElementById(
+                "duration"
+            ).value
+        );
+
+
+    const totalMarks =
+        Number(
+            document.getElementById(
+                "totalMarks"
+            ).value
+        );
+
+
+    const negativeMarks =
+        Number(
+            document.getElementById(
+                "negativeMarks"
+            ).value
+        );
+
+
+    if(
+        !Number.isFinite(duration) ||
+        duration <= 0
+    ){
+
+        showStatus(
+            "Duration must be greater than 0.",
+            false
+        );
+
+        return;
+    }
+
+
+    if(
+        !Number.isFinite(totalMarks) ||
+        totalMarks < 0
+    ){
+
+        showStatus(
+            "Total marks cannot be negative.",
+            false
+        );
+
+        return;
+    }
+
+
+    if(
+        !Number.isFinite(negativeMarks) ||
+        negativeMarks < 0
+    ){
+
+        showStatus(
+            "Negative marks cannot be negative.",
+            false
+        );
+
+        return;
+    }
+
+
+    const {
+        error
+    } =
+    await supabaseClient
+        .from("tests")
+        .update({
+
+            title:title,
+
+            exam:
+                document.getElementById(
+                    "exam"
+                ).value,
+
+            subject:
+                document.getElementById(
+                    "subject"
+                ).value.trim(),
+
+            description:
+                document.getElementById(
+                    "description"
+                ).value.trim(),
+
+            duration_minutes:
+                duration,
+
+            total_marks:
+                totalMarks,
+
+            negative_marks:
+                negativeMarks,
+
+            is_published:
+                document.getElementById(
+                    "published"
+                ).value === "true"
+
+        })
+        .eq("id",testId);
+
+
+    if(error){
+
+        console.error(error);
+
+        showStatus(
+            error.message,
+            false
+        );
+
+        return;
+    }
+
+
+    showStatus(
+        "✅ Test updated successfully!",
+        true
+    );
+
+}
+
+
+function openQuestions(){
+
+    window.location.href =
+        "admin-questions.html?test=" +
+        encodeURIComponent(
+            testId
+        );
+
+}
+
+
+function showStatus(
+    message,
+    success
+){
+
+    const box =
+        document.getElementById(
+            "status"
+        );
+
+
+    box.textContent =
+        message;
+
+
+    box.className =
+        success
+        ? "status success"
+        : "status error";
+
+}
+
+
+function showError(message){
+
+    const loading =
+        document.getElementById(
+            "loading"
+        );
+
+
+    loading.textContent =
+        "❌ " + message;
+
+}
+
+
+init();
+
+</script>
+
+
+</body>
+
+</html>

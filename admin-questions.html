@@ -1,0 +1,1803 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Question Builder | Road to Academy</title>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+*{box-sizing:border-box}
+body{
+    margin:0;
+    font-family:Arial,Helvetica,sans-serif;
+    background:#071a3d;
+    color:#fff;
+}
+header{
+    background:#04132e;
+    padding:18px 22px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:15px;
+    border-bottom:1px solid rgba(212,175,55,.35);
+    position:sticky;
+    top:0;
+    z-index:20;
+}
+.logo{
+    font-size:21px;
+    font-weight:800;
+    color:#d4af37;
+}
+.header-buttons{
+    display:flex;
+    gap:8px;
+    flex-wrap:wrap;
+}
+button,a.btn{
+    border:0;
+    border-radius:8px;
+    padding:11px 15px;
+    font-weight:700;
+    cursor:pointer;
+    text-decoration:none;
+    display:inline-block;
+}
+.btn-gold{
+    background:#d4af37;
+    color:#071a3d;
+}
+.btn-blue{
+    background:#164c91;
+    color:white;
+}
+.btn-red{
+    background:#c0392b;
+    color:white;
+}
+.btn-gray{
+    background:#34445f;
+    color:white;
+}
+button:disabled{
+    opacity:.5;
+    cursor:not-allowed;
+}
+.container{
+    max-width:1250px;
+    margin:auto;
+    padding:25px 16px 60px;
+}
+.card{
+    background:#0c2855;
+    border:1px solid rgba(255,255,255,.08);
+    border-radius:14px;
+    padding:20px;
+    margin-bottom:20px;
+    box-shadow:0 8px 25px rgba(0,0,0,.18);
+}
+h1,h2,h3{
+    margin-top:0;
+}
+h2{
+    color:#d4af37;
+}
+label{
+    display:block;
+    margin:13px 0 6px;
+    font-weight:700;
+}
+input,textarea,select{
+    width:100%;
+    padding:12px;
+    border-radius:8px;
+    border:1px solid #526889;
+    background:#071a3d;
+    color:white;
+    outline:none;
+}
+textarea{
+    min-height:110px;
+    resize:vertical;
+}
+input:focus,textarea:focus,select:focus{
+    border-color:#d4af37;
+}
+.grid{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:14px;
+}
+.actions{
+    display:flex;
+    gap:8px;
+    flex-wrap:wrap;
+    margin-top:15px;
+}
+.notice{
+    padding:13px;
+    border-radius:8px;
+    margin-bottom:15px;
+    display:none;
+}
+.success{
+    display:block;
+    background:#123e2b;
+    border:1px solid #2ecc71;
+}
+.error{
+    display:block;
+    background:#481c22;
+    border:1px solid #e74c3c;
+}
+.info{
+    display:block;
+    background:#12355d;
+    border:1px solid #3498db;
+}
+.stats{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:12px;
+}
+.stat{
+    background:#071a3d;
+    border-radius:10px;
+    padding:16px;
+    text-align:center;
+}
+.stat strong{
+    display:block;
+    font-size:26px;
+    color:#d4af37;
+}
+.stat span{
+    font-size:13px;
+    opacity:.8;
+}
+.question{
+    background:#071a3d;
+    border:1px solid #28456e;
+    border-radius:12px;
+    padding:17px;
+    margin-bottom:12px;
+}
+.question-head{
+    display:flex;
+    justify-content:space-between;
+    gap:10px;
+    align-items:center;
+}
+.q-number{
+    color:#d4af37;
+    font-weight:800;
+}
+.options{
+    margin:12px 0;
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:8px;
+}
+.option{
+    background:#0c2855;
+    padding:9px;
+    border-radius:7px;
+}
+.correct{
+    border:1px solid #2ecc71;
+}
+.csv-box{
+    border:2px dashed #496789;
+    border-radius:12px;
+    padding:20px;
+    text-align:center;
+}
+input[type=file]{
+    padding:10px;
+}
+.summary{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:10px;
+    margin:15px 0;
+}
+.summary div{
+    background:#071a3d;
+    border-radius:9px;
+    padding:13px;
+    text-align:center;
+}
+.summary strong{
+    display:block;
+    font-size:23px;
+    color:#d4af37;
+}
+.table-wrap{
+    overflow-x:auto;
+    margin-top:15px;
+}
+table{
+    width:100%;
+    border-collapse:collapse;
+    min-width:850px;
+}
+th,td{
+    border:1px solid #385272;
+    padding:9px;
+    text-align:left;
+    vertical-align:top;
+}
+th{
+    background:#04132e;
+    color:#d4af37;
+}
+.valid-row{
+    background:rgba(46,204,113,.06);
+}
+.invalid-row{
+    background:rgba(231,76,60,.1);
+}
+.badge{
+    display:inline-block;
+    padding:4px 8px;
+    border-radius:20px;
+    font-size:12px;
+    font-weight:700;
+}
+.badge-green{
+    background:#174d35;
+    color:#6ff0a7;
+}
+.badge-red{
+    background:#581e27;
+    color:#ff8e99;
+}
+.badge-yellow{
+    background:#594b16;
+    color:#ffe87a;
+}
+.modal{
+    display:none;
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,.75);
+    z-index:100;
+    align-items:center;
+    justify-content:center;
+    padding:15px;
+}
+.modal-box{
+    max-width:600px;
+    width:100%;
+    background:#0c2855;
+    border:1px solid #d4af37;
+    border-radius:14px;
+    padding:25px;
+}
+.small{
+    font-size:13px;
+    opacity:.75;
+}
+.loading{
+    text-align:center;
+    padding:30px;
+}
+.empty{
+    text-align:center;
+    opacity:.7;
+    padding:25px;
+}
+@media(max-width:800px){
+    .grid,.options{
+        grid-template-columns:1fr;
+    }
+    .stats,.summary{
+        grid-template-columns:repeat(2,1fr);
+    }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+    <div class="logo">ROAD TO ACADEMY — QUESTION BUILDER</div>
+
+    <div class="header-buttons">
+        <a class="btn btn-gray" href="admin.html">← Admin</a>
+        <button class="btn btn-blue" onclick="previewTest()">Preview Test</button>
+    </div>
+</header>
+
+<div class="container">
+
+<div id="message" class="notice"></div>
+
+<div class="card">
+    <h2 id="testTitle">Loading Test...</h2>
+    <div id="testInfo" class="small"></div>
+</div>
+
+<div class="card">
+    <h2>Question Statistics</h2>
+
+    <div class="stats">
+        <div class="stat">
+            <strong id="totalQuestions">0</strong>
+            <span>Total Questions</span>
+        </div>
+
+        <div class="stat">
+            <strong id="totalMarks">0</strong>
+            <span>Total Marks</span>
+        </div>
+
+        <div class="stat">
+            <strong id="positiveMarks">0</strong>
+            <span>Positive Marks</span>
+        </div>
+
+        <div class="stat">
+            <strong id="negativeMarks">0</strong>
+            <span>Negative Marks</span>
+        </div>
+    </div>
+</div>
+
+<div class="card">
+    <h2>Add / Edit Question</h2>
+
+    <input type="hidden" id="editingId">
+
+    <div class="grid">
+
+        <div>
+            <label>Question Number</label>
+            <input id="questionNumber" type="number" min="1">
+        </div>
+
+        <div>
+            <label>Marks</label>
+            <input id="marks" type="number" min="0" step="0.01" value="1">
+        </div>
+
+    </div>
+
+    <label>Question</label>
+    <textarea id="questionText" placeholder="Enter question"></textarea>
+
+    <div class="grid">
+
+        <div>
+            <label>Option A</label>
+            <input id="optionA">
+        </div>
+
+        <div>
+            <label>Option B</label>
+            <input id="optionB">
+        </div>
+
+        <div>
+            <label>Option C</label>
+            <input id="optionC">
+        </div>
+
+        <div>
+            <label>Option D</label>
+            <input id="optionD">
+        </div>
+
+    </div>
+
+    <div class="grid">
+
+        <div>
+            <label>Correct Answer</label>
+            <select id="correctAnswer">
+                <option value="">Select</option>
+                <option value="A">A</option>
+                <option value="B">B</option>
+                <option value="C">C</option>
+                <option value="D">D</option>
+            </select>
+        </div>
+
+        <div>
+            <label>Negative Marks</label>
+            <input id="negativeMarks" type="number" min="0" step="0.01" value="0">
+        </div>
+
+    </div>
+
+    <label>Explanation</label>
+    <textarea id="explanation" placeholder="Optional explanation"></textarea>
+
+    <div class="actions">
+        <button class="btn-gold" onclick="saveQuestion()">Save Question</button>
+        <button class="btn-gray" onclick="clearForm()">Clear</button>
+    </div>
+</div>
+
+<div class="card">
+
+    <h2>Advanced CSV Import</h2>
+
+    <p class="small">
+        Upload a CSV containing multiple questions. The system validates everything
+        before anything is inserted into Supabase.
+    </p>
+
+    <div class="csv-box">
+
+        <input
+            id="csvFile"
+            type="file"
+            accept=".csv,text/csv"
+            onchange="resetCSVPreview()"
+        >
+
+        <div class="actions" style="justify-content:center">
+
+            <button class="btn-blue" onclick="downloadTemplate()">
+                Download CSV Template
+            </button>
+
+            <button class="btn-gold" onclick="previewCSV()">
+                Validate & Preview
+            </button>
+
+        </div>
+
+    </div>
+
+    <div id="csvSummary"></div>
+
+    <div id="csvPreview"></div>
+
+    <div id="csvActions" class="actions" style="display:none">
+        <button id="importButton" class="btn-gold" onclick="openImportConfirm()">
+            Import Valid Questions
+        </button>
+
+        <button class="btn-gray" onclick="resetCSVPreview()">
+            Cancel
+        </button>
+    </div>
+
+</div>
+
+<div class="card">
+
+    <h2>Existing Questions</h2>
+
+    <div id="questionsList">
+        <div class="loading">Loading questions...</div>
+    </div>
+
+</div>
+
+</div>
+
+<!-- IMPORT CONFIRMATION MODAL -->
+
+<div id="confirmModal" class="modal">
+
+    <div class="modal-box">
+
+        <h2>Confirm Import</h2>
+
+        <p id="confirmText"></p>
+
+        <div class="actions">
+            <button class="btn-gold" onclick="confirmImport()">
+                Yes, Import
+            </button>
+
+            <button class="btn-gray" onclick="closeImportConfirm()">
+                Cancel
+            </button>
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+
+const SUPABASE_URL =
+"https://egjrkxdyehwbzgoppi4.co.supabase.co".replace(
+    "egjrkxdyehwbzgoppi4",
+    "egjrkxdyehwbzgoppi4"
+);
+
+/*
+ IMPORTANT:
+ The actual project URL used by Road to Academy is:
+ https://egjrkxdyehwbzgoppi4.supabase.co
+*/
+
+const REAL_SUPABASE_URL =
+"https://egjrkxdyehwbzgoppiqk.supabase.co";
+
+const SUPABASE_KEY =
+"sb_publishable_nc_Xv85AMQrmgIlDEWD8CA_aSeMk-yv";
+
+const { createClient } = supabase;
+
+const db = createClient(
+    REAL_SUPABASE_URL,
+    SUPABASE_KEY
+);
+
+const params = new URLSearchParams(location.search);
+const testId = params.get("test");
+
+let currentTest = null;
+let questions = [];
+let csvRows = [];
+let csvValidRows = [];
+let csvInvalidRows = [];
+
+
+// --------------------------------------------------
+// MESSAGE
+// --------------------------------------------------
+
+function showMessage(text,type="info"){
+
+    const el = document.getElementById("message");
+
+    el.className = "notice " + type;
+    el.textContent = text;
+
+    window.scrollTo({
+        top:0,
+        behavior:"smooth"
+    });
+}
+
+
+// --------------------------------------------------
+// INIT
+// --------------------------------------------------
+
+document.addEventListener("DOMContentLoaded",init);
+
+async function init(){
+
+    if(!testId){
+
+        showMessage(
+            "No test ID was supplied. Open the Question Builder from Admin.",
+            "error"
+        );
+
+        return;
+    }
+
+    const {
+        data:{user},
+        error:authError
+    } = await db.auth.getUser();
+
+    if(authError || !user){
+
+        location.href = "login.html";
+        return;
+    }
+
+    const {data:role,error:roleError} =
+        await db
+        .from("user_roles")
+        .select("role")
+        .eq("user_id",user.id)
+        .maybeSingle();
+
+    if(roleError || !role || role.role !== "admin"){
+
+        showMessage(
+            "Access denied. Admin account required.",
+            "error"
+        );
+
+        return;
+    }
+
+    await loadTest();
+    await loadQuestions();
+}
+
+
+// --------------------------------------------------
+// TEST
+// --------------------------------------------------
+
+async function loadTest(){
+
+    const {data,error} =
+        await db
+        .from("tests")
+        .select("*")
+        .eq("id",testId)
+        .single();
+
+    if(error){
+
+        showMessage(
+            "Could not load test: " + error.message,
+            "error"
+        );
+
+        return;
+    }
+
+    currentTest = data;
+
+    document.getElementById("testTitle").textContent =
+        data.title;
+
+    document.getElementById("testInfo").textContent =
+        `${data.exam} • ${data.subject || "General"} • ${data.duration_minutes} minutes • ${data.total_marks} marks`;
+
+}
+
+
+// --------------------------------------------------
+// LOAD QUESTIONS
+// --------------------------------------------------
+
+async function loadQuestions(){
+
+    const list =
+        document.getElementById("questionsList");
+
+    list.innerHTML =
+        '<div class="loading">Loading questions...</div>';
+
+    const {data,error} =
+        await db
+        .from("questions")
+        .select("*")
+        .eq("test_id",testId)
+        .order("question_number",{ascending:true});
+
+    if(error){
+
+        list.innerHTML = "";
+        showMessage(
+            "Could not load questions: " + error.message,
+            "error"
+        );
+
+        return;
+    }
+
+    questions = data || [];
+
+    updateStats();
+    renderQuestions();
+}
+
+
+// --------------------------------------------------
+// STATS
+// --------------------------------------------------
+
+function updateStats(){
+
+    let marks = 0;
+    let negative = 0;
+
+    questions.forEach(q => {
+
+        marks += Number(q.marks || 0);
+        negative += Number(q.negative_marks || 0);
+
+    });
+
+    document.getElementById("totalQuestions")
+        .textContent = questions.length;
+
+    document.getElementById("totalMarks")
+        .textContent = marks;
+
+    document.getElementById("positiveMarks")
+        .textContent = marks;
+
+    document.getElementById("negativeMarks")
+        .textContent = negative;
+}
+
+
+// --------------------------------------------------
+// RENDER QUESTIONS
+// --------------------------------------------------
+
+function renderQuestions(){
+
+    const list =
+        document.getElementById("questionsList");
+
+    if(!questions.length){
+
+        list.innerHTML =
+            '<div class="empty">No questions added yet.</div>';
+
+        return;
+    }
+
+    list.innerHTML = questions.map(q => {
+
+        const correct =
+            String(q.correct_answer || "").toUpperCase();
+
+        return `
+        <div class="question">
+
+            <div class="question-head">
+
+                <div>
+                    <span class="q-number">
+                        Q${escapeHTML(q.question_number)}
+                    </span>
+
+                    <span class="badge badge-yellow">
+                        ${escapeHTML(q.marks)} mark
+                    </span>
+
+                    ${
+                        q.negative_marks > 0
+                        ?
+                        `<span class="badge badge-red">
+                            -${escapeHTML(q.negative_marks)}
+                        </span>`
+                        :
+                        ""
+                    }
+                </div>
+
+                <div class="actions">
+
+                    <button
+                        class="btn-blue"
+                        onclick="editQuestion(${q.id})">
+                        Edit
+                    </button>
+
+                    <button
+                        class="btn-red"
+                        onclick="deleteQuestion(${q.id})">
+                        Delete
+                    </button>
+
+                </div>
+
+            </div>
+
+            <p>
+                ${escapeHTML(q.question_text)}
+            </p>
+
+            <div class="options">
+
+                <div class="option ${correct==="A"?"correct":""}">
+                    <b>A.</b> ${escapeHTML(q.option_a)}
+                </div>
+
+                <div class="option ${correct==="B"?"correct":""}">
+                    <b>B.</b> ${escapeHTML(q.option_b)}
+                </div>
+
+                <div class="option ${correct==="C"?"correct":""}">
+                    <b>C.</b> ${escapeHTML(q.option_c)}
+                </div>
+
+                <div class="option ${correct==="D"?"correct":""}">
+                    <b>D.</b> ${escapeHTML(q.option_d)}
+                </div>
+
+            </div>
+
+            <div class="small">
+                Correct Answer: <b>${escapeHTML(correct)}</b>
+            </div>
+
+            ${
+                q.explanation
+                ?
+                `<div class="small" style="margin-top:8px">
+                    Explanation: ${escapeHTML(q.explanation)}
+                </div>`
+                :
+                ""
+            }
+
+        </div>
+        `;
+
+    }).join("");
+}
+
+
+// --------------------------------------------------
+// SAVE QUESTION
+// --------------------------------------------------
+
+async function saveQuestion(){
+
+    const editingId =
+        document.getElementById("editingId").value;
+
+    const payload = {
+
+        test_id: Number(testId),
+
+        question_number:
+            Number(document.getElementById("questionNumber").value),
+
+        question_text:
+            document.getElementById("questionText").value.trim(),
+
+        option_a:
+            document.getElementById("optionA").value.trim(),
+
+        option_b:
+            document.getElementById("optionB").value.trim(),
+
+        option_c:
+            document.getElementById("optionC").value.trim(),
+
+        option_d:
+            document.getElementById("optionD").value.trim(),
+
+        correct_answer:
+            document.getElementById("correctAnswer").value,
+
+        explanation:
+            document.getElementById("explanation").value.trim(),
+
+        marks:
+            Number(document.getElementById("marks").value),
+
+        negative_marks:
+            Number(document.getElementById("negativeMarks").value)
+
+    };
+
+    if(
+        !payload.question_number ||
+        !payload.question_text ||
+        !payload.option_a ||
+        !payload.option_b ||
+        !payload.option_c ||
+        !payload.option_d ||
+        !payload.correct_answer
+    ){
+
+        showMessage(
+            "Please fill all required question fields.",
+            "error"
+        );
+
+        return;
+    }
+
+    if(payload.marks < 0 || payload.negative_marks < 0){
+
+        showMessage(
+            "Marks cannot be negative.",
+            "error"
+        );
+
+        return;
+    }
+
+    let error;
+
+    if(editingId){
+
+        ({error} =
+            await db
+            .from("questions")
+            .update(payload)
+            .eq("id",editingId));
+
+    }else{
+
+        const existing =
+            questions.find(q =>
+                Number(q.question_number) ===
+                payload.question_number
+            );
+
+        if(existing){
+
+            showMessage(
+                `Question number ${payload.question_number} already exists.`,
+                "error"
+            );
+
+            return;
+        }
+
+        ({error} =
+            await db
+            .from("questions")
+            .insert(payload));
+    }
+
+    if(error){
+
+        showMessage(
+            "Save failed: " + error.message,
+            "error"
+        );
+
+        return;
+    }
+
+    showMessage(
+        editingId
+        ? "Question updated successfully."
+        : "Question added successfully.",
+        "success"
+    );
+
+    clearForm();
+    await loadQuestions();
+}
+
+
+// --------------------------------------------------
+// EDIT
+// --------------------------------------------------
+
+function editQuestion(id){
+
+    const q =
+        questions.find(x => Number(x.id) === Number(id));
+
+    if(!q) return;
+
+    document.getElementById("editingId").value = q.id;
+    document.getElementById("questionNumber").value =
+        q.question_number;
+
+    document.getElementById("questionText").value =
+        q.question_text;
+
+    document.getElementById("optionA").value =
+        q.option_a;
+
+    document.getElementById("optionB").value =
+        q.option_b;
+
+    document.getElementById("optionC").value =
+        q.option_c;
+
+    document.getElementById("optionD").value =
+        q.option_d;
+
+    document.getElementById("correctAnswer").value =
+        q.correct_answer;
+
+    document.getElementById("marks").value =
+        q.marks;
+
+    document.getElementById("negativeMarks").value =
+        q.negative_marks;
+
+    document.getElementById("explanation").value =
+        q.explanation || "";
+
+    window.scrollTo({
+        top:300,
+        behavior:"smooth"
+    });
+}
+
+
+// --------------------------------------------------
+// DELETE
+// --------------------------------------------------
+
+async function deleteQuestion(id){
+
+    const q =
+        questions.find(x => Number(x.id) === Number(id));
+
+    if(!q) return;
+
+    if(!confirm(
+        `Delete question ${q.question_number}?`
+    )) return;
+
+    const {error} =
+        await db
+        .from("questions")
+        .delete()
+        .eq("id",id);
+
+    if(error){
+
+        showMessage(
+            "Delete failed: " + error.message,
+            "error"
+        );
+
+        return;
+    }
+
+    showMessage(
+        "Question deleted successfully.",
+        "success"
+    );
+
+    await loadQuestions();
+}
+
+
+// --------------------------------------------------
+// CLEAR
+// --------------------------------------------------
+
+function clearForm(){
+
+    document.getElementById("editingId").value = "";
+    document.getElementById("questionNumber").value = "";
+    document.getElementById("questionText").value = "";
+    document.getElementById("optionA").value = "";
+    document.getElementById("optionB").value = "";
+    document.getElementById("optionC").value = "";
+    document.getElementById("optionD").value = "";
+    document.getElementById("correctAnswer").value = "";
+    document.getElementById("marks").value = "1";
+    document.getElementById("negativeMarks").value = "0";
+    document.getElementById("explanation").value = "";
+}
+
+
+// --------------------------------------------------
+// CSV RESET
+// --------------------------------------------------
+
+function resetCSVPreview(){
+
+    csvRows = [];
+    csvValidRows = [];
+    csvInvalidRows = [];
+
+    document.getElementById("csvSummary").innerHTML = "";
+    document.getElementById("csvPreview").innerHTML = "";
+    document.getElementById("csvActions").style.display = "none";
+}
+
+
+// --------------------------------------------------
+// CSV PARSER
+// --------------------------------------------------
+
+function parseCSV(text){
+
+    const rows = [];
+    let row = [];
+    let cell = "";
+    let insideQuotes = false;
+
+    for(let i=0;i<text.length;i++){
+
+        const char = text[i];
+        const next = text[i+1];
+
+        if(char === '"' && insideQuotes && next === '"'){
+
+            cell += '"';
+            i++;
+            continue;
+        }
+
+        if(char === '"'){
+
+            insideQuotes = !insideQuotes;
+            continue;
+        }
+
+        if(char === "," && !insideQuotes){
+
+            row.push(cell);
+            cell = "";
+            continue;
+        }
+
+        if(
+            (char === "\n" || char === "\r") &&
+            !insideQuotes
+        ){
+
+            if(char === "\r" && next === "\n") i++;
+
+            row.push(cell);
+            cell = "";
+
+            if(row.some(x => x.trim() !== "")){
+                rows.push(row);
+            }
+
+            row = [];
+
+            continue;
+        }
+
+        cell += char;
+    }
+
+    row.push(cell);
+
+    if(row.some(x => x.trim() !== "")){
+        rows.push(row);
+    }
+
+    return rows;
+}
+
+
+// --------------------------------------------------
+// CSV VALIDATION
+// --------------------------------------------------
+
+async function previewCSV(){
+
+    resetCSVPreview();
+
+    const file =
+        document.getElementById("csvFile").files[0];
+
+    if(!file){
+
+        showMessage(
+            "Please select a CSV file first.",
+            "error"
+        );
+
+        return;
+    }
+
+    if(!file.name.toLowerCase().endsWith(".csv")){
+
+        showMessage(
+            "Please upload a .csv file.",
+            "error"
+        );
+
+        return;
+    }
+
+    let text;
+
+    try{
+
+        text = await file.text();
+
+    }catch(e){
+
+        showMessage(
+            "Could not read the CSV file.",
+            "error"
+        );
+
+        return;
+    }
+
+    const raw =
+        parseCSV(text);
+
+    if(raw.length < 2){
+
+        showMessage(
+            "CSV must contain a header and at least one question.",
+            "error"
+        );
+
+        return;
+    }
+
+    const headers =
+        raw[0].map(x => x.trim().toLowerCase());
+
+    const required = [
+        "question_number",
+        "question_text",
+        "option_a",
+        "option_b",
+        "option_c",
+        "option_d",
+        "correct_answer",
+        "explanation",
+        "marks",
+        "negative_marks"
+    ];
+
+    const missing =
+        required.filter(h => !headers.includes(h));
+
+    if(missing.length){
+
+        showMessage(
+            "Missing CSV columns: " + missing.join(", "),
+            "error"
+        );
+
+        return;
+    }
+
+    const index = {};
+
+    headers.forEach((h,i)=>{
+        index[h] = i;
+    });
+
+    csvRows = [];
+    csvValidRows = [];
+    csvInvalidRows = [];
+
+    const csvNumbers = new Set();
+
+    for(let i=1;i<raw.length;i++){
+
+        const r = raw[i];
+
+        const rowNumber = i + 1;
+
+        const item = {
+
+            rowNumber,
+
+            question_number:
+                (r[index.question_number] || "").trim(),
+
+            question_text:
+                (r[index.question_text] || "").trim(),
+
+            option_a:
+                (r[index.option_a] || "").trim(),
+
+            option_b:
+                (r[index.option_b] || "").trim(),
+
+            option_c:
+                (r[index.option_c] || "").trim(),
+
+            option_d:
+                (r[index.option_d] || "").trim(),
+
+            correct_answer:
+                (r[index.correct_answer] || "")
+                .trim()
+                .toUpperCase(),
+
+            explanation:
+                (r[index.explanation] || "").trim(),
+
+            marks:
+                (r[index.marks] || "").trim(),
+
+            negative_marks:
+                (r[index.negative_marks] || "").trim(),
+
+            errors:[]
+        };
+
+        if(!item.question_number){
+
+            item.errors.push(
+                "Missing question number"
+            );
+
+        }else if(
+            !Number.isInteger(Number(item.question_number)) ||
+            Number(item.question_number) < 1
+        ){
+
+            item.errors.push(
+                "Invalid question number"
+            );
+
+        }else{
+
+            const n =
+                Number(item.question_number);
+
+            if(csvNumbers.has(n)){
+
+                item.errors.push(
+                    "Duplicate question number in CSV"
+                );
+
+            }
+
+            csvNumbers.add(n);
+        }
+
+        if(!item.question_text)
+            item.errors.push("Missing question text");
+
+        if(!item.option_a)
+            item.errors.push("Missing option A");
+
+        if(!item.option_b)
+            item.errors.push("Missing option B");
+
+        if(!item.option_c)
+            item.errors.push("Missing option C");
+
+        if(!item.option_d)
+            item.errors.push("Missing option D");
+
+        if(!["A","B","C","D"].includes(
+            item.correct_answer
+        )){
+
+            item.errors.push(
+                "Correct answer must be A, B, C or D"
+            );
+
+        }
+
+        if(item.marks === ""){
+
+            item.errors.push(
+                "Missing marks"
+            );
+
+        }else if(
+            isNaN(Number(item.marks)) ||
+            Number(item.marks) < 0
+        ){
+
+            item.errors.push(
+                "Invalid marks"
+            );
+
+        }
+
+        if(item.negative_marks === ""){
+
+            item.negative_marks = "0";
+
+        }else if(
+            isNaN(Number(item.negative_marks)) ||
+            Number(item.negative_marks) < 0
+        ){
+
+            item.errors.push(
+                "Invalid negative marks"
+            );
+
+        }
+
+        csvRows.push(item);
+
+        if(item.errors.length){
+
+            csvInvalidRows.push(item);
+
+        }else{
+
+            csvValidRows.push(item);
+
+        }
+    }
+
+
+    // Check conflicts with existing questions
+
+    const existingNumbers =
+        new Set(
+            questions.map(q =>
+                Number(q.question_number)
+            )
+        );
+
+    csvValidRows.forEach(item => {
+
+        const n =
+            Number(item.question_number);
+
+        if(existingNumbers.has(n)){
+
+            item.errors.push(
+                "Question number already exists in this test"
+            );
+
+        }
+
+    });
+
+
+    // Move conflicts to invalid
+
+    const validAfterConflict = [];
+
+    csvValidRows.forEach(item => {
+
+        if(item.errors.length){
+
+            csvInvalidRows.push(item);
+
+        }else{
+
+            validAfterConflict.push(item);
+
+        }
+
+    });
+
+    csvValidRows = validAfterConflict;
+
+
+    renderCSVSummary();
+    renderCSVPreview();
+
+    document.getElementById("csvActions").style.display =
+        csvValidRows.length ? "flex" : "none";
+
+    if(csvValidRows.length){
+
+        showMessage(
+            `${csvRows.length} questions detected. ${csvValidRows.length} valid and ready for import.`,
+            "success"
+        );
+
+    }else{
+
+        showMessage(
+            "No valid questions are ready for import.",
+            "error"
+        );
+
+    }
+}
+
+
+// --------------------------------------------------
+// CSV SUMMARY
+// --------------------------------------------------
+
+function renderCSVSummary(){
+
+    document.getElementById("csvSummary").innerHTML = `
+
+        <div class="summary">
+
+            <div>
+                <strong>${csvRows.length}</strong>
+                Detected
+            </div>
+
+            <div>
+                <strong>${csvValidRows.length}</strong>
+                Valid
+            </div>
+
+            <div>
+                <strong>${csvInvalidRows.length}</strong>
+                Errors
+            </div>
+
+            <div>
+                <strong>
+                    ${csvValidRows.length + csvInvalidRows.length}
+                </strong>
+                Checked
+            </div>
+
+        </div>
+    `;
+}
+
+
+// --------------------------------------------------
+// CSV PREVIEW
+// --------------------------------------------------
+
+function renderCSVPreview(){
+
+    if(!csvRows.length) return;
+
+    let html = `
+
+    <h3 style="margin-top:25px">
+        CSV Validation Preview
+    </h3>
+
+    <div class="table-wrap">
+
+    <table>
+
+    <thead>
+        <tr>
+            <th>Row</th>
+            <th>Q.No</th>
+            <th>Question</th>
+            <th>Correct</th>
+            <th>Marks</th>
+            <th>Status</th>
+            <th>Errors</th>
+        </tr>
+    </thead>
+
+    <tbody>
+    `;
+
+    csvRows.forEach(item => {
+
+        const valid =
+            item.errors.length === 0;
+
+        html += `
+
+        <tr class="${valid ? "valid-row":"invalid-row"}">
+
+            <td>${item.rowNumber}</td>
+
+            <td>${escapeHTML(item.question_number)}</td>
+
+            <td>
+                ${escapeHTML(
+                    item.question_text
+                ).substring(0,250)}
+                ${
+                    item.question_text.length > 250
+                    ? "..."
+                    : ""
+                }
+            </td>
+
+            <td>${escapeHTML(item.correct_answer)}</td>
+
+            <td>${escapeHTML(item.marks)}</td>
+
+            <td>
+                ${
+                    valid
+                    ?
+                    `<span class="badge badge-green">
+                        VALID
+                    </span>`
+                    :
+                    `<span class="badge badge-red">
+                        ERROR
+                    </span>`
+                }
+            </td>
+
+            <td>
+                ${
+                    valid
+                    ?
+                    "-"
+                    :
+                    escapeHTML(
+                        item.errors.join(" • ")
+                    )
+                }
+            </td>
+
+        </tr>
+        `;
+    });
+
+    html += `
+    </tbody>
+    </table>
+    </div>
+    `;
+
+    document.getElementById("csvPreview").innerHTML =
+        html;
+}
+
+
+// --------------------------------------------------
+// IMPORT CONFIRMATION
+// --------------------------------------------------
+
+function openImportConfirm(){
+
+    if(!csvValidRows.length){
+
+        showMessage(
+            "There are no valid questions to import.",
+            "error"
+        );
+
+        return;
+    }
+
+    document.getElementById("confirmText").innerHTML = `
+
+        You are about to import
+        <b>${csvValidRows.length}</b>
+        question(s) into:
+
+        <br><br>
+
+        <b>${escapeHTML(
+            currentTest?.title || "this test"
+        )}</b>
+
+        <br><br>
+
+        Invalid rows will NOT be imported.
+        Existing question numbers were already checked.
+
+    `;
+
+    document.getElementById("confirmModal").style.display =
+        "flex";
+}
+
+
+function closeImportConfirm(){
+
+    document.getElementById("confirmModal").style.display =
+        "none";
+}
+
+
+// --------------------------------------------------
+// IMPORT
+// --------------------------------------------------
+
+async function confirmImport(){
+
+    closeImportConfirm();
+
+    const button =
+        document.getElementById("importButton");
+
+    button.disabled = true;
+    button.textContent = "Importing...";
+
+    const payload =
+        csvValidRows.map(item => ({
+
+            test_id:Number(testId),
+
+            question_number:
+                Number(item.question_number),
+
+            question_text:
+                item.question_text,
+
+            option_a:
+                item.option_a,
+
+            option_b:
+                item.option_b,
+
+            option_c:
+                item.option_c,
+
+            option_d:
+                item.option_d,
+
+            correct_answer:
+                item.correct_answer,
+
+            explanation:
+                item.explanation || null,
+
+            marks:
+                Number(item.marks),
+
+            negative_marks:
+                Number(item.negative_marks || 0)
+
+        }));
+
+    const {error} =
+        await db
+        .from("questions")
+        .insert(payload);
+
+    button.disabled = false;
+    button.textContent =
+        "Import Valid Questions";
+
+    if(error){
+
+        showMessage(
+            "Import failed: " + error.message,
+            "error"
+        );
+
+        return;
+    }
+
+    showMessage(
+        `${payload.length} question(s) imported successfully!`,
+        "success"
+    );
+
+    document.getElementById("csvFile").value = "";
+
+    resetCSVPreview();
+
+    await loadQuestions();
+}
+
+
+// --------------------------------------------------
+// CSV TEMPLATE
+// --------------------------------------------------
+
+function downloadTemplate(){
+
+    const header =
+        "question_number,question_text,option_a,option_b,option_c,option_d,correct_answer,explanation,marks,negative_marks";
+
+    const example =
+        '1,"What is 2 + 2?","3","4","5","6","B","Basic addition.",1,0.25';
+
+    const csv =
+        header + "\n" + example + "\n";
+
+    const blob =
+        new Blob(
+            [csv],
+            {type:"text/csv;charset=utf-8;"}
+        );
+
+    const url =
+        URL.createObjectURL(blob);
+
+    const a =
+        document.createElement("a");
+
+    a.href = url;
+    a.download = "road_to_academy_questions_template.csv";
+
+    document.body.appendChild(a);
+
+    a.click();
+
+    a.remove();
+
+    URL.revokeObjectURL(url);
+}
+
+
+// --------------------------------------------------
+// PREVIEW TEST
+// --------------------------------------------------
+
+function previewTest(){
+
+    location.href =
+        `admin-preview.html?test=${encodeURIComponent(testId)}`;
+}
+
+
+// --------------------------------------------------
+// ESCAPE HTML
+// --------------------------------------------------
+
+function escapeHTML(value){
+
+    return String(value ?? "")
+        .replace(/&/g,"&amp;")
+        .replace(/</g,"&lt;")
+        .replace(/>/g,"&gt;")
+        .replace(/"/g,"&quot;")
+        .replace(/'/g,"&#039;");
+}
+
+</script>
+
+</body>
+</html>

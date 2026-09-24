@@ -1,0 +1,691 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Test Details - Road to Academy</title>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #f4f7fb;
+    color: #17233c;
+}
+
+header {
+    background: #071a3d;
+    color: white;
+    padding: 18px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+header h1 {
+    margin: 0;
+    font-size: 22px;
+}
+
+.back-btn {
+    background: white;
+    color: #071a3d;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 8px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.container {
+    max-width: 900px;
+    margin: 30px auto;
+    padding: 0 15px;
+}
+
+.card {
+    background: white;
+    border-radius: 16px;
+    padding: 25px;
+    box-shadow: 0 5px 20px rgba(0,0,0,.07);
+}
+
+.title {
+    font-size: 30px;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.description {
+    color: #667085;
+    line-height: 1.6;
+    margin-bottom: 20px;
+}
+
+.badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 25px;
+}
+
+.badge {
+    background: #eef3ff;
+    color: #173b78;
+    padding: 8px 13px;
+    border-radius: 20px;
+    font-size: 14px;
+    font-weight: bold;
+}
+
+.stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    margin-bottom: 25px;
+}
+
+.stat {
+    background: #f7f9fc;
+    padding: 18px 10px;
+    border-radius: 10px;
+    text-align: center;
+}
+
+.stat strong {
+    display: block;
+    font-size: 23px;
+    margin-bottom: 6px;
+}
+
+.stat span {
+    font-size: 13px;
+    color: #667085;
+}
+
+.instructions {
+    background: #f8fafc;
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 25px;
+}
+
+.instructions h3 {
+    margin-top: 0;
+}
+
+.instructions li {
+    margin-bottom: 9px;
+    line-height: 1.5;
+}
+
+.start-btn {
+    width: 100%;
+    padding: 16px;
+    border: none;
+    border-radius: 10px;
+    background: #071a3d;
+    color: white;
+    font-size: 17px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.start-btn:hover {
+    opacity: .92;
+}
+
+.resume {
+    background: #fff8e6;
+    border: 1px solid #f1d27a;
+    color: #664d03;
+    padding: 14px;
+    border-radius: 10px;
+    margin-bottom: 15px;
+    display: none;
+}
+
+.loading {
+    text-align: center;
+    padding: 60px;
+    color: #667085;
+}
+
+.error {
+    background: #fdecec;
+    color: #b42318;
+    padding: 18px;
+    border-radius: 10px;
+}
+
+@media(max-width:700px) {
+    .stats {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .title {
+        font-size: 24px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+    <h1>📝 Test Details</h1>
+
+    <button class="back-btn" onclick="goBack()">
+        ← Back
+    </button>
+</header>
+
+<div class="container">
+
+    <div id="loading" class="loading">
+        Loading test...
+    </div>
+
+    <div id="content" style="display:none;">
+
+        <div class="card">
+
+            <div class="title" id="title"></div>
+
+            <div class="description" id="description"></div>
+
+            <div class="badges">
+                <div class="badge" id="exam"></div>
+                <div class="badge" id="subject"></div>
+            </div>
+
+            <div class="stats">
+
+                <div class="stat">
+                    <strong id="questions">0</strong>
+                    <span>Questions</span>
+                </div>
+
+                <div class="stat">
+                    <strong id="marks">0</strong>
+                    <span>Total Marks</span>
+                </div>
+
+                <div class="stat">
+                    <strong id="duration">0</strong>
+                    <span>Minutes</span>
+                </div>
+
+                <div class="stat">
+                    <strong id="negative">0</strong>
+                    <span>Negative Marking</span>
+                </div>
+
+            </div>
+
+            <div class="instructions">
+
+                <h3>📋 Instructions</h3>
+
+                <ul>
+                    <li>
+                        The test will start only after you press
+                        <strong>Start Test</strong>.
+                    </li>
+
+                    <li>
+                        The timer will run according to the
+                        test duration.
+                    </li>
+
+                    <li>
+                        Your answers are automatically saved.
+                    </li>
+
+                    <li>
+                        You can resume an unfinished attempt.
+                    </li>
+
+                    <li>
+                        Once submitted, the attempt cannot be
+                        restarted.
+                    </li>
+
+                    <li>
+                        Negative marking will be applied according
+                        to the test settings.
+                    </li>
+                </ul>
+
+            </div>
+
+            <div id="resumeBox" class="resume">
+                🔄 You already have an unfinished attempt for
+                this test. You can resume it.
+            </div>
+
+            <button
+                id="startBtn"
+                class="start-btn"
+                onclick="startTest()">
+
+                🚀 Start Test
+
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+
+const SUPABASE_URL =
+    "https://egjrkxdyehwbzgoppiqk.supabase.co";
+
+const SUPABASE_KEY =
+    "sb_publishable_nc_Xv85AMQrmgIlDEWD8CA_aSeMk-yv";
+
+const supabaseClient =
+    window.supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_KEY
+    );
+
+const params =
+    new URLSearchParams(window.location.search);
+
+const testId =
+    params.get("test");
+
+let test = null;
+let questions = [];
+let session = null;
+let existingAttempt = null;
+
+
+/* =========================
+   AUTH
+========================= */
+
+async function checkAuth() {
+
+    const {
+        data: {
+            session: currentSession
+        }
+    } =
+        await supabaseClient.auth.getSession();
+
+    if (!currentSession) {
+
+        window.location.href =
+            "login.html";
+
+        return false;
+    }
+
+    session = currentSession;
+
+    return true;
+}
+
+
+/* =========================
+   LOAD TEST
+========================= */
+
+async function loadTest() {
+
+    if (!testId) {
+
+        showError("No test was selected.");
+
+        return;
+    }
+
+
+    const {
+        data,
+        error
+    } =
+        await supabaseClient
+            .from("tests")
+            .select("*")
+            .eq("id", testId)
+            .eq("is_published", true)
+            .single();
+
+
+    if (error || !data) {
+
+        showError(
+            "This test does not exist or is not published."
+        );
+
+        return;
+    }
+
+    test = data;
+
+
+    const {
+        data: qData,
+        error: qError
+    } =
+        await supabaseClient
+            .from("test_questions_public")
+            .select("*")
+            .eq("test_id", testId)
+            .order("question_number", {
+                ascending: true
+            });
+
+
+    if (qError) {
+
+        showError(
+            "Could not load questions: " +
+            qError.message
+        );
+
+        return;
+    }
+
+    questions = qData || [];
+
+
+    await checkExistingAttempt();
+
+    render();
+}
+
+
+/* =========================
+   CHECK EXISTING ATTEMPT
+========================= */
+
+async function checkExistingAttempt() {
+
+    const {
+        data,
+        error
+    } =
+        await supabaseClient
+            .from("attempts")
+            .select(
+                "id, started_at, submitted_at"
+            )
+            .eq("user_id", session.user.id)
+            .eq("test_id", testId)
+            .is("submitted_at", null)
+            .order("started_at", {
+                ascending: false
+            })
+            .limit(1)
+            .maybeSingle();
+
+
+    if (!error && data) {
+
+        existingAttempt = data;
+
+    } else {
+
+        existingAttempt = null;
+
+    }
+}
+
+
+/* =========================
+   RENDER
+========================= */
+
+function render() {
+
+    document.getElementById("loading")
+        .style.display = "none";
+
+    document.getElementById("content")
+        .style.display = "block";
+
+
+    document.getElementById("title")
+        .textContent =
+        test.title || "Untitled Test";
+
+
+    document.getElementById("description")
+        .textContent =
+        test.description ||
+        "No description available.";
+
+
+    document.getElementById("exam")
+        .textContent =
+        "🎯 " + (test.exam || "Exam");
+
+
+    document.getElementById("subject")
+        .textContent =
+        "📚 " + (test.subject || "General");
+
+
+    document.getElementById("questions")
+        .textContent =
+        questions.length;
+
+
+    const totalMarks =
+        questions.reduce(
+            (sum, q) =>
+                sum + Number(q.marks || 0),
+            0
+        );
+
+
+    document.getElementById("marks")
+        .textContent =
+        totalMarks ||
+        test.total_marks ||
+        0;
+
+
+    document.getElementById("duration")
+        .textContent =
+        test.duration_minutes || 0;
+
+
+    const negative =
+        questions.length
+            ? Number(
+                questions[0].negative_marks || 0
+              )
+            : Number(
+                test.negative_marks || 0
+              );
+
+
+    document.getElementById("negative")
+        .textContent =
+        negative;
+
+
+    if (existingAttempt) {
+
+        document.getElementById("resumeBox")
+            .style.display = "block";
+
+        document.getElementById("startBtn")
+            .textContent =
+            "🔄 Resume Test";
+
+    } else {
+
+        document.getElementById("resumeBox")
+            .style.display = "none";
+
+        document.getElementById("startBtn")
+            .textContent =
+            "🚀 Start Test";
+    }
+}
+
+
+/* =========================
+   START / RESUME TEST
+========================= */
+
+async function startTest() {
+
+    const button =
+        document.getElementById("startBtn");
+
+    button.disabled = true;
+
+    button.textContent =
+        "Starting...";
+
+
+    /*
+       start_test_attempt handles both:
+
+       - creating a new attempt
+       - returning an existing attempt
+    */
+
+    const {
+        data,
+        error
+    } =
+        await supabaseClient.rpc(
+            "start_test_attempt",
+            {
+                p_test_id:
+                    Number(testId)
+            }
+        );
+
+
+    if (error) {
+
+        alert(
+            "Could not start test:\n\n" +
+            error.message
+        );
+
+        button.disabled = false;
+
+        button.textContent =
+            existingAttempt
+                ? "🔄 Resume Test"
+                : "🚀 Start Test";
+
+        return;
+    }
+
+
+    const attemptId =
+        data?.attempt_id;
+
+
+    if (!attemptId) {
+
+        alert(
+            "Could not create the test attempt."
+        );
+
+        button.disabled = false;
+
+        return;
+    }
+
+
+    window.location.href =
+        `test.html?test=${encodeURIComponent(testId)}&attempt=${encodeURIComponent(attemptId)}`;
+}
+
+
+/* =========================
+   BACK
+========================= */
+
+function goBack() {
+
+    if (test && test.exam) {
+
+        const exam =
+            String(test.exam).toLowerCase();
+
+        if (exam.includes("cds")) {
+
+            window.location.href =
+                "cds-tests.html";
+
+            return;
+        }
+    }
+
+    window.location.href =
+        "tests.html";
+}
+
+
+/* =========================
+   ERROR
+========================= */
+
+function showError(message) {
+
+    document.getElementById("loading")
+        .innerHTML = `
+            <div class="error">
+                ${escapeHtml(message)}
+            </div>
+        `;
+}
+
+
+/* =========================
+   ESCAPE HTML
+========================= */
+
+function escapeHtml(value) {
+
+    return String(value ?? "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+}
+
+
+/* =========================
+   START
+========================= */
+
+(async function() {
+
+    const authenticated =
+        await checkAuth();
+
+    if (!authenticated) return;
+
+    await loadTest();
+
+})();
+
+</script>
+
+</body>
+</html>
