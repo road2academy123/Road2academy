@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Test | Road to Academy</title>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background: #f4f6fa;
+    color: #111827;
+}
+
+header {
+    background: #071a3d;
+    color: white;
+    padding: 16px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo {
+    font-size: 22px;
+    font-weight: bold;
+    color: #f5c542;
+}
+
+.timer {
+    background: #f5c542;
+    color: #071a3d;
+    padding: 10px 16px;
+    border-radius: 8px;
+    font-weight: bold;
+}
+
+.container {
+    max-width: 900px;
+    margin: 25px auto;
+    padding: 0 15px;
+}
+
+.test-info {
+    background: white;
+    padding: 20px;
+    border-radius: 12px;
+    margin-bottom: 20px;
+    box-shadow: 0 3px 12px rgba(0,0,0,0.08);
+}
+
+.test-info h1 {
+    color: #071a3d;
+    margin-bottom: 8px;
+}
+
+.question-card {
+    background: white;
+    padding: 25px;
+    border-radius: 12px;
+    box-shadow: 0 3px 12px rgba(0,0,0,0.08);
+}
+
+.question-number {
+    color: #777;
+    margin-bottom: 12px;
+}
+
+.question-text {
+    font-size: 20px;
+    font-weight: bold;
+    line-height: 1.5;
+    margin-bottom: 25px;
+}
+
+.option {
+    display: block;
+    border: 2px solid #ddd;
+    padding: 15px;
+    border-radius: 10px;
+    margin-bottom: 12px;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.option:hover {
+    border-color: #071a3d;
+}
+
+.option.selected {
+    border-color: #071a3d;
+    background: #eef3ff;
+}
+
+.option input {
+    margin-right: 10px;
+}
+
+.buttons {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 25px;
+    gap: 10px;
+}
+
+button {
+    border: none;
+    padding: 12px 22px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 15px;
+    font-weight: bold;
+}
+
+.prev {
+    background: #ddd;
+}
+
+.next {
+    background: #071a3d;
+    color: white;
+}
+
+.submit {
+    background: #d62828;
+    color: white;
+}
+
+.palette {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 25px;
+}
+
+.palette button {
+    width: 40px;
+    height: 40px;
+    padding: 0;
+    background: #eee;
+}
+
+.palette button.answered {
+    background: #071a3d;
+    color: white;
+}
+
+.loading {
+    text-align: center;
+    padding: 50px;
+    font-size: 20px;
+}
+
+@media(max-width:600px) {
+    .question-text {
+        font-size: 17px;
+    }
+
+    .buttons {
+        flex-wrap: wrap;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+    <div class="logo">ROAD TO ACADEMY</div>
+    <div class="timer" id="timer">--:--</div>
+</header>
+
+<div class="container">
+
+    <div id="loading" class="loading">
+        Loading test...
+    </div>
+
+    <div id="testArea" style="display:none;">
+
+        <div class="test-info">
+            <h1 id="testTitle">Test</h1>
+            <p id="testDescription"></p>
+        </div>
+
+        <div class="question-card">
+
+            <div class="question-number" id="questionNumber"></div>
+
+            <div class="question-text" id="questionText"></div>
+
+            <div id="options"></div>
+
+            <div class="buttons">
+
+                <button class="prev" onclick="previousQuestion()">
+                    ← Previous
+                </button>
+
+                <button class="next" id="nextButton" onclick="nextQuestion()">
+                    Next →
+                </button>
+
+                <button class="submit" onclick="submitTest()">
+                    Submit Test
+                </button>
+
+            </div>
+
+            <div class="palette" id="palette"></div>
+
+        </div>
+
+    </div>
+
+</div>
+<
+
+</body>
+</html>

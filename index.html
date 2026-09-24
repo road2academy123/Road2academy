@@ -1,10 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Road to Academy | NDA & CDS Test Series</title>
+<title>Road 2 Academy | NDA & CDS Test Series</title>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <style>
 
@@ -40,19 +43,34 @@ nav{
 }
 
 .logo{
-    font-size:23px;
+    display:flex;
+    align-items:center;
+    gap:10px;
+    font-size:22px;
     font-weight:800;
-    color:#123b7a;
+    color:#13233f;
+}
+
+.logo img{
+    width:45px;
+    height:45px;
+    object-fit:contain;
+    border-radius:50%;
 }
 
 .logo span{
-    color:#d89b22;
+    color:#13233f;
+}
+
+.logo b{
+    color:#c49a45;
 }
 
 .nav-links{
     display:flex;
     gap:30px;
     list-style:none;
+    align-items:center;
 }
 
 .nav-links a{
@@ -79,8 +97,7 @@ nav{
     display:flex;
     align-items:center;
     padding:80px 8%;
-    background:
-    linear-gradient(135deg,#071d3b,#123b7a);
+    background:linear-gradient(135deg,#071d3b,#123b7a);
     color:white;
 }
 
@@ -119,6 +136,7 @@ nav{
 .hero-buttons{
     display:flex;
     gap:15px;
+    flex-wrap:wrap;
 }
 
 .btn-primary{
@@ -137,6 +155,11 @@ nav{
     border-radius:8px;
     text-decoration:none;
     font-weight:bold;
+}
+
+.btn-primary:hover,
+.btn-secondary:hover{
+    transform:translateY(-2px);
 }
 
 /* HERO CARD */
@@ -306,6 +329,7 @@ section{
     padding:28px;
     border:1px solid #e5e7eb;
     border-radius:15px;
+    background:#fff;
 }
 
 .feature-icon{
@@ -365,6 +389,17 @@ section{
     padding:12px;
     border-radius:8px;
     margin-top:20px;
+}
+
+.test-btn:hover{
+    background:#0b2c60;
+}
+
+.loading{
+    grid-column:1/-1;
+    text-align:center;
+    padding:30px;
+    color:#667085;
 }
 
 /* CTA */
@@ -432,6 +467,10 @@ footer a{
     text-decoration:none;
 }
 
+footer a:hover{
+    color:white;
+}
+
 .copyright{
     text-align:center;
     border-top:1px solid #273449;
@@ -478,6 +517,10 @@ footer a{
         grid-template-columns:repeat(2,1fr);
     }
 
+    .stat{
+        border-bottom:1px solid #eee;
+    }
+
     .exam-grid,
     .feature-grid,
     .test-grid{
@@ -495,11 +538,12 @@ footer a{
     .cta h2{
         font-size:30px;
     }
+
 }
 
 </style>
-</head>
 
+</head>
 
 <body>
 
@@ -508,8 +552,11 @@ footer a{
 
 <nav>
 
-<div class="logo">
-Road to <span>Academy</span>
+<div  <a href="index.html" class="logo">
+    <img src="https://road2academy.neocities.org/Road2academy.png"
+         alt="Road to Academy Logo"
+    <span>Road to <b>Academy</b></span> >
+</a>
 </div>
 
 <ul class="nav-links">
@@ -519,7 +566,7 @@ Road to <span>Academy</span>
 </li>
 
 <li>
-<a href="dashboard.html">NDA / CDS</a>
+<a href="#exams">NDA / CDS</a>
 </li>
 
 <li>
@@ -531,7 +578,7 @@ Road to <span>Academy</span>
 </li>
 
 <li>
-<a href="#login" class="login">Login</a>
+<a href="login.html" class="login">Login</a>
 </li>
 
 </ul>
@@ -584,7 +631,7 @@ Explore NDA & CDS
 <div class="subject">
 
 <strong>Mathematics</strong>
-<span>86% Accuracy</span>
+<span>Practice & Analyse</span>
 
 <div class="bar">
 <div style="width:86%"></div>
@@ -595,7 +642,7 @@ Explore NDA & CDS
 <div class="subject">
 
 <strong>English</strong>
-<span>91% Accuracy</span>
+<span>Practice & Improve</span>
 
 <div class="bar">
 <div style="width:91%"></div>
@@ -606,7 +653,7 @@ Explore NDA & CDS
 <div class="subject">
 
 <strong>General Knowledge</strong>
-<span>78% Accuracy</span>
+<span>Learn & Test</span>
 
 <div class="bar">
 <div style="width:78%"></div>
@@ -621,28 +668,28 @@ Explore NDA & CDS
 </section>
 
 
-<!-- STATS -->
+<!-- LIVE STATS -->
 
 <div class="stats">
 
 <div class="stat">
-<h2>100+</h2>
-<p>Mock Tests</p>
+<h2 id="statTests">—</h2>
+<p>Published Tests</p>
 </div>
 
 <div class="stat">
-<h2>10K+</h2>
+<h2 id="statQuestions">—</h2>
 <p>Questions</p>
 </div>
 
 <div class="stat">
-<h2>NDA</h2>
-<p>Preparation</p>
+<h2 id="statNda">—</h2>
+<p>NDA Tests</p>
 </div>
 
 <div class="stat">
-<h2>CDS</h2>
-<p>Preparation</p>
+<h2 id="statCds">—</h2>
+<p>CDS Tests</p>
 </div>
 
 </div>
@@ -666,8 +713,6 @@ Focused preparation for India's defence entrance examinations.
 <div class="exam-grid">
 
 
-<!-- NDA -->
-
 <div class="exam-card">
 
 <div class="exam-icon">🎖️</div>
@@ -688,14 +733,12 @@ with focused practice and mock tests.
 
 </ul>
 
-<a href="#tests" class="exam-btn">
+<a href="tests.html" class="exam-btn">
 Explore NDA Tests →
 </a>
 
 </div>
 
-
-<!-- CDS -->
 
 <div class="exam-card cds">
 
@@ -717,7 +760,7 @@ examination through regular testing.
 
 </ul>
 
-<a href="#tests" class="exam-btn">
+<a href="cds-tests.html" class="exam-btn">
 Explore CDS Tests →
 </a>
 
@@ -747,85 +790,61 @@ Designed around consistent practice and measurable improvement.
 
 
 <div class="feature">
-
 <div class="feature-icon">📝</div>
-
 <h3>Exam-Level Tests</h3>
-
 <p>
 Practice with carefully structured questions
 and timed mock examinations.
 </p>
-
 </div>
 
 
 <div class="feature">
-
 <div class="feature-icon">⏱️</div>
-
 <h3>Real Exam Timer</h3>
-
 <p>
 Practice under realistic time limits to improve
 speed and time management.
 </p>
-
 </div>
 
 
 <div class="feature">
-
 <div class="feature-icon">📊</div>
-
 <h3>Performance Analysis</h3>
-
 <p>
 Track marks, accuracy, attempts and improvement
 after every test.
 </p>
-
 </div>
 
 
 <div class="feature">
-
 <div class="feature-icon">💡</div>
-
 <h3>Detailed Solutions</h3>
-
 <p>
 Understand the correct approach instead of simply
 checking the answer.
 </p>
-
 </div>
 
 
 <div class="feature">
-
 <div class="feature-icon">🏆</div>
-
 <h3>Leaderboard</h3>
-
 <p>
-Compare your performance with other students
-and track your rank.
+Track your performance and compare your results
+with other students.
 </p>
-
 </div>
 
 
 <div class="feature">
-
 <div class="feature-icon">📱</div>
-
 <h3>Study Anywhere</h3>
-
 <p>
 Take your tests from your mobile, tablet or computer.
 </p>
-
 </div>
 
 </div>
@@ -839,75 +858,19 @@ Take your tests from your mobile, tablet or computer.
 
 <div class="section-title">
 
-<h2>Test Series</h2>
+<h2>Live Test Series</h2>
 
 <p>
-Start practicing with Road to Academy.
+Choose a published test and start practicing.
 </p>
 
 </div>
 
 
-<div class="test-grid">
+<div class="test-grid" id="testGrid">
 
-
-<div class="test-card">
-
-<span class="test-tag">
-NDA
-</span>
-
-<h3>NDA Mathematics</h3>
-
-<p>
-Topic-wise and full-length mathematics
-practice tests.
-</p>
-
-<a href="#" class="test-btn">
-View Series
-</a>
-
-</div>
-
-
-<div class="test-card">
-
-<span class="test-tag">
-NDA
-</span>
-
-<h3>NDA GAT</h3>
-
-<p>
-English, Science, History, Geography,
-Polity and Current Affairs.
-</p>
-
-<a href="#" class="test-btn">
-View Series
-</a>
-
-</div>
-
-
-<div class="test-card">
-
-<span class="test-tag">
-CDS
-</span>
-
-<h3>CDS Full Mock</h3>
-
-<p>
-Full-length CDS-style mock tests for
-complete examination practice.
-</p>
-
-<a href="#" class="test-btn">
-View Series
-</a>
-
+<div class="loading">
+Loading published test series...
 </div>
 
 </div>
@@ -927,7 +890,7 @@ Ready to Start Your Road?
 Create your account and begin your preparation.
 </p>
 
-<a href="#login">
+<a href="signup.html">
 Create Free Account
 </a>
 
@@ -964,11 +927,11 @@ Examinations
 <ul>
 
 <li>
-<a href="#exams">NDA</a>
+<a href="tests.html">NDA</a>
 </li>
 
 <li>
-<a href="#exams">CDS</a>
+<a href="cds-tests.html">CDS</a>
 </li>
 
 <li>
@@ -993,7 +956,11 @@ Platform
 </li>
 
 <li>
-<a href="#login">Login</a>
+<a href="login.html">Login</a>
+</li>
+
+<li>
+<a href="signup.html">Create Account</a>
 </li>
 
 <li>
@@ -1014,6 +981,270 @@ Platform
 </div>
 
 </footer>
+
+
+<script>
+
+/* ==========================================
+   SUPABASE
+========================================== */
+
+const SUPABASE_URL =
+    "https://egjrkxdyehwbzgoppiqk.supabase.co";
+
+const SUPABASE_KEY =
+    "sb_publishable_nc_Xv85AMQrmgIlDEWD8CA_aSeMk-yv";
+
+const supabaseClient =
+    supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_KEY
+    );
+
+
+/* ==========================================
+   LOAD LIVE PLATFORM STATS
+========================================== */
+
+async function loadStats(){
+
+    try{
+
+        const {
+            data: tests,
+            error: testError
+        } = await supabaseClient
+            .from("tests")
+            .select("id, exam")
+            .eq("is_published", true);
+
+        if(testError){
+            console.error(testError);
+            return;
+        }
+
+        const testList = tests || [];
+
+        const ndaCount =
+            testList.filter(
+                t =>
+                    String(t.exam || "")
+                    .toUpperCase()
+                    === "NDA"
+            ).length;
+
+        const cdsCount =
+            testList.filter(
+                t =>
+                    String(t.exam || "")
+                    .toUpperCase()
+                    === "CDS"
+            ).length;
+
+        document.getElementById("statTests")
+            .textContent = testList.length;
+
+        document.getElementById("statNda")
+            .textContent = ndaCount;
+
+        document.getElementById("statCds")
+            .textContent = cdsCount;
+
+
+        /* Published question count */
+
+        const {
+            count,
+            error: questionError
+        } = await supabaseClient
+            .from("test_questions_public")
+            .select("id", {
+                count:"exact",
+                head:true
+            });
+
+        if(!questionError){
+
+            document.getElementById("statQuestions")
+                .textContent = count || 0;
+
+        }else{
+
+            document.getElementById("statQuestions")
+                .textContent = "—";
+
+        }
+
+    }catch(error){
+
+        console.error(
+            "STATS ERROR:",
+            error
+        );
+
+    }
+
+}
+
+
+/* ==========================================
+   LOAD PUBLISHED TESTS
+========================================== */
+
+async function loadTests(){
+
+    const grid =
+        document.getElementById("testGrid");
+
+    try{
+
+        const {
+            data,
+            error
+        } = await supabaseClient
+            .from("tests")
+            .select(`
+                id,
+                title,
+                exam,
+                subject,
+                description,
+                duration_minutes,
+                total_marks
+            `)
+            .eq("is_published", true)
+            .order("created_at", {
+                ascending:false
+            })
+            .limit(6);
+
+
+        if(error){
+            throw error;
+        }
+
+
+        if(!data || data.length === 0){
+
+            grid.innerHTML = `
+                <div class="loading">
+                    No published tests are available yet.
+                </div>
+            `;
+
+            return;
+        }
+
+
+        grid.innerHTML = "";
+
+
+        data.forEach(test => {
+
+            const exam =
+                String(test.exam || "")
+                .toUpperCase();
+
+            const tagClass =
+                exam === "CDS"
+                    ? "test-tag"
+                    : "test-tag";
+
+
+            const card =
+                document.createElement("div");
+
+            card.className =
+                "test-card";
+
+
+            card.innerHTML = `
+
+                <span class="${tagClass}">
+                    ${escapeHTML(exam || "TEST")}
+                </span>
+
+                <h3>
+                    ${escapeHTML(test.title || "Untitled Test")}
+                </h3>
+
+                <p>
+                    ${
+                        escapeHTML(
+                            test.description ||
+                            test.subject ||
+                            "Practice with this published test."
+                        )
+                    }
+                </p>
+
+                <p style="
+                    margin-top:12px;
+                    font-size:13px;
+                    color:#667085;
+                ">
+                    ⏱️ ${test.duration_minutes || 60} minutes
+                    &nbsp; • &nbsp;
+                    🎯 ${test.total_marks || 0} marks
+                </p>
+
+                <a
+                    href="test-details.html?test=${encodeURIComponent(test.id)}"
+                    class="test-btn"
+                >
+                    View Test →
+                </a>
+
+            `;
+
+
+            grid.appendChild(card);
+
+        });
+
+
+    }catch(error){
+
+        console.error(
+            "TEST LOAD ERROR:",
+            error
+        );
+
+        grid.innerHTML = `
+            <div class="loading">
+                Unable to load test series right now.
+            </div>
+        `;
+
+    }
+
+}
+
+
+/* ==========================================
+   BASIC HTML ESCAPE
+========================================== */
+
+function escapeHTML(value){
+
+    return String(value)
+        .replaceAll("&","&amp;")
+        .replaceAll("<","&lt;")
+        .replaceAll(">","&gt;")
+        .replaceAll('"',"&quot;")
+        .replaceAll("'","&#039;");
+
+}
+
+
+/* ==========================================
+   START
+========================================== */
+
+loadStats();
+loadTests();
+
+</script>
 
 
 </body>
