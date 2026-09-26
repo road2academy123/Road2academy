@@ -460,7 +460,19 @@ button:disabled {
     .buttons button {
         width: 100%;
     }
+.restart{
+    background:#f3f4f6;
+    color:#1f2937;
+    border:1px solid #d1d5db;
+    padding:12px 18px;
+    border-radius:10px;
+    font-weight:700;
+    cursor:pointer;
+}
 
+.restart:hover{
+    background:#e5e7eb;
+}
     .submit {
         grid-column: 1 / -1;
     }
@@ -583,6 +595,7 @@ button:disabled {
                     Next →
                 </button>
 
+<button class="restart" onclick="restartTest()">Restart Test</button>
 
                 <button
                     class="submit"
@@ -1884,7 +1897,61 @@ async function submitTest(
         }
 
     }
+async function restartTest(){
 
+    if(!attemptId){
+        alert("No active attempt found.");
+        return;
+    }
+
+    const confirmed = confirm(
+        "Restart this test?\n\nYour current attempt and saved answers will be deleted and a fresh attempt will start."
+    );
+
+    if(!confirmed) return;
+
+    try{
+
+        const { data, error } = await supabase.rpc(
+            "restart_test_attempt",
+            {
+                p_attempt_id: attemptId
+            }
+        );
+
+        if(error){
+            console.error(error);
+            alert(error.message || "Could not restart the test.");
+            return;
+        }
+
+        attemptId = data.attempt_id;
+        serverStartedAt = data.started_at;
+        durationSeconds = data.duration_minutes * 60;
+
+        answers = {};
+        markedForReview = {};
+        currentQuestion = 0;
+
+        if(timerInterval){
+            clearInterval(timerInterval);
+            timerInterval = null;
+        }
+
+        startTimer();
+
+        renderQuestion();
+        renderPalette();
+
+        alert("Test restarted successfully!");
+
+    }catch(err){
+
+        console.error(err);
+        alert("Something went wrong while restarting the test.");
+
+    }
+}
 
     /* -----------------------------------------
        LOCK SUBMISSION
