@@ -68,6 +68,11 @@ header {
     text-align: center;
 }
 
+.timer.paused {
+    background: #9ca3af;
+    color: white;
+}
+
 /* =========================================================
    CONTAINER
 ========================================================= */
@@ -276,6 +281,28 @@ button:disabled {
     background: #5b21b6;
 }
 
+.restart {
+    background: #f3f4f6;
+
+    color: #1f2937;
+
+    border: 1px solid #d1d5db;
+}
+
+.restart:hover {
+    background: #e5e7eb;
+}
+
+.exit {
+    background: #374151;
+
+    color: white;
+}
+
+.exit:hover {
+    background: #1f2937;
+}
+
 /* =========================================================
    QUESTION PALETTE
 ========================================================= */
@@ -460,20 +487,9 @@ button:disabled {
     .buttons button {
         width: 100%;
     }
-.restart{
-    background:#f3f4f6;
-    color:#1f2937;
-    border:1px solid #d1d5db;
-    padding:12px 18px;
-    border-radius:10px;
-    font-weight:700;
-    cursor:pointer;
-}
 
-.restart:hover{
-    background:#e5e7eb;
-}
-    .submit {
+    .submit,
+    .exit {
         grid-column: 1 / -1;
     }
 
@@ -595,7 +611,22 @@ button:disabled {
                     Next →
                 </button>
 
-<button class="restart" onclick="restartTest()">Restart Test</button>
+
+                <button
+                    class="restart"
+                    onclick="restartTest()"
+                >
+                    Restart Test
+                </button>
+
+
+                <button
+                    class="exit"
+                    onclick="exitTest()"
+                >
+                    🚪 Exit & Save
+                </button>
+
 
                 <button
                     class="submit"
@@ -708,11 +739,17 @@ let attemptId = null;
 
 let serverStartedAt = null;
 
+let remainingSeconds = 0;
+
 let durationSeconds = 0;
 
 let timerInterval = null;
 
 let submitting = false;
+
+let paused = false;
+
+let pausing = false;
 
 
 /* =========================================================
@@ -922,16 +959,28 @@ async function loadTest() {
         attemptData.attempt_id;
 
 
-    serverStartedAt =
-        new Date(
-            attemptData.started_at
-        ).getTime();
-
-
     durationSeconds =
         Number(
             attemptData.duration_minutes
         ) * 60;
+
+
+    remainingSeconds =
+        Number(
+            attemptData.remaining_seconds
+        );
+
+
+    paused =
+        attemptData.is_paused === true;
+
+
+    serverStartedAt =
+        attemptData.started_at
+            ? new Date(
+                attemptData.started_at
+              ).getTime()
+            : Date.now();
 
 
     /* -----------------------------------------
@@ -939,13 +988,6 @@ async function loadTest() {
     ----------------------------------------- */
 
     await loadSavedAnswers();
-
-
-    /* -----------------------------------------
-       START TIMER
-    ----------------------------------------- */
-
-    startTimer();
 
 
     /* -----------------------------------------
@@ -965,6 +1007,23 @@ async function loadTest() {
 
 
     renderQuestion();
+
+
+    /* -----------------------------------------
+       TIMER
+    ----------------------------------------- */
+
+    if (paused) {
+
+        showPausedTimer();
+
+    }
+
+    else {
+
+        startTimer();
+
+    }
 
 }
 
@@ -1028,12 +1087,6 @@ async function loadSavedAnswers() {
         }
 
 
-        console.log(
-            "Restored answers:",
-            answers
-        );
-
-
         const savedCount =
             questions.filter(
                 q =>
@@ -1085,6 +1138,16 @@ async function saveAnswer(
     selectedAnswer
 ) {
 
+    if (
+        !attemptId ||
+        submitting
+    ) {
+
+        return false;
+
+    }
+
+
     setSaveStatus(
         "Saving..."
     );
@@ -1126,12 +1189,6 @@ async function saveAnswer(
             return false;
 
         }
-
-
-        console.log(
-            "Answer saved:",
-            data
-        );
 
 
         setSaveStatus(
@@ -1211,29 +1268,17 @@ function renderQuestion() {
     }
 
 
-    /* -----------------------------------------
-       QUESTION NUMBER
-    ----------------------------------------- */
-
     document.getElementById(
         "questionNumber"
     ).textContent =
         `Question ${currentQuestion + 1} of ${questions.length}`;
 
 
-    /* -----------------------------------------
-       QUESTION TEXT
-    ----------------------------------------- */
-
     document.getElementById(
         "questionText"
     ).textContent =
         q.question_text;
 
-
-    /* -----------------------------------------
-       OPTIONS
-    ----------------------------------------- */
 
     const optionsContainer =
         document.getElementById(
@@ -1260,7 +1305,6 @@ function renderQuestion() {
 
     options.forEach(
         ([letter, text]) => {
-
 
             const label =
                 document.createElement(
@@ -1311,14 +1355,9 @@ function renderQuestion() {
                     "change",
                     async function() {
 
-
                         const selected =
                             this.value;
 
-
-                        /* --------------------------------
-                           UPDATE LOCAL ANSWER
-                        -------------------------------- */
 
                         answers[q.id] =
                             selected;
@@ -1326,10 +1365,6 @@ function renderQuestion() {
 
                         renderQuestion();
 
-
-                        /* --------------------------------
-                           SAVE TO SUPABASE
-                        -------------------------------- */
 
                         await saveAnswer(
                             q.id,
@@ -1346,10 +1381,6 @@ function renderQuestion() {
         }
     );
 
-
-    /* -----------------------------------------
-       REVIEW BUTTON
-    ----------------------------------------- */
 
     const reviewButton =
         document.getElementById(
@@ -1382,10 +1413,6 @@ function renderQuestion() {
     }
 
 
-    /* -----------------------------------------
-       CLEAR ANSWER BUTTON
-    ----------------------------------------- */
-
     const unattemptButton =
         document.getElementById(
             "unattemptButton"
@@ -1396,16 +1423,7 @@ function renderQuestion() {
         !answers[q.id];
 
 
-    /* -----------------------------------------
-       UPDATE NAVIGATION
-    ----------------------------------------- */
-
     updateButtons();
-
-
-    /* -----------------------------------------
-       UPDATE PALETTE
-    ----------------------------------------- */
 
     renderPalette();
 
@@ -1459,7 +1477,7 @@ function escapeHtml(value) {
 
 
 /* =========================================================
-   UNATTEMPT / CLEAR ANSWER
+   CLEAR ANSWER
 ========================================================= */
 
 async function unattemptQuestion() {
@@ -1470,7 +1488,8 @@ async function unattemptQuestion() {
 
     if (
         !q ||
-        submitting
+        submitting ||
+        paused
     ) {
 
         return;
@@ -1487,23 +1506,11 @@ async function unattemptQuestion() {
     }
 
 
-    /* -----------------------------------------
-       REMOVE LOCAL ANSWER
-    ----------------------------------------- */
-
     delete answers[q.id];
 
 
-    /* -----------------------------------------
-       UPDATE UI
-    ----------------------------------------- */
-
     renderQuestion();
 
-
-    /* -----------------------------------------
-       SAVE EMPTY ANSWER
-    ----------------------------------------- */
 
     await saveAnswer(
         q.id,
@@ -1523,7 +1530,10 @@ function toggleReview() {
         questions[currentQuestion];
 
 
-    if (!q) {
+    if (
+        !q ||
+        paused
+    ) {
 
         return;
 
@@ -1587,21 +1597,9 @@ function updateButtons() {
     }
 
 
-    if (
-        currentQuestion === 0
-    ) {
-
-        prevButton.disabled =
-            true;
-
-    }
-
-    else {
-
-        prevButton.disabled =
-            false;
-
-    }
+    prevButton.disabled =
+        currentQuestion === 0 ||
+        paused;
 
 }
 
@@ -1611,6 +1609,15 @@ function updateButtons() {
 ========================================================= */
 
 function nextQuestion() {
+
+    if (
+        paused
+    ) {
+
+        return;
+
+    }
+
 
     if (
         currentQuestion <
@@ -1631,6 +1638,15 @@ function nextQuestion() {
 ========================================================= */
 
 function previousQuestion() {
+
+    if (
+        paused
+    ) {
+
+        return;
+
+    }
+
 
     if (
         currentQuestion > 0
@@ -1664,7 +1680,6 @@ function renderPalette() {
     questions.forEach(
         (q, index) => {
 
-
             const button =
                 document.createElement(
                     "button"
@@ -1674,10 +1689,6 @@ function renderPalette() {
             button.textContent =
                 index + 1;
 
-
-            /* -----------------------------------------
-               ANSWERED
-            ----------------------------------------- */
 
             if (
                 answers[q.id]
@@ -1690,10 +1701,6 @@ function renderPalette() {
             }
 
 
-            /* -----------------------------------------
-               REVIEW
-            ----------------------------------------- */
-
             if (
                 markedForReview[q.id]
             ) {
@@ -1704,10 +1711,6 @@ function renderPalette() {
 
             }
 
-
-            /* -----------------------------------------
-               CURRENT
-            ----------------------------------------- */
 
             if (
                 index === currentQuestion
@@ -1720,8 +1723,16 @@ function renderPalette() {
             }
 
 
+            button.disabled =
+                paused;
+
+
             button.onclick =
                 function() {
+
+                    if (paused) {
+                        return;
+                    }
 
                     currentQuestion =
                         index;
@@ -1747,6 +1758,20 @@ function renderPalette() {
 
 function startTimer() {
 
+    if (paused) {
+        return;
+    }
+
+
+    if (timerInterval) {
+
+        clearInterval(
+            timerInterval
+        );
+
+    }
+
+
     updateTimer();
 
 
@@ -1766,8 +1791,8 @@ function startTimer() {
 function updateTimer() {
 
     if (
-        !serverStartedAt ||
-        !durationSeconds
+        paused ||
+        !attemptId
     ) {
 
         return;
@@ -1791,7 +1816,7 @@ function updateTimer() {
     const remaining =
         Math.max(
             0,
-            durationSeconds -
+            remainingSeconds -
             elapsedSeconds
         );
 
@@ -1811,10 +1836,6 @@ function updateTimer() {
     ).textContent =
         `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
 
-
-    /* -----------------------------------------
-       TIME EXPIRED
-    ----------------------------------------- */
 
     if (
         remaining <= 0 &&
@@ -1839,6 +1860,600 @@ function updateTimer() {
 
 
 /* =========================================================
+   PAUSE TEST
+========================================================= */
+
+async function pauseTest(
+    silent = false
+) {
+
+    if (
+        !attemptId ||
+        submitting ||
+        paused ||
+        pausing
+    ) {
+
+        return false;
+
+    }
+
+
+    pausing = true;
+
+
+    try {
+
+        const {
+            data,
+            error
+        } =
+        await supabaseClient.rpc(
+            "pause_test_attempt",
+            {
+                p_attempt_id:
+                    Number(attemptId)
+            }
+        );
+
+
+        if (error) {
+
+            console.error(
+                "Pause error:",
+                error
+            );
+
+            pausing = false;
+
+            if (!silent) {
+
+                alert(
+                    "Could not pause the test.\n\n" +
+                    error.message
+                );
+
+            }
+
+            return false;
+
+        }
+
+
+        remainingSeconds =
+            Number(
+                data.remaining_seconds
+            );
+
+
+        paused = true;
+
+
+        if (timerInterval) {
+
+            clearInterval(
+                timerInterval
+            );
+
+            timerInterval = null;
+
+        }
+
+
+        showPausedTimer();
+
+
+        setSaveStatus(
+            "Test paused. Your answers are saved.",
+            "saved"
+        );
+
+
+        updateButtons();
+
+
+        pausing = false;
+
+
+        return true;
+
+    }
+
+    catch (error) {
+
+        console.error(
+            "Pause exception:",
+            error
+        );
+
+        pausing = false;
+
+        return false;
+
+    }
+
+}
+
+
+/* =========================================================
+   RESUME TEST
+========================================================= */
+
+async function resumeTest() {
+
+    if (
+        !attemptId ||
+        !paused
+    ) {
+
+        return;
+
+    }
+
+
+    try {
+
+        const {
+            data,
+            error
+        } =
+        await supabaseClient.rpc(
+            "resume_test_attempt",
+            {
+                p_attempt_id:
+                    Number(attemptId)
+            }
+        );
+
+
+        if (error) {
+
+            console.error(
+                "Resume error:",
+                error
+            );
+
+            alert(
+                "Could not resume the test.\n\n" +
+                error.message
+            );
+
+            return;
+
+        }
+
+
+        remainingSeconds =
+            Number(
+                data.remaining_seconds
+            );
+
+
+        serverStartedAt =
+            new Date(
+                data.started_at
+            ).getTime();
+
+
+        paused = false;
+
+
+        startTimer();
+
+
+        updateButtons();
+
+
+        setSaveStatus(
+            "Test resumed.",
+            "saved"
+        );
+
+
+        renderQuestion();
+
+    }
+
+    catch (error) {
+
+        console.error(error);
+
+        alert(
+            "Could not resume the test."
+        );
+
+    }
+
+}
+
+
+/* =========================================================
+   SHOW PAUSED TIMER
+========================================================= */
+
+function showPausedTimer() {
+
+    const timer =
+        document.getElementById(
+            "timer"
+        );
+
+
+    const minutes =
+        Math.floor(
+            remainingSeconds / 60
+        );
+
+
+    const seconds =
+        remainingSeconds % 60;
+
+
+    timer.textContent =
+        `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
+
+
+    timer.classList.add(
+        "paused"
+    );
+
+
+    const saveStatus =
+        document.getElementById(
+            "saveStatus"
+        );
+
+
+    saveStatus.innerHTML =
+        `
+        <strong>Test paused.</strong>
+        <br>
+        ${formatTime(remainingSeconds)}
+        remaining.
+        <br><br>
+        <button
+            type="button"
+            onclick="resumeTest()"
+            style="
+                background:#071a3d;
+                color:white;
+                padding:10px 16px;
+                border-radius:8px;
+                border:none;
+                cursor:pointer;
+                font-weight:bold;
+            "
+        >
+            ▶ Resume Test
+        </button>
+        `;
+
+}
+
+
+/* =========================================================
+   FORMAT TIME
+========================================================= */
+
+function formatTime(seconds) {
+
+    const minutes =
+        Math.floor(
+            seconds / 60
+        );
+
+
+    const secs =
+        seconds % 60;
+
+
+    return (
+        String(minutes).padStart(2, "0") +
+        ":" +
+        String(secs).padStart(2, "0")
+    );
+
+}
+
+
+/* =========================================================
+   EXIT & SAVE
+========================================================= */
+
+async function exitTest() {
+
+    if (
+        submitting
+    ) {
+
+        return;
+
+    }
+
+
+    const confirmed =
+        confirm(
+            "Exit this test?\n\n" +
+            "Your answers will be saved and the timer will pause. " +
+            "You can resume later from the same remaining time."
+        );
+
+
+    if (!confirmed) {
+
+        return;
+
+    }
+
+
+    const pausedSuccessfully =
+        await pauseTest(false);
+
+
+    if (!pausedSuccessfully) {
+
+        return;
+
+    }
+
+
+    window.location.href =
+        "tests.html";
+
+}
+
+
+/* =========================================================
+   RESTART TEST
+========================================================= */
+
+async function restartTest() {
+
+    if (
+        !attemptId ||
+        submitting
+    ) {
+
+        alert(
+            "No active test attempt found."
+        );
+
+        return;
+
+    }
+
+
+    const confirmed =
+        confirm(
+            "Restart this test?\n\n" +
+            "Your current attempt and saved answers " +
+            "will be deleted and a fresh attempt will start."
+        );
+
+
+    if (!confirmed) {
+
+        return;
+
+    }
+
+
+    try {
+
+        if (timerInterval) {
+
+            clearInterval(
+                timerInterval
+            );
+
+            timerInterval = null;
+
+        }
+
+
+        const {
+            data,
+            error
+        } =
+        await supabaseClient.rpc(
+            "restart_test_attempt",
+            {
+                p_attempt_id:
+                    Number(attemptId)
+            }
+        );
+
+
+        if (error) {
+
+            console.error(
+                "Restart error:",
+                error
+            );
+
+            alert(
+                "Restart failed.\n\n" +
+                error.message
+            );
+
+            return;
+
+        }
+
+
+        attemptId =
+            data.attempt_id;
+
+
+        serverStartedAt =
+            new Date(
+                data.started_at
+            ).getTime();
+
+
+        durationSeconds =
+            Number(
+                data.duration_minutes
+            ) * 60;
+
+
+        remainingSeconds =
+            Number(
+                data.remaining_seconds
+            );
+
+
+        answers = {};
+
+        markedForReview = {};
+
+        currentQuestion = 0;
+
+        submitting = false;
+
+        paused = false;
+
+        pausing = false;
+
+
+        const timer =
+            document.getElementById(
+                "timer"
+            );
+
+
+        timer.classList.remove(
+            "paused"
+        );
+
+
+        setSaveStatus(
+            "New attempt started.",
+            "saved"
+        );
+
+
+        renderQuestion();
+
+        startTimer();
+
+
+        alert(
+            "Test restarted successfully!"
+        );
+
+    }
+
+    catch (error) {
+
+        console.error(
+            "Restart exception:",
+            error
+        );
+
+        alert(
+            "Restart failed.\n\n" +
+            (error.message || error)
+        );
+
+    }
+
+}
+
+
+/* =========================================================
+   BEST-EFFORT AUTO PAUSE WHEN PAGE EXITS
+========================================================= */
+
+window.addEventListener(
+    "pagehide",
+    async function() {
+
+        if (
+            !attemptId ||
+            submitting ||
+            paused ||
+            pausing
+        ) {
+
+            return;
+
+        }
+
+
+        try {
+
+            const {
+                data: {
+                    session
+                }
+            } =
+            await supabaseClient.auth.getSession();
+
+
+            if (
+                !session ||
+                !session.access_token
+            ) {
+
+                return;
+
+            }
+
+
+            /*
+             * Use fetch(... keepalive) because normal async
+             * JavaScript may be terminated when the page closes.
+             */
+
+            fetch(
+                SUPABASE_URL +
+                "/rest/v1/rpc/pause_test_attempt",
+                {
+
+                    method: "POST",
+
+                    keepalive: true,
+
+                    headers: {
+
+                        "Content-Type":
+                            "application/json",
+
+                        "apikey":
+                            SUPABASE_KEY,
+
+                        "Authorization":
+                            "Bearer " +
+                            session.access_token
+
+                    },
+
+                    body:
+                        JSON.stringify({
+                            p_attempt_id:
+                                Number(attemptId)
+                        })
+
+                }
+            );
+
+        }
+
+        catch (error) {
+
+            console.warn(
+                "Automatic pause could not be sent:",
+                error
+            );
+
+        }
+
+    }
+);
+
+
+/* =========================================================
    SUBMIT TEST
 ========================================================= */
 
@@ -1846,18 +2461,18 @@ async function submitTest(
     autoSubmit = false
 ) {
 
-    if (submitting) {
+    if (
+        submitting
+    ) {
 
         return;
 
     }
 
 
-    /* -----------------------------------------
-       CONFIRMATION
-    ----------------------------------------- */
-
-    if (!autoSubmit) {
+    if (
+        !autoSubmit
+    ) {
 
         const answered =
             questions.filter(
@@ -1897,72 +2512,20 @@ async function submitTest(
         }
 
     }
-async function restartTest(){
 
-    if(!attemptId){
-        alert("No active attempt found.");
-        return;
-    }
-
-    const confirmed = confirm(
-        "Restart this test?\n\nYour current attempt and saved answers will be deleted and a fresh attempt will start."
-    );
-
-    if(!confirmed) return;
-
-    try{
-
-        const { data, error } = await supabase.rpc(
-            "restart_test_attempt",
-            {
-                p_attempt_id: attemptId
-            }
-        );
-
-        if(error){
-            console.error(error);
-            alert(error.message || "Could not restart the test.");
-            return;
-        }
-
-        attemptId = data.attempt_id;
-        serverStartedAt = data.started_at;
-        durationSeconds = data.duration_minutes * 60;
-
-        answers = {};
-        markedForReview = {};
-        currentQuestion = 0;
-
-        if(timerInterval){
-            clearInterval(timerInterval);
-            timerInterval = null;
-        }
-
-        startTimer();
-
-        renderQuestion();
-        renderPalette();
-
-        alert("Test restarted successfully!");
-
-    }catch(err){
-
-        console.error(err);
-        alert("Something went wrong while restarting the test.");
-
-    }
-}
-
-    /* -----------------------------------------
-       LOCK SUBMISSION
-    ----------------------------------------- */
 
     submitting = true;
 
 
-    clearInterval(
-        timerInterval
-    );
+    if (timerInterval) {
+
+        clearInterval(
+            timerInterval
+        );
+
+        timerInterval = null;
+
+    }
 
 
     const submitButton =
@@ -1976,7 +2539,6 @@ async function restartTest(){
         submitButton.disabled =
             true;
 
-
         submitButton.textContent =
             "Submitting...";
 
@@ -1984,13 +2546,6 @@ async function restartTest(){
 
 
     try {
-
-        /* -----------------------------------------
-           SERVER-SIDE GRADING
-
-           The server ignores p_answers and
-           grades from attempt_responses.
-        ----------------------------------------- */
 
         const {
             data,
@@ -2023,7 +2578,6 @@ async function restartTest(){
                 submitButton.disabled =
                     false;
 
-
                 submitButton.textContent =
                     "Submit Test";
 
@@ -2047,19 +2601,11 @@ async function restartTest(){
         );
 
 
-        /* -----------------------------------------
-           SAVE RESULT
-        ----------------------------------------- */
-
         sessionStorage.setItem(
             "latestTestResult",
             JSON.stringify(data)
         );
 
-
-        /* -----------------------------------------
-           GO TO RESULT
-        ----------------------------------------- */
 
         window.location.href =
             `result.html?attempt=${data.attempt_id}`;
@@ -2080,7 +2626,6 @@ async function restartTest(){
 
             submitButton.disabled =
                 false;
-
 
             submitButton.textContent =
                 "Submit Test";
@@ -2107,4 +2652,4 @@ startTest();
 
 </body>
 
-</html>
+    </html>
