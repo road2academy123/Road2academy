@@ -120,6 +120,53 @@ textarea{min-height:80px}
 <div id="testList">Loading tests...</div>
 </section>
 
+<!-- GLOBAL SUBSCRIPTION MANAGEMENT -->
+<section class="card" id="globalSubscriptionSection">
+    <h2>🌐 Global Subscriptions</h2>
+    <p>
+        Grant a student access to eligible paid NDA, CDS
+        and CAPF tests for 90 days.
+    </p>
+
+    <label for="subscriptionEmail">Student Gmail</label>
+    <input
+        type="email"
+        id="subscriptionEmail"
+        placeholder="student@gmail.com"
+        required
+    >
+
+    <button
+        type="button"
+        id="grantSubscriptionButton"
+        onclick="grantGlobalSubscription()"
+    >
+        Approve 90-Day Subscription
+    </button>
+
+    <p id="subscriptionMessage" role="status"></p>
+
+    <hr>
+
+    <h3>Revoke Subscription</h3>
+    <label for="subscriptionIdToRevoke">
+        Subscription ID
+    </label>
+    <input
+        type="number"
+        id="subscriptionIdToRevoke"
+        min="1"
+        placeholder="Enter subscription ID"
+    >
+
+    <button
+        type="button"
+        onclick="revokeGlobalSubscription()"
+    >
+        Revoke Subscription
+    </button>
+</section>
+
 <section class="card" id="payments">
 <h2>💳 Payment Requests</h2>
 <p class="muted">Verify the actual payment in your payment provider before approving. Approval creates a one-time access code.</p>
@@ -314,6 +361,97 @@ async function logout(){
  if(!await checkAdmin())return;
  await Promise.all([loadAdminDashboard(),loadTests(),loadPayments()]);
 })();
+  
+async function grantGlobalSubscription() {
+    const emailInput = document.getElementById(
+        "subscriptionEmail"
+    );
+
+    const message = document.getElementById(
+        "subscriptionMessage"
+    );
+
+    const button = document.getElementById(
+        "grantSubscriptionButton"
+    );
+
+    const email = emailInput.value.trim().toLowerCase();
+
+    if (!email) {
+        message.textContent = "Enter the student's email.";
+        return;
+    }
+
+    button.disabled = true;
+    message.textContent = "Approving subscription...";
+
+    try {
+        const { data, error } = await supabaseClient.rpc(
+            "admin_grant_global_subscription",
+            { p_email: email }
+        );
+
+        if (error) throw error;
+
+        const expiry = new Date(
+            data.expires_at
+        ).toLocaleString();
+
+        message.textContent =
+            `Subscription approved for ${data.email}. ` +
+            `Subscription ID: ${data.subscription_id}. ` +
+            `Expires: ${expiry}`;
+
+        emailInput.value = "";
+    } catch (error) {
+        console.error(error);
+
+        message.textContent =
+            "Approval failed: " + error.message;
+    } finally {
+        button.disabled = false;
+    }
+}
+
+async function revokeGlobalSubscription() {
+    const idInput = document.getElementById(
+        "subscriptionIdToRevoke"
+    );
+
+    const id = Number(idInput.value);
+
+    if (!Number.isSafeInteger(id) || id <= 0) {
+        alert("Enter a valid subscription ID.");
+        return;
+    }
+
+    if (!confirm(
+        "Revoke this global subscription? " +
+        "Existing individual test purchases will remain unchanged."
+    )) {
+        return;
+    }
+
+    try {
+        const { data, error } = await supabaseClient.rpc(
+            "admin_revoke_global_subscription",
+            { p_subscription_id: id }
+        );
+
+        if (error) throw error;
+
+        alert(
+            "Subscription revoked successfully. ID: " +
+            data.subscription_id
+        );
+
+        idInput.value = "";
+    } catch (error) {
+        console.error(error);
+        alert("Revocation failed: " + error.message);
+    }
+}
+
 </script>
 </body>
 </html>
