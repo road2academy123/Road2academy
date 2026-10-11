@@ -1,0 +1,200 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Test Series | Road to Academy</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#f3f6fb;color:#182338;font-family:Arial,sans-serif}
+header{background:#13233f;color:white;padding:20px}
+main{max-width:900px;margin:22px auto;padding:0 14px}
+.card{background:white;border:1px solid #e0e6ef;border-radius:14px;padding:18px;margin-bottom:16px}
+input,button{width:100%;padding:13px;border-radius:8px;border:1px solid #cbd5e1;font:inherit;margin:5px 0}
+button{background:#245bd5;color:white;border:0;font-weight:bold;cursor:pointer}
+button:disabled{opacity:.5;cursor:not-allowed}
+.test{padding:12px 0;border-top:1px solid #e3e8ef}
+.test a{color:#245bd5;font-weight:bold;text-decoration:none}
+.small{font-size:13px;color:#65738a}
+.status{white-space:pre-wrap;color:#9a2525}
+.pill{display:inline-block;padding:5px 9px;border-radius:20px;background:#e8eefb;font-size:12px}
+</style>
+</head>
+<body>
+<header>
+  <h1>ROAD TO ACADEMY</h1>
+  <p>Test Series — NDA / CDS / CAPF</p>
+</header>
+<main>
+  <section class="card">
+    <h2>Redeem your series code</h2>
+    <p class="small">Sign in first. Enter the access code provided by the Road to Academy admin.</p>
+    <input id="code" placeholder="Example: RA-SER-XXXXXXXXXXXX" autocomplete="off">
+    <button id="redeemBtn">Redeem code</button>
+    <div id="status" class="status"></div>
+  </section>
+
+  <section class="card">
+    <h2>Available test series</h2>
+    <div id="seriesList">Loading series...</div>
+  </section>
+</main>
+
+<script>
+const SUPABASE_URL = "https://egjrkxdyehwbzgoppiqk.supabase.co";
+const SUPABASE_KEY = "sb_publishable_nc_Xv85AMQrmgIlDEWD8CA_aSeMk-yv";
+const db = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+const $ = id => document.getElementById(id);
+const say = msg => $("status").textContent = msg;
+
+let user = null;
+
+function safe(text) {
+  return String(text ?? "").replace(/[&<>"']/g, c => ({
+    "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+  }[c]));
+}
+
+async function init() {
+  const {data:{session}, error} = await db.auth.getSession();
+  if(error || !session) {
+    $("seriesList").textContent = "Please sign in to view your series.";
+    say("You need to sign in before redeeming a code.");
+    return;
+  }
+  user = session.user;
+  await loadSeries();
+}
+
+async function loadSeries() {
+  $("seriesList").textContent = "Loading...";
+  const [seriesResult, entitlementResult] = await Promise.all([
+    db.from("test_series")
+      .select("id,title,description,price_inr")
+      .eq("is_published", true)
+      .order("id", {ascending:false}),
+    db.from("series_entitlements")
+      .select("series_id,revoked_at")
+      .eq("user_id", user.id)
+  ]);
+
+  if(seriesResult.error) {
+    $("seriesList").textContent = "Could not load series: " + seriesResult.error.message;
+    return;
+  }
+  if(entitlementResult.error) {
+    $("seriesList").textContent = "Could not check access: " + entitlementResult.error.message;
+    return;
+  }
+
+  const owned = new Set((entitlementResult.data || [])
+    .filter(e => !e.revoked_at)
+    .map(e => String(e.series_id)));
+  const series = seriesResult.data || [];
+
+  if(!series.length) {
+    $("seriesList").textContent = "No published series are available yet.";
+    return;
+  }
+
+  $("seriesList").innerHTML = series.map(s => `
+    <article class="card">
+      <span class="pill">${owned.has(String(s.id)) ? "UNLOCKED" : "LOCKED"}</span>
+      <h3>${safe(s.title)}</h3>
+      <p>${safe(s.description || "")}</p>
+      <p><strong>Series price: ₹${Number(s.price_inr || 0)}</strong></p>
+      <div id="tests-${s.id}" class="small">Loading included tests...</div>
+    </article>
+  `).join("");
+
+  await Promise.all(series.map(s => loadSeriesTests(s, owned.has(String(s.id)))));
+}
+
+async function loadSeriesTests(series, unlocked) {
+  const target = $(`tests-${series.id}`);
+  const {data:mappings, error} = await db
+    .from("series_tests")
+    .select("test_id")
+    .eq("series_id", series.id);
+
+  if(error) {
+    target.textContent = "Could not load included tests.";
+    return;
+  }
+
+  const ids = (mappings || []).map(m => m.test_id);
+  if(!ids.length) {
+    target.textContent = "No tests have been added to this series yet.";
+    return;
+  }
+
+  const {data:tests, error:testError} = await db
+    .from("tests")
+    .select("id,title,exam,is_published")
+    .in("id", ids)
+    .eq("is_published", true);
+
+  if(testError) {
+    target.textContent = "Could not load test details.";
+    return;
+  }
+
+  const available = tests || [];
+  if(!available.length) {
+    target.textContent = "No published tests are currently available in this series.";
+    return;
+  }
+
+  target.innerHTML = available.map(t => `
+    <div class="test">
+      <strong>${safe(t.title || "Test #" + t.id)}</strong>
+      <div class="small">${safe(t.exam || "")} · Test ID ${t.id}</div>
+      ${unlocked
+        ? `<a href="test.html?test=${encodeURIComponent(t.id)}">Open test →</a>`
+        : `<span class="small">Redeem a series code to unlock this test.</span>`}
+    </div>
+  `).join("");
+}
+
+$("redeemBtn").onclick = async () => {
+  if(!user) {
+    say("Please sign in first.");
+    return;
+  }
+
+  const code = $("code").value.trim();
+  if(!code) {
+    say("Enter your access code.");
+    return;
+  }
+
+  $("redeemBtn").disabled = true;
+  say("Checking code...");
+
+  const {data, error} = await db.rpc("redeem_series_access_code", {
+    p_code: code
+  });
+
+  $("redeemBtn").disabled = false;
+
+  if(error) {
+    say("Redemption failed: " + error.message);
+    return;
+  }
+  if(data !== true) {
+    say("Invalid, expired, revoked, or fully used code.");
+    return;
+  }
+
+  $("code").value = "";
+  say("Series unlocked successfully!");
+  await loadSeries();
+};
+
+init();
+</script>
+</body>
+</html>
