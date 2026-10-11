@@ -1,1910 +1,319 @@
+
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
+<meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Admin Dashboard | Road to Academy</title>
-
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
 <style>
-
-*{
-    box-sizing:border-box;
-    margin:0;
-    padding:0;
-}
-
-body{
-    font-family:Arial,sans-serif;
-    background:#f4f6fa;
-    color:#111827;
-}
-
-/* HEADER */
-
-header{
-    background:#071a3d;
-    color:white;
-    padding:16px 25px;
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    gap:15px;
-}
-
-.logo{
-    display:flex;
-    align-items:center;
-    gap:10px;
-    color:#f5c542;
-    font-size:21px;
-    font-weight:bold;
-}
-
-.header-actions{
-    display:flex;
-    align-items:center;
-    gap:9px;
-    flex-wrap:wrap;
-}
-
-.header-btn{
-    border:none;
-    padding:9px 13px;
-    border-radius:7px;
-    cursor:pointer;
-    font-weight:bold;
-    text-decoration:none;
-}
-
-.analytics-btn{
-    background:#d4af37;
-    color:#071a3d;
-}
-
-.students-btn{
-    background:#e8eefc;
-    color:#071a3d;
-}
-
-.logout{
-    background:#d62828;
-    color:white;
-}
-
-/* CONTAINER */
-
-.container{
-    max-width:1150px;
-    margin:30px auto;
-    padding:0 20px;
-}
-
-h1{
-    color:#071a3d;
-    margin-bottom:8px;
-}
-
-.subtitle{
-    color:#667085;
-    margin-bottom:25px;
-}
-
-/* STATS */
-
-.stats{
-    display:grid;
-    grid-template-columns:repeat(4,1fr);
-    gap:15px;
-    margin-bottom:25px;
-}
-
-.stat{
-    background:white;
-    padding:20px;
-    border-radius:13px;
-    box-shadow:0 4px 15px rgba(0,0,0,.06);
-}
-
-.stat-icon{
-    font-size:24px;
-    margin-bottom:10px;
-}
-
-.stat h2{
-    color:#071a3d;
-    font-size:28px;
-    margin-bottom:5px;
-}
-
-.stat p{
-    color:#667085;
-    font-size:14px;
-}
-
-/* QUICK ACTIONS */
-
-.card{
-    background:white;
-    padding:25px;
-    border-radius:14px;
-    margin-bottom:25px;
-    box-shadow:0 4px 15px rgba(0,0,0,.07);
-}
-
-.card h2{
-    color:#071a3d;
-    margin-bottom:20px;
-}
-
-.quick-grid{
-    display:grid;
-    grid-template-columns:repeat(4,1fr);
-    gap:12px;
-}
-
-.quick-btn{
-    display:block;
-    text-align:center;
-    padding:14px 10px;
-    border-radius:9px;
-    text-decoration:none;
-    font-weight:bold;
-    background:#e8eefc;
-    color:#071a3d;
-}
-
-.quick-btn:hover{
-    background:#dce5fa;
-}
-
-/* CREATE TEST */
-
-.form-grid{
-    display:grid;
-    grid-template-columns:1fr 1fr;
-    gap:15px;
-}
-
-.field{
-    display:flex;
-    flex-direction:column;
-}
-
-.field.full{
-    grid-column:1 / -1;
-}
-
-label{
-    font-weight:bold;
-    margin-bottom:7px;
-    color:#374151;
-}
-
-input,
-select,
-textarea{
-    width:100%;
-    padding:12px;
-    border:1px solid #d1d5db;
-    border-radius:8px;
-    font-size:15px;
-}
-
-textarea{
-    min-height:90px;
-    resize:vertical;
-}
-
-.create-btn{
-    margin-top:20px;
-    background:#071a3d;
-    color:white;
-    border:none;
-    padding:13px 22px;
-    border-radius:8px;
-    cursor:pointer;
-    font-weight:bold;
-}
-
-.create-btn:hover{
-    background:#102c61;
-}
-
-/* MESSAGE */
-
-.message{
-    margin-top:15px;
-    padding:12px;
-    border-radius:8px;
-    display:none;
-}
-
-.success{
-    display:block;
-    background:#e9f8ef;
-    color:#176b36;
-}
-
-.error{
-    display:block;
-    background:#fff0f0;
-    color:#b00020;
-}
-
-/* TEST */
-
-.test{
-    border:1px solid #e1e5eb;
-    border-radius:10px;
-    padding:18px;
-    margin-bottom:12px;
-}
-
-.test h3{
-    color:#071a3d;
-    margin-bottom:8px;
-}
-
-.test-details{
-    color:#666;
-    font-size:14px;
-    margin-bottom:12px;
-    line-height:1.5;
-}
-
-.status{
-    display:inline-block;
-    padding:4px 8px;
-    border-radius:6px;
-    font-size:12px;
-    font-weight:bold;
-}
-
-.status-published{
-    background:#e9f8ef;
-    color:#176b36;
-}
-
-.status-draft{
-    background:#fff4d6;
-    color:#8a6500;
-}
-
-.actions{
-    display:flex;
-    gap:8px;
-    flex-wrap:wrap;
-}
-
-.actions button{
-    border:none;
-    padding:9px 13px;
-    border-radius:7px;
-    cursor:pointer;
-    font-weight:bold;
-}
-
-.questions-btn{
-    background:#071a3d;
-    color:white;
-}
-
-.publish-btn{
-    background:#f5c542;
-    color:#071a3d;
-}
-
-.unpublish-btn{
-    background:#ddd;
-    color:#333;
-}
-
-.delete-btn{
-    background:#d62828;
-    color:white;
-}
-
-.edit-btn{
-    background:#e8eefc;
-    color:#071a3d;
-}
-
-/* RECENT ATTEMPTS */
-
-.attempt{
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    gap:15px;
-    padding:14px 0;
-    border-bottom:1px solid #e8ebef;
-}
-
-.attempt:last-child{
-    border-bottom:0;
-}
-
-.attempt-title{
-    font-weight:bold;
-    margin-bottom:5px;
-}
-
-.attempt-info{
-    color:#667085;
-    font-size:13px;
-}
-
-.attempt-score{
-    font-size:18px;
-    font-weight:bold;
-    color:#071a3d;
-}
-
-/* EMPTY */
-
-.empty{
-    color:#667085;
-    text-align:center;
-    padding:25px;
-}
-
-.loading{
-    color:#667085;
-}
-
-/* MOBILE */
-
-@media(max-width:850px){
-
-    .stats{
-        grid-template-columns:1fr 1fr;
-    }
-
-    .quick-grid{
-        grid-template-columns:1fr 1fr;
-    }
-
-}
-
-@media(max-width:700px){
-
-    header{
-        align-items:flex-start;
-        flex-direction:column;
-    }
-
-    .form-grid{
-        grid-template-columns:1fr;
-    }
-
-    .field.full{
-        grid-column:auto;
-    }
-
-    .attempt{
-        align-items:flex-start;
-        flex-direction:column;
-    }
-
-}
-
-@media(max-width:450px){
-
-    .stats{
-        grid-template-columns:1fr;
-    }
-
-    .quick-grid{
-        grid-template-columns:1fr;
-    }
-
-}
-
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Arial,sans-serif;background:#f4f6fa;color:#111827}
+header{background:#071a3d;color:white;padding:16px 22px;display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+.logo{color:#f5c542;font-weight:bold;font-size:20px}
+.header-actions,.actions{display:flex;gap:8px;flex-wrap:wrap}
+button,a{cursor:pointer}
+.header-btn,.actions button,.create-btn{border:0;border-radius:7px;padding:10px 13px;font-weight:bold;text-decoration:none}
+.analytics-btn{background:#d4af37;color:#071a3d}
+.students-btn,.edit-btn{background:#e8eefc;color:#071a3d}
+.logout,.delete-btn,.reject-btn{background:#d62828;color:white}
+.container{max-width:1150px;margin:28px auto;padding:0 16px}
+h1{color:#071a3d;margin-bottom:8px}
+.subtitle{color:#667085;margin-bottom:22px}
+.card,.stat{background:white;padding:21px;border-radius:13px;margin-bottom:22px;box-shadow:0 4px 15px #0000000c}
+.card h2{color:#071a3d;margin-bottom:17px}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:13px;margin-bottom:22px}
+.stat h2{color:#071a3d;font-size:26px;margin:8px 0}
+.stat p,.muted{color:#667085;font-size:13px}
+.quick-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.quick-btn{background:#e8eefc;color:#071a3d;padding:13px;text-align:center;text-decoration:none;border-radius:8px;font-weight:bold}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.field{display:flex;flex-direction:column;gap:7px}
+.full{grid-column:1/-1}
+label{font-weight:bold;color:#374151;font-size:14px}
+input,select,textarea{width:100%;padding:12px;border:1px solid #d1d5db;border-radius:8px;font-size:15px;background:white}
+textarea{min-height:80px}
+.create-btn{margin-top:16px;background:#071a3d;color:white}
+.message{margin-top:12px;padding:12px;border-radius:8px;overflow-wrap:anywhere}
+.success{background:#e9f8ef;color:#176b36}
+.error{background:#fff0f0;color:#b00020}
+.test,.payment{border:1px solid #e1e5eb;border-radius:10px;padding:16px;margin:12px 0;overflow-wrap:anywhere}
+.test h3,.payment h3{color:#071a3d;margin-bottom:9px}
+.details{font-size:14px;color:#667085;line-height:1.7;margin-bottom:12px}
+.actions button{font-size:13px}
+.questions-btn{background:#071a3d;color:white}
+.publish-btn{background:#f5c542;color:#071a3d}
+.unpublish-btn{background:#ddd;color:#333}
+.duplicate-btn{background:#e8eefc;color:#071a3d}
+.approve-btn{background:#168044;color:white}
+.badge{display:inline-block;padding:5px 8px;border-radius:6px;font-size:12px;font-weight:bold}
+.pending{background:#fff4d6;color:#8a6500}
+.approved{background:#e9f8ef;color:#176b36}
+.rejected{background:#fff0f0;color:#b00020}
+.empty{text-align:center;color:#667085;padding:22px}
+.attempt{padding:13px 0;border-bottom:1px solid #eee;display:flex;justify-content:space-between;gap:12px}
+.attempt:last-child{border:0}
+@media(max-width:800px){.stats{grid-template-columns:1fr 1fr}.quick-grid{grid-template-columns:1fr 1fr}}
+@media(max-width:550px){.stats,.quick-grid,.form-grid{grid-template-columns:1fr}.full{grid-column:auto}.attempt{flex-direction:column}header{align-items:flex-start}}
 </style>
-
 </head>
-
 <body>
-
-
-<!-- HEADER -->
-
 <header>
-
-    <div class="logo">
-        🛡️ ROAD TO ACADEMY — ADMIN
-    </div>
-
-    <div class="header-actions">
-
-        <a
-            href="admin-analytics.html"
-            class="header-btn analytics-btn"
-        >
-            📊 Analytics
-        </a>
-
-        <a
-            href="admin-students.html"
-            class="header-btn students-btn"
-        >
-            👥 Students
-        </a>
-
-        <button
-            class="header-btn logout"
-            onclick="logout()"
-        >
-            Logout
-        </button>
-
-    </div>
-
+  <div class="logo">🛡️ ROAD TO ACADEMY — ADMIN</div>
+  <div class="header-actions">
+    <a href="admin-analytics.html" class="header-btn analytics-btn">📊 Analytics</a>
+    <a href="admin-students.html" class="header-btn students-btn">👥 Students</a>
+    <button class="header-btn logout" onclick="logout()">Logout</button>
+  </div>
 </header>
 
-
-
-<div class="container">
-
-
-    <h1>
-        Admin Dashboard
-    </h1>
-
-    <p class="subtitle">
-        Manage tests, students and platform performance.
-    </p>
-
-
-
-    <!-- ================================
-         STATISTICS
-    ================================= -->
-
-    <div class="stats">
-
-
-        <div class="stat">
-
-            <div class="stat-icon">
-                👥
-            </div>
-
-            <h2 id="totalStudents">
-                —
-            </h2>
-
-            <p>
-                Total Students
-            </p>
-
-        </div>
-
-
-
-        <div class="stat">
-
-            <div class="stat-icon">
-                📝
-            </div>
-
-            <h2 id="totalTests">
-                —
-            </h2>
-
-            <p>
-                Total Tests
-            </p>
-
-        </div>
-
-
-
-        <div class="stat">
-
-            <div class="stat-icon">
-                🌐
-            </div>
-
-            <h2 id="publishedTests">
-                —
-            </h2>
-
-            <p>
-                Published Tests
-            </p>
-
-        </div>
-
-
-
-        <div class="stat">
-
-            <div class="stat-icon">
-                ❓
-            </div>
-
-            <h2 id="totalQuestions">
-                —
-            </h2>
-
-            <p>
-                Total Questions
-            </p>
-
-        </div>
-
-
-
-        <div class="stat">
-
-            <div class="stat-icon">
-                🎯
-            </div>
-
-            <h2 id="totalAttempts">
-                —
-            </h2>
-
-            <p>
-                Total Attempts
-            </p>
-
-        </div>
-
-
-
-        <div class="stat">
-
-            <div class="stat-icon">
-                📈
-            </div>
-
-            <h2 id="averageScore">
-                —
-            </h2>
-
-            <p>
-                Average Score
-            </p>
-
-        </div>
-
-
-
-        <div class="stat">
-
-            <div class="stat-icon">
-                🎯
-            </div>
-
-            <h2 id="averageAccuracy">
-                —
-            </h2>
-
-            <p>
-                Average Accuracy
-            </p>
-
-        </div>
-
-
-
-        <div class="stat">
-
-            <div class="stat-icon">
-                🚀
-            </div>
-
-            <h2 id="platformStatus">
-                LIVE
-            </h2>
-
-            <p>
-                Platform Status
-            </p>
-
-        </div>
-
-
-    </div>
-
-
-
-    <!-- ================================
-         QUICK ACTIONS
-    ================================= -->
-
-    <div class="card">
-
-        <h2>
-            ⚡ Quick Actions
-        </h2>
-
-
-        <div class="quick-grid">
-
-
-            <a
-                href="#createTest"
-                class="quick-btn"
-            >
-                ➕ Create Test
-            </a>
-
-
-            <a
-                href="admin-analytics.html"
-                class="quick-btn"
-            >
-                📊 Analytics
-            </a>
-
-
-            <a
-                href="admin-students.html"
-                class="quick-btn"
-            >
-                👥 Students
-            </a>
-
-
-            <a
-                href="leaderboard.html"
-                class="quick-btn"
-            >
-                🏆 Leaderboard
-            </a>
-
-
-        </div>
-
-    </div>
-
-
-
-    <!-- ================================
-         RECENT ATTEMPTS
-    ================================= -->
-
-    <div class="card">
-
-        <h2>
-            🆕 Recent Student Attempts
-        </h2>
-
-
-        <div id="recentAttempts">
-
-            <div class="loading">
-                Loading recent attempts...
-            </div>
-
-        </div>
-
-    </div>
-
-
-
-    <!-- ================================
-         CREATE TEST
-    ================================= -->
-
-    <div
-        class="card"
-        id="createTest"
-    >
-
-        <h2>
-            ➕ Create New Test
-        </h2>
-
-
-        <form id="testForm">
-
-
-            <div class="form-grid">
-
-
-                <div class="field">
-
-                    <label>
-                        Test Title
-                    </label>
-
-                    <input
-                        id="title"
-                        type="text"
-                        placeholder="NDA Mathematics Test 03"
-                        required
-                    >
-
-                </div>
-
-
-
-                <div class="field">
-
-                    <label>
-                        Exam
-                    </label>
-
-                    <select
-                        id="exam"
-                        required
-                    >
-
-                        <option value="NDA">
-                            NDA
-                        </option>
-
-                        <option value="CDS">
-                            CDS
-                        </option>
-
-                    </select>
-
-                </div>
-
-
-
-                <div class="field">
-
-                    <label>
-                        Subject
-                    </label>
-
-                    <input
-                        id="subject"
-                        type="text"
-                        placeholder="Mathematics"
-                    >
-
-                </div>
-
-
-
-                <div class="field">
-
-                    <label>
-                        Duration (minutes)
-                    </label>
-
-                    <input
-                        id="duration"
-                        type="number"
-                        min="1"
-                        value="30"
-                        required
-                    >
-
-                </div>
-
-
-
-                <div class="field">
-
-                    <label>
-                        Total Marks
-                    </label>
-
-                    <input
-                        id="marks"
-                        type="number"
-                        min="1"
-                        value="100"
-                        required
-                    >
-
-                </div>
-
-
-
-                <div class="field">
-
-                    <label>
-                        Negative Marks
-                    </label>
-
-                    <input
-                        id="negative"
-                        type="number"
-                        min="0"
-                        step="0.01"
-                        value="0.25"
-                        required
-                    >
-
-                </div>
-
-
-
-                <div class="field full">
-
-                    <label>
-                        Description
-                    </label>
-
-                    <textarea
-                        id="description"
-                        placeholder="Enter test description..."
-                    ></textarea>
-
-                </div>
-
-
-            </div>
-
-
-            <button
-                type="submit"
-                class="create-btn"
-            >
-                + Create Test
-            </button>
-
-
-            <div
-                id="message"
-                class="message"
-            ></div>
-
-
-        </form>
-
-    </div>
-
-
-
-    <!-- ================================
-         TEST LIST
-    ================================= -->
-
-    <div class="card">
-
-        <h2>
-            📝 Manage Tests
-        </h2>
-
-
-        <div id="testList">
-
-            <div class="empty">
-                Loading tests...
-            </div>
-
-        </div>
-
-    </div>
-
-
+<main class="container">
+<h1>Admin Dashboard</h1>
+<p class="subtitle">Manage tests, payments, students and platform performance.</p>
+
+<div class="stats">
+  <div class="stat"><span>👥</span><h2 id="totalStudents">—</h2><p>Total Students</p></div>
+  <div class="stat"><span>📝</span><h2 id="totalTests">—</h2><p>Total Tests</p></div>
+  <div class="stat"><span>🌐</span><h2 id="publishedTests">—</h2><p>Published Tests</p></div>
+  <div class="stat"><span>❓</span><h2 id="totalQuestions">—</h2><p>Total Questions</p></div>
+  <div class="stat"><span>🎯</span><h2 id="totalAttempts">—</h2><p>Total Attempts</p></div>
+  <div class="stat"><span>📈</span><h2 id="averageScore">—</h2><p>Average Score</p></div>
+  <div class="stat"><span>🎯</span><h2 id="averageAccuracy">—</h2><p>Average Accuracy</p></div>
+  <div class="stat"><span>🚀</span><h2>LIVE</h2><p>Platform Status</p></div>
 </div>
 
+<section class="card">
+<h2>⚡ Quick Actions</h2>
+<div class="quick-grid">
+<a class="quick-btn" href="#createTest">➕ Create Test</a>
+<a class="quick-btn" href="#payments">💳 Payments</a>
+<a class="quick-btn" href="admin-analytics.html">📊 Analytics</a>
+<a class="quick-btn" href="leaderboard.html">🏆 Leaderboard</a>
+</div>
+</section>
 
+<section class="card">
+<h2>🆕 Recent Student Attempts</h2>
+<div id="recentAttempts" class="muted">Loading...</div>
+</section>
+
+<section class="card" id="createTest">
+<h2>➕ Create New Test</h2>
+<form id="testForm">
+<div class="form-grid">
+  <div class="field"><label for="title">Test Title</label><input id="title" required placeholder="NDA Mathematics Test 03"></div>
+  <div class="field"><label for="exam">Exam</label><select id="exam"><option>NDA</option><option>CDS</option></select></div>
+  <div class="field"><label for="subject">Subject</label><input id="subject" placeholder="Mathematics"></div>
+  <div class="field"><label for="duration">Duration (minutes)</label><input id="duration" type="number" min="1" value="30" required></div>
+  <div class="field"><label for="marks">Total Marks</label><input id="marks" type="number" min="1" value="100" required></div>
+  <div class="field"><label for="negative">Negative Marks</label><input id="negative" type="number" min="0" step="0.01" value="0.25" required></div>
+  <div class="field"><label for="price">Test Price (INR)</label><input id="price" type="number" min="0" step="0.01" value="0" required><small class="muted">₹0 = free test; greater than ₹0 = paid test.</small></div>
+  <div class="field full"><label for="description">Description</label><textarea id="description" placeholder="Enter test description"></textarea></div>
+</div>
+<button class="create-btn" type="submit">Create Test</button>
+<div id="message" hidden></div>
+</form>
+</section>
+
+<section class="card">
+<h2>📝 Manage Tests</h2>
+<div id="testList">Loading tests...</div>
+</section>
+
+<section class="card" id="payments">
+<h2>💳 Payment Requests</h2>
+<p class="muted">Verify the actual payment in your payment provider before approving. Approval creates a one-time access code.</p>
+<div class="actions" style="margin:14px 0">
+<button class="create-btn" onclick="loadPayments()">↻ Refresh Requests</button>
+<select id="paymentFilter" onchange="renderPayments()" style="width:auto">
+<option value="all">All requests</option>
+<option value="pending">Pending</option>
+<option value="approved">Approved</option>
+<option value="rejected">Rejected</option>
+</select>
+</div>
+<div id="paymentList">Loading payment requests...</div>
+</section>
+</main>
 
 <script>
+const SUPABASE_URL="https://egjrkxdyehwbzgoppiqk.supabase.co";
+const SUPABASE_KEY="sb_publishable_nc_Xv85AMQrmgIlDEWD8CA_aSeMk-yv";
+const db=supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
+let paymentRequests=[];
 
-
-/* ======================================
-   SUPABASE
-====================================== */
-
-const SUPABASE_URL =
-    "https://egjrkxdyehwbzgoppiqk.supabase.co";
-
-const SUPABASE_KEY =
-    "sb_publishable_nc_Xv85AMQrmgIlDEWD8CA_aSeMk-yv";
-
-
-const supabaseClient =
-    supabase.createClient(
-        SUPABASE_URL,
-        SUPABASE_KEY
-    );
-
-
-
-/* ======================================
-   ADMIN CHECK
-====================================== */
-
+function esc(v){
+ return String(v??"").replaceAll("&","&amp;").replaceAll("<","&lt;")
+ .replaceAll(">","&gt;").replaceAll('"',"&quot;").replaceAll("'","&#039;");
+}
+function money(v){return "₹"+Number(v||0).toFixed(2)}
+function showMessage(text,type){
+ const el=document.getElementById("message");
+ el.hidden=false;el.className="message "+type;el.textContent=text;
+}
 async function checkAdmin(){
-
-    const {
-        data:{session},
-        error
-    } =
-    await supabaseClient.auth.getSession();
-
-
-    if(error){
-
-        console.error(error);
-
-        alert(
-            "Session error: " +
-            error.message
-        );
-
-        return false;
-    }
-
-
-    if(!session){
-
-        window.location.href =
-            "login.html";
-
-        return false;
-    }
-
-
-    const user =
-        session.user;
-
-
-    const {
-        data:roleData,
-        error:roleError
-    } =
-    await supabaseClient
-
-        .from("user_roles")
-
-        .select("role")
-
-        .eq(
-            "user_id",
-            user.id
-        )
-
-        .maybeSingle();
-
-
-    if(roleError){
-
-        console.error(
-            "ROLE ERROR:",
-            roleError
-        );
-
-        document.getElementById(
-            "testList"
-        ).innerHTML =
-
-            `<p style="color:red;">
-                Admin check failed:
-                ${escapeHTML(roleError.message)}
-            </p>`;
-
-        return false;
-    }
-
-
-    if(
-        !roleData ||
-        roleData.role !== "admin"
-    ){
-
-        alert(
-            "You are not an admin."
-        );
-
-        window.location.href =
-            "dashboard.html";
-
-        return false;
-    }
-
-
-    console.log(
-        "ADMIN VERIFIED:",
-        user.id
-    );
-
-
-    return true;
-
+ const {data:{session},error}=await db.auth.getSession();
+ if(error){alert("Session error: "+error.message);return false}
+ if(!session){location.href="login.html";return false}
+ const {data:role,error:re}=await db.from("user_roles").select("role")
+ .eq("user_id",session.user.id).maybeSingle();
+ if(re){alert("Admin check failed: "+re.message);return false}
+ if(!role||role.role!=="admin"){alert("Admin access required.");location.href="dashboard.html";return false}
+ return true;
 }
-
-
-
-/* ======================================
-   LOAD ADMIN DASHBOARD
-====================================== */
-
 async function loadAdminDashboard(){
-
-    const {
-        data,
-        error
-    } =
-    await supabaseClient.rpc(
-        "get_admin_analytics",
-        {
-            p_request:"dashboard"
-        }
-    );
-
-
-    if(error){
-
-        console.error(
-            "ADMIN ANALYTICS ERROR:",
-            error
-        );
-
-        return;
-    }
-
-
-    console.log(
-        "ADMIN ANALYTICS:",
-        data
-    );
-
-
-    /*
-       Your existing RPC returns the
-       dashboard statistics.
-    */
-
-    if(!data){
-        return;
-    }
-
-
-    document.getElementById(
-        "totalStudents"
-    ).textContent =
-        data.students ?? 0;
-
-
-    document.getElementById(
-        "totalTests"
-    ).textContent =
-        data.tests ?? 0;
-
-
-    document.getElementById(
-        "publishedTests"
-    ).textContent =
-        data.published_tests ?? 0;
-
-
-    document.getElementById(
-        "totalQuestions"
-    ).textContent =
-        data.questions ?? 0;
-
-
-    document.getElementById(
-        "totalAttempts"
-    ).textContent =
-        data.attempts ?? 0;
-
-
-    document.getElementById(
-        "averageScore"
-    ).textContent =
-        Number(
-            data.average_score ?? 0
-        ).toFixed(2);
-
-
-    document.getElementById(
-        "averageAccuracy"
-    ).textContent =
-        Number(
-            data.average_accuracy ?? 0
-        ).toFixed(1)
-        + "%";
-
-
-    renderRecentAttempts(
-        data.recent_attempts || []
-    );
-
+ const {data,error}=await db.rpc("get_admin_analytics",{p_request:"dashboard"});
+ if(error){console.error(error);return}
+ if(!data)return;
+ document.getElementById("totalStudents").textContent=data.students??0;
+ document.getElementById("totalTests").textContent=data.tests??0;
+ document.getElementById("publishedTests").textContent=data.published_tests??0;
+ document.getElementById("totalQuestions").textContent=data.questions??0;
+ document.getElementById("totalAttempts").textContent=data.attempts??0;
+ document.getElementById("averageScore").textContent=Number(data.average_score??0).toFixed(2);
+ document.getElementById("averageAccuracy").textContent=Number(data.average_accuracy??0).toFixed(1)+"%";
+ renderRecentAttempts(data.recent_attempts||[]);
+}
+function renderRecentAttempts(items){
+ const el=document.getElementById("recentAttempts");
+ if(!items.length){el.innerHTML='<div class="empty">No student attempts yet.</div>';return}
+ el.innerHTML=items.slice(0,5).map(a=>`
+ <div class="attempt"><div><b>${esc(a.name||a.full_name||a.email||"Student")}</b>
+ <div class="muted">${esc(a.test_title||a.title||"Test")} · ${esc(a.submitted_at||a.created_at?new Date(a.submitted_at||a.created_at).toLocaleDateString():"—")}</div></div>
+ <div><b>${Number(a.score||0).toFixed(2)}</b><div class="muted">${Number(a.accuracy||0).toFixed(1)}% accuracy</div></div></div>`).join("");
 }
 
-
-
-/* ======================================
-   RECENT ATTEMPTS
-====================================== */
-
-function renderRecentAttempts(
-    attempts
-){
-
-    const container =
-        document.getElementById(
-            "recentAttempts"
-        );
-
-
-    if(
-        !attempts ||
-        !attempts.length
-    ){
-
-        container.innerHTML = `
-
-            <div class="empty">
-                No student attempts yet.
-            </div>
-
-        `;
-
-        return;
-    }
-
-
-    container.innerHTML =
-
-        attempts
-        .slice(0,5)
-        .map(
-            attempt => {
-
-
-                const name =
-                    attempt.name ||
-                    attempt.full_name ||
-                    attempt.email ||
-                    "Student";
-
-
-                const title =
-                    attempt.test_title ||
-                    attempt.title ||
-                    "Test";
-
-
-                const score =
-                    Number(
-                        attempt.score || 0
-                    ).toFixed(2);
-
-
-                const accuracy =
-                    Number(
-                        attempt.accuracy || 0
-                    ).toFixed(1);
-
-
-                const dateValue =
-                    attempt.submitted_at ||
-                    attempt.created_at;
-
-
-                const date =
-                    dateValue
-                    ?
-                    new Date(
-                        dateValue
-                    ).toLocaleDateString()
-                    :
-                    "—";
-
-
-                return `
-
-                    <div class="attempt">
-
-                        <div>
-
-                            <div class="attempt-title">
-
-                                ${escapeHTML(
-                                    name
-                                )}
-
-                            </div>
-
-                            <div class="attempt-info">
-
-                                ${escapeHTML(
-                                    title
-                                )}
-
-                                •
-
-                                ${date}
-
-                            </div>
-
-                        </div>
-
-
-                        <div>
-
-                            <div class="attempt-score">
-
-                                ${score}
-
-                            </div>
-
-                            <div class="attempt-info">
-
-                                ${accuracy}% accuracy
-
-                            </div>
-
-                        </div>
-
-                    </div>
-
-                `;
-
-            }
-        )
-        .join("");
-
-}
-
-
-
-/* ======================================
-   CREATE TEST
-====================================== */
-
-document
-.getElementById("testForm")
-.addEventListener(
-    "submit",
-    async function(event){
-
-        event.preventDefault();
-
-
-        const message =
-            document.getElementById(
-                "message"
-            );
-
-
-        message.className =
-            "message";
-
-
-        message.textContent =
-            "Creating test...";
-
-
-        message.style.display =
-            "block";
-
-
-        const title =
-            document
-            .getElementById("title")
-            .value
-            .trim();
-
-
-        const exam =
-            document
-            .getElementById("exam")
-            .value;
-
-
-        const subject =
-            document
-            .getElementById("subject")
-            .value
-            .trim();
-
-
-        const description =
-            document
-            .getElementById("description")
-            .value
-            .trim();
-
-
-        const duration =
-            Number(
-                document
-                .getElementById("duration")
-                .value
-            );
-
-
-        const marks =
-            Number(
-                document
-                .getElementById("marks")
-                .value
-            );
-
-
-        const negative =
-            Number(
-                document
-                .getElementById("negative")
-                .value
-            );
-
-
-        const {
-            data,
-            error
-        } =
-        await supabaseClient
-
-            .from("tests")
-
-            .insert({
-
-                title:title,
-
-                exam:exam,
-
-                subject:subject,
-
-                description:description,
-
-                duration_minutes:duration,
-
-                total_marks:marks,
-
-                negative_marks:negative,
-
-                is_published:false
-
-            })
-
-            .select()
-
-            .single();
-
-
-        if(error){
-
-            console.error(error);
-
-
-            message.className =
-                "message error";
-
-
-            message.textContent =
-                error.message;
-
-
-            return;
-        }
-
-
-        message.className =
-            "message success";
-
-
-        message.textContent =
-            `Test created successfully! Test ID: ${data.id}`;
-
-
-        document
-        .getElementById("testForm")
-        .reset();
-
-
-        loadTests();
-
-
-        loadAdminDashboard();
-
-    }
-);
-
-
-
-/* ======================================
-   LOAD TESTS
-====================================== */
+document.getElementById("testForm").addEventListener("submit",async e=>{
+ e.preventDefault();
+ const b=e.submitter;b.disabled=true;
+ showMessage("Creating test...","");
+ try{
+  const payload={
+   title:document.getElementById("title").value.trim(),
+   exam:document.getElementById("exam").value,
+   subject:document.getElementById("subject").value.trim(),
+   description:document.getElementById("description").value.trim(),
+   duration_minutes:Number(document.getElementById("duration").value),
+   total_marks:Number(document.getElementById("marks").value),
+   negative_marks:Number(document.getElementById("negative").value),
+   price_inr:Number(document.getElementById("price").value),
+   is_published:false
+  };
+  if(!Number.isFinite(payload.price_inr)||payload.price_inr<0)throw Error("Price must be zero or greater.");
+  const {data,error}=await db.from("tests").insert(payload).select().single();
+  if(error)throw error;
+  showMessage("Test created! ID: "+data.id,"success");
+  e.target.reset();document.getElementById("duration").value=30;
+  document.getElementById("marks").value=100;
+  document.getElementById("negative").value="0.25";
+  document.getElementById("price").value=0;
+  await loadTests();await loadAdminDashboard();
+ }catch(err){showMessage(err.message,"error")}
+ finally{b.disabled=false}
+});
 
 async function loadTests(){
-
-    const {
-        data:tests,
-        error
-    } =
-    await supabaseClient
-
-        .from("tests")
-
-        .select("*")
-
-        .order(
-            "id",
-            {
-                ascending:false
-            }
-        );
-
-
-    const container =
-        document.getElementById(
-            "testList"
-        );
-
-
-    if(error){
-
-        console.error(
-            "TEST LOAD ERROR:",
-            error
-        );
-
-
-        container.innerHTML =
-
-            `<p style="color:red;">
-                Failed to load tests:
-                ${escapeHTML(error.message)}
-            </p>`;
-
-        return;
-    }
-
-
-    if(
-        !tests ||
-        !tests.length
-    ){
-
-        container.innerHTML = `
-
-            <div class="empty">
-                No tests created yet.
-            </div>
-
-        `;
-
-        return;
-    }
-
-
-    container.innerHTML = "";
-
-
-    tests.forEach(
-        test => {
-
-
-            const div =
-                document.createElement(
-                    "div"
-                );
-
-
-            div.className =
-                "test";
-
-
-            const statusClass =
-                test.is_published
-                ?
-                "status-published"
-                :
-                "status-draft";
-
-
-            const statusText =
-                test.is_published
-                ?
-                "Published"
-                :
-                "Draft";
-
-
-            div.innerHTML = `
-
-                <h3>
-
-                    ${escapeHTML(
-                        test.title
-                    )}
-
-                </h3>
-
-
-                <div class="test-details">
-
-                    ${escapeHTML(
-                        test.exam
-                    )}
-
-                    •
-
-                    ${escapeHTML(
-                        test.subject ||
-                        "General"
-                    )}
-
-                    •
-
-                    ${test.duration_minutes}
-                    min
-
-                    •
-
-                    ${test.total_marks}
-                    marks
-
-                    <br><br>
-
-                    Status:
-
-                    <span
-                        class="status ${statusClass}"
-                    >
-                        ${statusText}
-                    </span>
-
-                </div>
-
-
-                <div class="actions">
-
-
-                    <button
-                        class="edit-btn"
-                        onclick="editTest(${test.id})"
-                    >
-                        ✏️ Edit Test
-                    </button>
-
-<button class="btn-blue" onclick="duplicateTest(${test.id})">
-    Duplicate
-</button>
-
-                    <button
-                        class="questions-btn"
-                        onclick="manageQuestions(${test.id})"
-                    >
-                        📝 Questions
-                    </button>
-
-
-                    <button
-                        class="${
-                            test.is_published
-                            ?
-                            "unpublish-btn"
-                            :
-                            "publish-btn"
-                        }"
-                        onclick="togglePublish(
-                            ${test.id},
-                            ${test.is_published}
-                        )"
-                    >
-
-                        ${
-                            test.is_published
-                            ?
-                            "Unpublish"
-                            :
-                            "Publish"
-                        }
-
-                    </button>
-
-
-                    <button
-                        class="delete-btn"
-                        onclick="deleteTest(${test.id})"
-                    >
-                        Delete
-                    </button>
-
-
-                </div>
-
-            `;
-
-
-            container.appendChild(
-                div
-            );
-
-        }
-    );
-
+ const el=document.getElementById("testList");el.textContent="Loading tests...";
+ const {data,error}=await db.from("tests").select("*").order("id",{ascending:false});
+ if(error){el.textContent="Failed to load tests: "+error.message;return}
+ if(!data?.length){el.innerHTML='<div class="empty">No tests created yet.</div>';return}
+ el.innerHTML=data.map(t=>`
+ <div class="test">
+ <h3>${esc(t.title)}</h3>
+ <div class="details">${esc(t.exam)} · ${esc(t.subject||"General")} · ${t.duration_minutes} min · ${t.total_marks} marks
+ <br>Price: <b>${Number(t.price_inr||0)>0?money(t.price_inr):"Free"}</b>
+ <br>Status: <span class="badge ${t.is_published?"approved":"pending"}">${t.is_published?"Published":"Draft"}</span>
+ </div><div class="actions">
+ <button class="edit-btn" onclick="editTest(${Number(t.id)})">✏️ Edit Test</button>
+ <button class="duplicate-btn" onclick="duplicateTest(${Number(t.id)})">Duplicate</button>
+ <button class="questions-btn" onclick="manageQuestions(${Number(t.id)})">📝 Questions</button>
+ <button class="${t.is_published?"unpublish-btn":"publish-btn"}" onclick="togglePublish(${Number(t.id)},${Boolean(t.is_published)})">${t.is_published?"Unpublish":"Publish"}</button>
+ <button class="delete-btn" onclick="deleteTest(${Number(t.id)})">Delete</button>
+ </div></div>`).join("");
 }
-
-
-
-/* ======================================
-   PUBLISH / UNPUBLISH
-====================================== */
-
-async function togglePublish(
-    id,
-    currentlyPublished
-){
-
-    const {
-        error
-    } =
-    await supabaseClient
-
-        .from("tests")
-
-        .update({
-
-            is_published:
-                !currentlyPublished
-
-        })
-
-        .eq(
-            "id",
-            id
-        );
-
-
-    if(error){
-
-        alert(
-            error.message
-        );
-
-        return;
-    }
-
-
-    await loadTests();
-
-    await loadAdminDashboard();
-
+async function togglePublish(id,current){
+ if(!confirm((current?"Unpublish":"Publish")+" this test?"))return;
+ const {error}=await db.from("tests").update({is_published:!current}).eq("id",id);
+ if(error){alert(error.message);return}
+ await loadTests();await loadAdminDashboard();
 }
-
-
-
-/* ======================================
-   DELETE TEST
-====================================== */
-
 async function deleteTest(id){
+ if(!confirm("Delete this test? This may fail if related records prevent deletion."))return;
+ const {error}=await db.from("tests").delete().eq("id",id);
+ if(error){alert("Delete failed: "+error.message);return}
+ await loadTests();await loadAdminDashboard();
+}
+function editTest(id){location.href="admin-edit.html?test="+id}
+function manageQuestions(id){location.href="admin-questions.html?test="+id}
 
-    const confirmed =
-        confirm(
-            "Delete this test and all its questions?"
-        );
-
-
-    if(!confirmed){
-        return;
-    }
-
-
-    const {
-        error
-    } =
-    await supabaseClient
-
-        .from("tests")
-
-        .delete()
-
-        .eq(
-            "id",
-            id
-        );
-
-
-    if(error){
-
-        alert(
-            error.message
-        );
-
-        return;
-    }
-
-
-    await loadTests();
-
-    await loadAdminDashboard();
-
+async function duplicateTest(id){
+ const {data:src,error}=await db.from("tests").select("*").eq("id",id).single();
+ if(error){alert(error.message);return}
+ const title=prompt("Title for the duplicated test:",src.title+" - Copy");
+ if(!title?.trim())return;
+ if(!confirm("Duplicate this test and its questions? The new test should remain unpublished."))return;
+ const {data,error:rpcError}=await db.rpc("duplicate_test",{p_test_id:Number(id),p_new_title:title.trim()});
+ if(rpcError){alert("Duplicate failed: "+rpcError.message);return}
+ alert("Test duplicated. New test ID: "+data);
+ await loadTests();await loadAdminDashboard();
 }
 
-
-
-/* ======================================
-   EDIT TEST
-====================================== */
-
-function editTest(id){
-
-    window.location.href =
-        `admin-edit.html?test=${id}`;
-
+async function loadPayments(){
+ const el=document.getElementById("paymentList");el.textContent="Loading payment requests...";
+ const {data,error}=await db.rpc("get_admin_payment_requests");
+ if(error){el.textContent="Could not load payment requests: "+error.message;return}
+ paymentRequests=Array.isArray(data)?data:[];
+ renderPayments();
 }
-
-
-
-/* ======================================
-   MANAGE QUESTIONS
-====================================== */
-
-function manageQuestions(id){
-
-    window.location.href =
-        `admin-questions.html?test=${id}`;
-
+function renderPayments(){
+ const el=document.getElementById("paymentList");
+ const filter=document.getElementById("paymentFilter").value;
+ const items=paymentRequests.filter(p=>filter==="all"||p.status===filter);
+ if(!items.length){el.innerHTML='<div class="empty">No matching payment requests.</div>';return}
+ el.innerHTML=items.map(p=>`
+ <div class="payment">
+ <h3>Request #${Number(p.id)} — ${esc(p.test_title||"Test unavailable")}</h3>
+ <div class="details">
+ Student ID: <code>${esc(p.user_id)}</code><br>
+ Test ID: ${Number(p.test_id)} · Price: ${money(p.price_inr)}<br>
+ Payment reference: <b>${esc(p.payment_reference)}</b><br>
+ Submitted: ${esc(p.created_at?new Date(p.created_at).toLocaleString():"—")}<br>
+ Status: <span class="badge ${esc(p.status)}">${esc(p.status)}</span>
+ ${p.reviewed_at?"<br>Reviewed: "+esc(new Date(p.reviewed_at).toLocaleString()):""}
+ </div>
+ ${p.status==="pending"?`<div class="actions">
+ <button class="approve-btn" onclick="approvePayment(${Number(p.id)})">✓ Verify & Approve</button>
+ <button class="reject-btn" onclick="rejectPayment(${Number(p.id)})">✕ Reject</button>
+ </div>`:""}
+ </div>`).join("");
 }
-
-
-
-/* ======================================
-   LOGOUT
-====================================== */
-
+async function approvePayment(id){
+ if(!confirm("Have you independently verified that payment was received for this exact test and amount? Only approve after verification."))return;
+ try{
+  const {data,error}=await db.rpc("approve_test_payment",{p_request_id:Number(id)});
+  if(error)throw error;
+  if(!data?.access_code)throw Error("Approval returned no access code. Check the request status with Supabase before retrying.");
+  // This is the only time the plaintext code is returned. Save it securely now.
+  alert("PAYMENT APPROVED\n\nRequest: "+data.request_id+
+  "\nTest ID: "+data.test_id+
+  "\n\nONE-TIME ACCESS CODE:\n\n"+data.access_code+
+  "\n\nCopy and securely deliver this code to the intended student now. It cannot be retrieved from its hash later.");
+  await loadPayments();
+ }catch(err){alert("Approval failed: "+err.message)}
+}
+async function rejectPayment(id){
+ if(!confirm("Reject payment request #"+id+"? Verify the reference first."))return;
+ const {data,error}=await db.rpc("reject_test_payment",{p_request_id:Number(id)});
+ if(error){alert("Rejection failed: "+error.message);return}
+ await loadPayments();
+}
 async function logout(){
-
-    await supabaseClient
-        .auth
-        .signOut();
-
-
-    window.location.href =
-        "login.html";
-
+ await db.auth.signOut();location.href="login.html";
 }
-
-
-
-/* ======================================
-   ESCAPE HTML
-====================================== */
-
-function escapeHTML(value){
-
-    return String(
-        value ?? ""
-    )
-
-    .replaceAll(
-        "&",
-        "&amp;"
-    )
-
-    .replaceAll(
-        "<",
-        "&lt;"
-    )
-
-    .replaceAll(
-        ">",
-        "&gt;"
-    )
-
-    .replaceAll(
-        '"',
-        "&quot;"
-    )
-
-    .replaceAll(
-        "'",
-        "&#039;"
-    );
-
-}
-
-
-
-/* ======================================
-   START
-====================================== */
-
-(async function(){
-
-    const allowed =
-        await checkAdmin();
-
-
-    if(!allowed){
-        return;
-    }
-
-
-    await loadAdminDashboard();
-
-    await loadTests();
-
+(async()=>{
+ if(!await checkAdmin())return;
+ await Promise.all([loadAdminDashboard(),loadTests(),loadPayments()]);
 })();
-async function duplicateTest(testId) {
-
-    const {
-        data: sourceTest,
-        error: fetchError
-    } = await supabaseClient
-        .from("tests")
-        .select("title")
-        .eq("id", testId)
-        .single();
-
-    if (fetchError) {
-
-        alert(
-            "Could not load test:\n\n" +
-            fetchError.message
-        );
-
-        return;
-    }
-
-    const newTitle = prompt(
-        "Enter the title for the duplicated test:",
-        sourceTest.title + " - Copy"
-    );
-
-    if (!newTitle || !newTitle.trim()) {
-        return;
-    }
-
-    const confirmed = confirm(
-        `Duplicate "${sourceTest.title}"?\n\n` +
-        `New test:\n${newTitle.trim()}\n\n` +
-        `All questions will be copied.\n` +
-        `Attempts and results will NOT be copied.\n` +
-        `The new test will remain UNPUBLISHED.`
-    );
-
-    if (!confirmed) {
-        return;
-    }
-
-    try {
-
-        const {
-            data,
-            error
-        } = await supabaseClient.rpc(
-            "duplicate_test",
-            {
-                p_test_id: Number(testId),
-                p_new_title: newTitle.trim()
-            }
-        );
-
-        if (error) {
-            throw error;
-        }
-
-        alert(
-            "✅ Test duplicated successfully!\n\n" +
-            "New Test ID: " + data
-        );
-
-        await loadTests();
-        await loadAdminDashboard();
-
-    } catch (error) {
-
-        console.error(
-            "DUPLICATE TEST ERROR:",
-            error
-        );
-
-        alert(
-            "❌ Duplicate failed:\n\n" +
-            error.message
-        );
-    }
-}
-
 </script>
-
 </body>
-
 </html>
