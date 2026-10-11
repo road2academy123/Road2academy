@@ -1,0 +1,767 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#071a3d">
+  <title>My Purchases | Road to Academy</title>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <style>
+    :root {
+      --navy: #071a3d;
+      --navy2: #102b57;
+      --gold: #f5c542;
+      --bg: #f3f6fb;
+      --card: #ffffff;
+      --text: #18243b;
+      --muted: #68758b;
+      --border: #e1e7f0;
+      --green: #147d48;
+      --red: #b42318;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: Arial, Helvetica, sans-serif;
+      line-height: 1.5;
+    }
+
+    header {
+      background: var(--navy);
+      color: white;
+      padding: 22px 16px;
+    }
+
+    .header-inner,
+    main {
+      width: min(100% - 28px, 1000px);
+      margin: auto;
+    }
+
+    .brand {
+      font-size: 21px;
+      font-weight: 800;
+      letter-spacing: .3px;
+    }
+
+    .brand span {
+      color: var(--gold);
+    }
+
+    .subtitle {
+      color: #d4deef;
+      margin-top: 5px;
+      font-size: 14px;
+    }
+
+    .top-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 9px;
+      margin-top: 16px;
+    }
+
+    main {
+      padding: 22px 0 40px;
+    }
+
+    .intro {
+      margin-bottom: 20px;
+    }
+
+    h1 {
+      margin: 0 0 5px;
+      font-size: 27px;
+    }
+
+    h2 {
+      font-size: 19px;
+      margin: 0 0 15px;
+    }
+
+    p {
+      margin: 6px 0;
+    }
+
+    .muted {
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 18px;
+      margin-bottom: 18px;
+      box-shadow: 0 3px 12px rgba(7, 26, 61, .035);
+    }
+
+    .button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border: 0;
+      border-radius: 8px;
+      padding: 10px 14px;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      text-decoration: none;
+      background: var(--navy);
+      color: white;
+    }
+
+    .button.gold {
+      background: var(--gold);
+      color: var(--navy);
+    }
+
+    .button.light {
+      background: white;
+      color: var(--navy);
+      border: 1px solid var(--border);
+    }
+
+    .button:disabled {
+      opacity: .6;
+      cursor: not-allowed;
+    }
+
+    .list {
+      display: grid;
+      gap: 12px;
+    }
+
+    .item {
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 14px;
+      min-width: 0;
+    }
+
+    .item-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .item-title {
+      font-weight: 800;
+      overflow-wrap: anywhere;
+    }
+
+    .status {
+      display: inline-block;
+      border-radius: 20px;
+      padding: 4px 10px;
+      font-size: 12px;
+      font-weight: 800;
+      background: #edf1f7;
+      color: #46546b;
+      text-transform: capitalize;
+    }
+
+    .status.approved,
+    .status.active,
+    .status.paid {
+      background: #e2f7eb;
+      color: var(--green);
+    }
+
+    .status.pending {
+      background: #fff3cd;
+      color: #805d00;
+    }
+
+    .status.rejected,
+    .status.revoked,
+    .status.failed {
+      background: #fde8e7;
+      color: var(--red);
+    }
+
+    .details {
+      color: var(--muted);
+      font-size: 13px;
+      margin-top: 7px;
+      overflow-wrap: anywhere;
+    }
+
+    .item-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .empty {
+      color: var(--muted);
+      text-align: center;
+      padding: 22px 8px;
+      font-size: 14px;
+    }
+
+    .notice {
+      display: none;
+      padding: 12px 14px;
+      border-radius: 9px;
+      margin-bottom: 16px;
+      overflow-wrap: anywhere;
+    }
+
+    .notice.show {
+      display: block;
+    }
+
+    .notice.error {
+      background: #fde8e7;
+      color: #8e2119;
+    }
+
+    .notice.success {
+      background: #e2f7eb;
+      color: #12653b;
+    }
+
+    .notice.info {
+      background: #e8f1ff;
+      color: #17417a;
+    }
+
+    .form-row {
+      display: flex;
+      gap: 9px;
+      flex-wrap: wrap;
+      margin-top: 12px;
+    }
+
+    input {
+      flex: 1;
+      min-width: 180px;
+      padding: 12px;
+      border: 1px solid #cbd5e1;
+      border-radius: 8px;
+      font-size: 15px;
+      outline-color: var(--navy2);
+    }
+
+    .account {
+      font-size: 13px;
+      color: #d4deef;
+      margin-top: 8px;
+      overflow-wrap: anywhere;
+    }
+
+    footer {
+      text-align: center;
+      color: var(--muted);
+      font-size: 12px;
+      padding: 8px 14px 25px;
+    }
+
+    @media (max-width: 500px) {
+      h1 {
+        font-size: 23px;
+      }
+
+      .card {
+        padding: 14px;
+      }
+
+      .form-row {
+        flex-direction: column;
+      }
+
+      .form-row input,
+      .form-row button {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+
+<body>
+<header>
+  <div class="header-inner">
+    <div class="brand">ROAD <span>2</span> ACADEMY</div>
+    <div class="subtitle">Your purchases, payment requests and test access</div>
+
+    <div class="account" id="accountInfo">Checking login...</div>
+
+    <div class="top-actions">
+      <a class="button gold" href="tests.html">Browse Tests</a>
+      <button class="button light" id="refreshBtn" type="button">
+        Refresh
+      </button>
+      <button class="button light" id="logoutBtn" type="button">
+        Log Out
+      </button>
+    </div>
+  </div>
+</header>
+
+<main>
+  <div class="intro">
+    <h1>🛍️ My Purchases</h1>
+    <p class="muted">
+      Track your payment requests and open tests you have access to.
+    </p>
+  </div>
+
+  <div id="notice" class="notice" role="status" aria-live="polite"></div>
+
+  <section class="card">
+    <h2>🎟️ Redeem Access Code</h2>
+    <p class="muted">
+      Have a test access code? Enter it below to redeem it.
+    </p>
+
+    <form id="redeemForm" class="form-row">
+      <input
+        id="accessCode"
+        type="text"
+        placeholder="Enter your access code"
+        maxlength="200"
+        autocomplete="off"
+        required
+      >
+      <button class="button gold" id="redeemBtn" type="submit">
+        Redeem Code
+      </button>
+    </form>
+  </section>
+
+  <section class="card">
+    <h2>✅ My Purchased Tests</h2>
+    <p class="muted">
+      Only active access grants are shown here.
+    </p>
+    <div id="entitlementsList" class="list">
+      <div class="empty">Loading your test access...</div>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>💳 Payment History</h2>
+    <p class="muted">
+      Check the latest status of your payment requests.
+    </p>
+    <div id="paymentsList" class="list">
+      <div class="empty">Loading payment history...</div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  Road to Academy · Your account information is private to your login.
+</footer>
+
+<script>
+(() => {
+  "use strict";
+
+  // Use the existing Road to Academy Supabase project.
+  const SUPABASE_URL = "https://egjrkxdyehwbzgoppiqk.supabase.co";
+
+  // Use your project's existing publishable/anon key.
+  // Never put a service_role or secret key in browser HTML.
+  const SUPABASE_KEY = "sb_publishable_nc_Xv85AMQrmgIlDEWD8CA_aSeMk-yv";
+
+  const client = window.supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_KEY
+  );
+
+  const $ = (id) => document.getElementById(id);
+
+  let currentUser = null;
+  let testsById = {};
+  let loading = false;
+
+  function escapeHTML(value) {
+    return String(value ?? "").replace(/[&<>"']/g, (char) => ({
+      "&": "&amp;",
+      "<": "&lt;",
+      ">": "&gt;",
+      '"': "&quot;",
+      "'": "&#39;"
+    })[char]);
+  }
+
+  function showNotice(message, type = "info") {
+    const el = $("notice");
+    el.textContent = message;
+    el.className = "notice show " + type;
+  }
+
+  function clearNotice() {
+    $("notice").textContent = "";
+    $("notice").className = "notice";
+  }
+
+  function formatDate(value) {
+    if (!value) return "Not available";
+
+    const date = new Date(value);
+
+    if (Number.isNaN(date.getTime())) {
+      return "Not available";
+    }
+
+    return date.toLocaleString();
+  }
+
+  function formatPrice(value) {
+    if (value === null || value === undefined || value === "") {
+      return "";
+    }
+
+    const amount = Number(value);
+
+    if (!Number.isFinite(amount)) {
+      return "";
+    }
+
+    return "₹" + amount.toLocaleString("en-IN", {
+      maximumFractionDigits: 2
+    });
+  }
+
+  function statusClass(status) {
+    const normalized = String(status || "unknown").toLowerCase();
+
+    if (["approved", "active", "paid", "granted"].includes(normalized)) {
+      return normalized === "granted" ? "active" : normalized;
+    }
+
+    if (["pending", "rejected", "revoked", "failed"].includes(normalized)) {
+      return normalized;
+    }
+
+    return "";
+  }
+
+  function testName(testId) {
+    const test = testsById[String(testId)];
+
+    return test ? test.title : "Test #" + testId;
+  }
+
+  function testPrice(testId) {
+    const test = testsById[String(testId)];
+
+    return test ? formatPrice(test.price_inr) : "";
+  }
+
+  async function requireLogin() {
+    const { data, error } = await client.auth.getSession();
+
+    if (error) {
+      throw error;
+    }
+
+    if (!data.session) {
+      window.location.replace("login.html");
+      return false;
+    }
+
+    currentUser = data.session.user;
+    $("accountInfo").textContent =
+      "Signed in as " + (currentUser.email || "Road to Academy student");
+
+    return true;
+  }
+
+  async function loadTestDetails(testIds) {
+    const uniqueIds = [...new Set(
+      testIds
+        .filter((id) => id !== null && id !== undefined)
+        .map(String)
+    )];
+
+    if (!uniqueIds.length) {
+      testsById = {};
+      return;
+    }
+
+    const { data, error } = await client
+      .from("tests")
+      .select("id,title,price_inr")
+      .in("id", uniqueIds);
+
+    if (error) {
+      throw error;
+    }
+
+    testsById = {};
+
+    for (const test of (data || [])) {
+      testsById[String(test.id)] = test;
+    }
+  }
+
+  async function loadEntitlements() {
+    const container = $("entitlementsList");
+
+    const { data, error } = await client
+      .from("test_entitlements")
+      .select("id,user_id,test_id,granted_at,revoked_at")
+      .eq("user_id", currentUser.id)
+      .is("revoked_at", null)
+      .order("granted_at", { ascending: false });
+
+    if (error) {
+      throw new Error("Could not load test access: " + error.message);
+    }
+
+    const rows = data || [];
+
+    if (!rows.length) {
+      container.innerHTML =
+        '<div class="empty">No active test access yet. ' +
+        'Purchased tests will appear here after access is granted.</div>';
+      return [];
+    }
+
+    container.innerHTML = rows.map((row) => {
+      const name = testName(row.test_id);
+      const price = testPrice(row.test_id);
+
+      return `
+        <article class="item">
+          <div class="item-top">
+            <div class="item-title">${escapeHTML(name)}</div>
+            <span class="status active">Active access</span>
+          </div>
+
+          <div class="details">
+            Test ID: ${escapeHTML(row.test_id)}
+            ${price ? " · Price: " + escapeHTML(price) : ""}
+          </div>
+
+          <div class="details">
+            Access granted: ${escapeHTML(formatDate(row.granted_at))}
+          </div>
+
+          <div class="item-actions">
+            <a class="button gold"
+               href="test.html?test=${encodeURIComponent(row.test_id)}">
+              Open Test
+            </a>
+          </div>
+        </article>
+      `;
+    }).join("");
+
+    return rows;
+  }
+
+  async function loadPayments() {
+    const container = $("paymentsList");
+
+    const { data, error } = await client
+      .from("test_payment_requests")
+      .select("id,user_id,test_id,payment_reference,status,created_at,reviewed_at")
+      .eq("user_id", currentUser.id)
+      .order("created_at", { ascending: false });
+
+    if (error) {
+      throw new Error("Could not load payment history: " + error.message);
+    }
+
+    const rows = data || [];
+
+    if (!rows.length) {
+      container.innerHTML =
+        '<div class="empty">You have not submitted any payment requests yet.</div>';
+      return [];
+    }
+
+    container.innerHTML = rows.map((row) => {
+      const name = testName(row.test_id);
+      const status = String(row.status || "unknown");
+      const css = statusClass(status);
+
+      return `
+        <article class="item">
+          <div class="item-top">
+            <div class="item-title">${escapeHTML(name)}</div>
+            <span class="status ${css}">${escapeHTML(status)}</span>
+          </div>
+
+          <div class="details">
+            Request ID: ${escapeHTML(row.id)}
+            · Test ID: ${escapeHTML(row.test_id)}
+          </div>
+
+          <div class="details">
+            Payment reference: ${escapeHTML(row.payment_reference || "Not provided")}
+          </div>
+
+          <div class="details">
+            Submitted: ${escapeHTML(formatDate(row.created_at))}
+          </div>
+
+          ${row.reviewed_at ? `
+            <div class="details">
+              Reviewed: ${escapeHTML(formatDate(row.reviewed_at))}
+            </div>
+          ` : ""}
+        </article>
+      `;
+    }).join("");
+
+    return rows;
+  }
+
+  async function refreshPage() {
+    if (loading) return;
+
+    loading = true;
+    $("refreshBtn").disabled = true;
+    clearNotice();
+
+    try {
+      const loggedIn = await requireLogin();
+
+      if (!loggedIn) return;
+
+      // Load both datasets first; then load titles for all associated tests.
+      const [entitlementsResult, paymentsResult] = await Promise.all([
+        client
+          .from("test_entitlements")
+          .select("test_id")
+          .eq("user_id", currentUser.id)
+          .is("revoked_at", null),
+
+        client
+          .from("test_payment_requests")
+          .select("test_id")
+          .eq("user_id", currentUser.id)
+      ]);
+
+      if (entitlementsResult.error) {
+        throw new Error(
+          "Could not load test access: " + entitlementsResult.error.message
+        );
+      }
+
+      if (paymentsResult.error) {
+        throw new Error(
+          "Could not load payment history: " + paymentsResult.error.message
+        );
+      }
+
+      const ids = [
+        ...(entitlementsResult.data || []).map((row) => row.test_id),
+        ...(paymentsResult.data || []).map((row) => row.test_id)
+      ];
+
+      await loadTestDetails(ids);
+
+      await Promise.all([
+        loadEntitlements(),
+        loadPayments()
+      ]);
+    } catch (error) {
+      console.error("My Purchases error:", error);
+      showNotice(
+        error.message || "Something went wrong while loading your purchases.",
+        "error"
+      );
+    } finally {
+      loading = false;
+      $("refreshBtn").disabled = false;
+    }
+  }
+
+  $("refreshBtn").addEventListener("click", refreshPage);
+
+  $("logoutBtn").addEventListener("click", async () => {
+    $("logoutBtn").disabled = true;
+
+    try {
+      const { error } = await client.auth.signOut();
+
+      if (error) throw error;
+
+      window.location.replace("login.html");
+    } catch (error) {
+      showNotice("Could not log out: " + error.message, "error");
+      $("logoutBtn").disabled = false;
+    }
+  });
+
+  $("redeemForm").addEventListener("submit", async (event) => {
+    event.preventDefault();
+
+    const code = $("accessCode").value.trim();
+
+    if (!code) {
+      showNotice("Enter an access code first.", "error");
+      return;
+    }
+
+    $("redeemBtn").disabled = true;
+    clearNotice();
+
+    try {
+      const loggedIn = await requireLogin();
+
+      if (!loggedIn) return;
+
+      const { data, error } = await client.rpc(
+        "redeem_test_access_code",
+        { p_code: code }
+      );
+
+      if (error) {
+        throw error;
+      }
+
+      $("accessCode").value = "";
+
+      // Do not assume a particular RPC return format.
+      // The authoritative result comes from reloading access records.
+      await refreshPage();
+
+      showNotice(
+        "Code submitted. Check your active test access below. " +
+        "If access did not appear, verify the code's validity and RPC response.",
+        "success"
+      );
+    } catch (error) {
+      console.error("Code redemption error:", error);
+      showNotice(
+        error.message || "Could not redeem this code.",
+        "error"
+      );
+    } finally {
+      $("redeemBtn").disabled = false;
+    }
+  });
+
+  // Redirect immediately if the session disappears.
+  client.auth.onAuthStateChange((event, session) => {
+    if (event === "SIGNED_OUT" || !session) {
+      window.location.replace("login.html");
+    }
+  });
+
+  refreshPage();
+})();
+</script>
+</body>
+</html>
