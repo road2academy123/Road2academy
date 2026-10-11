@@ -1,0 +1,319 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Test Series Admin | Road to Academy</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#f3f6fb;color:#182338;font-family:Arial,sans-serif}
+header{background:#13233f;color:white;padding:18px}
+main{max-width:950px;margin:20px auto;padding:0 14px}
+.card{background:white;border:1px solid #e0e6ef;border-radius:14px;padding:18px;margin-bottom:16px}
+h1,h2{margin-top:0}input,textarea,select,button{width:100%;padding:12px;margin:6px 0;border-radius:8px;border:1px solid #cbd5e1;font:inherit}
+button{background:#245bd5;color:white;border:0;font-weight:bold;cursor:pointer}
+button.secondary{background:#e8eefb;color:#193d88}
+button.danger{background:#a32929}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.small{color:#65738a;font-size:13px}.item{border-top:1px solid #e3e8ef;padding:14px 0}
+.code{font-size:18px;font-weight:bold;overflow-wrap:anywhere;background:#eff8ee;padding:12px;border-radius:8px}
+.status{white-space:pre-wrap;margin:10px 0;color:#9a2525}
+@media(max-width:600px){.row{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<header>
+  <h1>ROAD TO ACADEMY</h1>
+  <div>Test Series Management</div>
+</header>
+<main>
+  <div id="status" class="status">Checking admin access...</div>
+
+  <section class="card">
+    <h2>Create a series</h2>
+    <input id="title" placeholder="Series name (e.g. NDA + CDS + CAPF Pack)" maxlength="150">
+    <textarea id="description" placeholder="Description of the series"></textarea>
+    <div class="row">
+      <input id="price" type="number" min="0" step="1" placeholder="Series price in ₹">
+      <select id="published">
+        <option value="false">Keep unpublished</option>
+        <option value="true">Publish series immediately</option>
+      </select>
+    </div>
+    <button id="createBtn">Create series</button>
+  </section>
+
+  <section class="card">
+    <h2>Add tests to a series</h2>
+    <label for="seriesSelect">Choose series</label>
+    <select id="seriesSelect"></select>
+    <label for="testSelect">Choose a test</label>
+    <select id="testSelect"></select>
+    <button id="addTestBtn">Add test to series</button>
+    <button class="secondary" id="refreshBtn">Refresh series and tests</button>
+    <div id="seriesList"></div>
+  </section>
+
+  <section class="card">
+    <h2>Generate an access code</h2>
+    <p class="small">Choose a series. Each successful redemption grants access to every test in it.</p>
+    <label for="codeSeries">Series</label>
+    <select id="codeSeries"></select>
+    <div class="row">
+      <input id="maxUses" type="number" min="1" value="1" placeholder="Maximum redemptions">
+      <input id="expiry" type="datetime-local" aria-label="Optional expiry">
+    </div>
+    <button id="generateBtn">Generate code</button>
+    <div id="generated"></div>
+  </section>
+</main>
+
+<script>
+const SUPABASE_URL = "https://egjrkxdyehwbzgoppiqk.supabase.co";
+const SUPABASE_KEY = "sb_publishable_nc_Xv85AMQrmgIlDEWD8CA_aSeMk-yv";
+const db = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+let currentUser = null;
+let allSeries = [];
+let allTests = [];
+
+const $ = id => document.getElementById(id);
+const status = msg => $("status").textContent = msg;
+
+async function checkAdmin() {
+  const {data:{session}, error} = await db.auth.getSession();
+  if(error || !session) {
+    location.href = "login.html";
+    return false;
+  }
+
+  currentUser = session.user;
+  const {data:role, error:roleError} = await db
+    .from("user_roles")
+    .select("role")
+    .eq("user_id", currentUser.id)
+    .maybeSingle();
+
+  if(roleError || role?.role !== "admin") {
+    status("Admin access required. Sign in with your admin account.");
+    document.querySelectorAll("button,input,textarea,select")
+      .forEach(el => el.disabled = true);
+    return false;
+  }
+  return true;
+}
+
+function safe(text) {
+  return String(text ?? "").replace(/[&<>"']/g, c => ({
+    "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+  }[c]));
+}
+
+function fillSelect(id, items, labelFn) {
+  const select = $(id);
+  const previous = select.value;
+  select.innerHTML = "";
+  if(!items.length) {
+    select.add(new Option("No items available", ""));
+    return;
+  }
+  items.forEach(item => select.add(new Option(labelFn(item), String(item.id))));
+  if(items.some(item => String(item.id) === previous)) select.value = previous;
+}
+
+async function loadData() {
+  status("Loading series and tests...");
+  const [seriesResult, testsResult] = await Promise.all([
+    db.from("test_series")
+      .select("id,title,description,price_inr,is_published,created_at")
+      .order("id", {ascending:false}),
+    db.from("tests")
+      .select("id,title,exam,is_published")
+      .order("id", {ascending:false})
+  ]);
+
+  if(seriesResult.error) {
+    status("Could not load series: " + seriesResult.error.message);
+    return;
+  }
+  if(testsResult.error) {
+    status("Could not load tests: " + testsResult.error.message);
+    return;
+  }
+
+  allSeries = seriesResult.data || [];
+  allTests = testsResult.data || [];
+
+  fillSelect("seriesSelect", allSeries,
+    s => `${s.title} (#${s.id})${s.is_published ? "" : " — unpublished"}`);
+  fillSelect("codeSeries", allSeries,
+    s => `${s.title} (#${s.id})`);
+  fillSelect("testSelect", allTests,
+    t => `#${t.id} — ${t.title || "Untitled"} (${t.exam || "No exam label"})`);
+
+  await renderSeries();
+  status("Ready.");
+}
+
+async function renderSeries() {
+  const root = $("seriesList");
+  if(!allSeries.length) {
+    root.innerHTML = "<p>No series created yet.</p>";
+    return;
+  }
+
+  const {data:mappings, error} = await db
+    .from("series_tests")
+    .select("series_id,test_id");
+
+  if(error) {
+    root.innerHTML = "<p>Could not load series membership: " + safe(error.message) + "</p>";
+    return;
+  }
+
+  root.innerHTML = allSeries.map(s => {
+    const ids = (mappings || [])
+      .filter(m => String(m.series_id) === String(s.id))
+      .map(m => m.test_id);
+
+    const names = ids.map(id => {
+      const t = allTests.find(x => String(x.id) === String(id));
+      return t ? `#${t.id} ${t.title || "Untitled"} (${t.exam || "No exam"})` : `Test #${id}`;
+    });
+
+    return `<div class="item">
+      <strong>${safe(s.title)}</strong>
+      <div class="small">ID: ${s.id} · ₹${s.price_inr} · ${s.is_published ? "Published" : "Unpublished"}</div>
+      <p>${safe(s.description || "")}</p>
+      <div>Included tests: ${names.length ? names.map(safe).join(", ") : "None yet"}</div>
+      <button class="secondary" data-publish="${s.id}" data-value="${!s.is_published}">
+        ${s.is_published ? "Unpublish series" : "Publish series"}
+      </button>
+      <button class="danger" data-remove-series="${s.id}">Delete series</button>
+    </div>`;
+  }).join("");
+
+  root.querySelectorAll("[data-publish]").forEach(btn => {
+    btn.onclick = () => togglePublish(btn.dataset.publish, btn.dataset.value === "true");
+  });
+  root.querySelectorAll("[data-remove-series]").forEach(btn => {
+    btn.onclick = () => deleteSeries(btn.dataset.removeSeries);
+  });
+}
+
+$("createBtn").onclick = async () => {
+  const title = $("title").value.trim();
+  const description = $("description").value.trim();
+  const price = Number($("price").value);
+  const is_published = $("published").value === "true";
+
+  if(title.length < 2 || !Number.isInteger(price) || price < 0) {
+    status("Enter a series name and a valid non-negative whole-number price.");
+    return;
+  }
+
+  $("createBtn").disabled = true;
+  const {data, error} = await db.from("test_series").insert({
+    title, description, price_inr:price, is_published,
+    created_by:currentUser.id
+  }).select().single();
+  $("createBtn").disabled = false;
+
+  if(error) {
+    status("Create failed: " + error.message);
+    return;
+  }
+  $("title").value = "";
+  $("description").value = "";
+  $("price").value = "";
+  status("Series created successfully.");
+  await loadData();
+  $("seriesSelect").value = String(data.id);
+  $("codeSeries").value = String(data.id);
+};
+
+$("addTestBtn").onclick = async () => {
+  const series_id = Number($("seriesSelect").value);
+  const test_id = Number($("testSelect").value);
+  if(!series_id || !test_id) {
+    status("Choose both a series and a test.");
+    return;
+  }
+
+  const {error} = await db.from("series_tests").insert({series_id, test_id});
+  if(error) {
+    status(error.code === "23505"
+      ? "That test is already included in this series."
+      : "Could not add test: " + error.message);
+    return;
+  }
+  status("Test added to series.");
+  await renderSeries();
+};
+
+async function togglePublish(id, published) {
+  const {error} = await db.from("test_series")
+    .update({is_published:published}).eq("id", id);
+  if(error) {
+    status("Update failed: " + error.message);
+    return;
+  }
+  await loadData();
+}
+
+async function deleteSeries(id) {
+  if(!confirm("Delete this series, its series access codes and series entitlements? Individual test purchases will not be deleted.")) return;
+  const {error} = await db.from("test_series").delete().eq("id", id);
+  if(error) {
+    status("Delete failed: " + error.message);
+    return;
+  }
+  status("Series deleted.");
+  await loadData();
+}
+
+$("generateBtn").onclick = async () => {
+  const seriesId = Number($("codeSeries").value);
+  const maxUses = Number($("maxUses").value);
+  const expiryValue = $("expiry").value;
+  const expiresAt = expiryValue ? new Date(expiryValue).toISOString() : null;
+
+  if(!seriesId || !Number.isInteger(maxUses) || maxUses < 1) {
+    status("Choose a series and a valid usage limit.");
+    return;
+  }
+  $("generateBtn").disabled = true;
+  const {data, error} = await db.rpc("admin_create_series_access_code", {
+    p_series_id:seriesId,
+    p_max_uses:maxUses,
+    p_expires_at:expiresAt
+  });
+  $("generateBtn").disabled = false;
+
+  if(error) {
+    status("Code generation failed: " + error.message);
+    return;
+  }
+  $("generated").innerHTML =
+    `<p>New access code:</p><div class="code">${safe(data)}</div>
+     <button id="copyCode">Copy code</button>
+     <p class="small">Save this code and share it only with the intended students.</p>`;
+  $("copyCode").onclick = async () => {
+    try {
+      await navigator.clipboard.writeText(String(data));
+      status("Code copied.");
+    } catch {
+      status("Copy was blocked by the browser. Select and copy the code manually.");
+    }
+  };
+};
+
+$("refreshBtn").onclick = loadData;
+
+(async () => {
+  if(await checkAdmin()) await loadData();
+})();
+</script>
+</body>
+</html>
