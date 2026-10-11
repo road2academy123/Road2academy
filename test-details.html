@@ -3,689 +3,718 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>Test Details - Road to Academy</title>
+<title>Test Details | Road to Academy</title>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <style>
-* {
-    box-sizing: border-box;
+:root {
+  --navy: #101c3a;
+  --blue: #315efb;
+  --bg: #f4f6fb;
+  --text: #17213a;
+  --muted: #64708a;
+  --border: #e3e8f2;
+  --green: #13834a;
+  --red: #c33c3c;
 }
-
+* { box-sizing: border-box; }
 body {
-    margin: 0;
-    font-family: Arial, sans-serif;
-    background: #f4f7fb;
-    color: #17233c;
+  margin: 0;
+  font-family: Arial, Helvetica, sans-serif;
+  background: var(--bg);
+  color: var(--text);
 }
-
 header {
-    background: #071a3d;
-    color: white;
-    padding: 18px 20px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+  background: var(--navy);
+  color: white;
+  padding: 17px 5%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 15px;
 }
-
-header h1 {
-    margin: 0;
-    font-size: 22px;
+.brand { font-size: 20px; font-weight: 800; }
+header button {
+  background: transparent;
+  color: white;
+  border: 1px solid #ffffff55;
+  padding: 9px 13px;
+  border-radius: 8px;
+  cursor: pointer;
 }
-
-.back-btn {
-    background: white;
-    color: #071a3d;
-    border: none;
-    padding: 10px 15px;
-    border-radius: 8px;
-    font-weight: bold;
-    cursor: pointer;
+main {
+  width: min(900px, 92%);
+  margin: 28px auto;
 }
-
-.container {
-    max-width: 900px;
-    margin: 30px auto;
-    padding: 0 15px;
-}
-
 .card {
-    background: white;
-    border-radius: 16px;
-    padding: 25px;
-    box-shadow: 0 5px 20px rgba(0,0,0,.07);
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 23px;
+  margin-bottom: 18px;
+  box-shadow: 0 5px 20px #15234708;
 }
-
-.title {
-    font-size: 30px;
-    font-weight: bold;
-    margin-bottom: 10px;
-}
-
-.description {
-    color: #667085;
-    line-height: 1.6;
-    margin-bottom: 20px;
-}
-
-.badges {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-    margin-bottom: 25px;
-}
-
+h1 { margin: 0 0 12px; font-size: clamp(24px, 5vw, 34px); }
+h2 { margin: 0 0 14px; font-size: 20px; }
+p { line-height: 1.6; }
+.muted { color: var(--muted); }
+.badges { display: flex; gap: 8px; flex-wrap: wrap; margin: 12px 0; }
 .badge {
-    background: #eef3ff;
-    color: #173b78;
-    padding: 8px 13px;
-    border-radius: 20px;
-    font-size: 14px;
-    font-weight: bold;
+  background: #edf1ff;
+  color: #2848bb;
+  padding: 6px 10px;
+  border-radius: 30px;
+  font-size: 12px;
+  font-weight: 700;
 }
-
 .stats {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 12px;
-    margin-bottom: 25px;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+  margin-top: 20px;
 }
-
 .stat {
-    background: #f7f9fc;
-    padding: 18px 10px;
-    border-radius: 10px;
-    text-align: center;
+  background: #f6f8fc;
+  padding: 14px 10px;
+  border-radius: 10px;
+  text-align: center;
 }
-
-.stat strong {
-    display: block;
-    font-size: 23px;
-    margin-bottom: 6px;
+.stat strong { display: block; font-size: 21px; margin-bottom: 5px; }
+.stat span { color: var(--muted); font-size: 12px; }
+.price { font-size: 30px; font-weight: 800; margin: 8px 0; }
+label { display: block; font-weight: 700; margin: 14px 0 7px; }
+input {
+  width: 100%;
+  padding: 13px;
+  border: 1px solid #d5dced;
+  border-radius: 9px;
+  font-size: 15px;
+  outline: none;
 }
-
-.stat span {
-    font-size: 13px;
-    color: #667085;
+input:focus { border-color: var(--blue); }
+button.primary {
+  background: var(--blue);
+  color: white;
+  border: 0;
+  padding: 13px 17px;
+  border-radius: 9px;
+  font-weight: 700;
+  cursor: pointer;
 }
-
-.instructions {
-    background: #f8fafc;
-    border-radius: 12px;
-    padding: 20px;
-    margin-bottom: 25px;
+button.secondary {
+  background: white;
+  border: 1px solid var(--border);
+  padding: 12px 15px;
+  border-radius: 9px;
+  cursor: pointer;
 }
-
-.instructions h3 {
-    margin-top: 0;
+button:disabled { opacity: .55; cursor: not-allowed; }
+.actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 18px; }
+.notice {
+  padding: 13px;
+  border-radius: 9px;
+  background: #eef3ff;
+  color: #2444a6;
+  margin: 13px 0;
+  line-height: 1.5;
 }
-
-.instructions li {
-    margin-bottom: 9px;
-    line-height: 1.5;
-}
-
-.start-btn {
-    width: 100%;
-    padding: 16px;
-    border: none;
-    border-radius: 10px;
-    background: #071a3d;
-    color: white;
-    font-size: 17px;
-    font-weight: bold;
-    cursor: pointer;
-}
-
-.start-btn:hover {
-    opacity: .92;
-}
-
-.resume {
-    background: #fff8e6;
-    border: 1px solid #f1d27a;
-    color: #664d03;
-    padding: 14px;
-    border-radius: 10px;
-    margin-bottom: 15px;
-    display: none;
-}
-
-.loading {
-    text-align: center;
-    padding: 60px;
-    color: #667085;
-}
-
-.error {
-    background: #fdecec;
-    color: #b42318;
-    padding: 18px;
-    border-radius: 10px;
-}
-
-@media(max-width:700px) {
-    .stats {
-        grid-template-columns: repeat(2, 1fr);
-    }
-
-    .title {
-        font-size: 24px;
-    }
+.notice.success { background: #e9f8ef; color: #17683c; }
+.notice.warning { background: #fff5df; color: #855a00; }
+.notice.error { background: #fff0f0; color: #a12a2a; }
+.hidden { display: none !important; }
+ul { padding-left: 21px; line-height: 1.8; }
+#message { margin-top: 12px; white-space: pre-wrap; }
+footer { text-align: center; padding: 25px; color: var(--muted); font-size: 13px; }
+@media (max-width: 600px) {
+  .stats { grid-template-columns: repeat(2, 1fr); }
+  .card { padding: 17px; }
+  header { padding: 15px 4%; }
 }
 </style>
 </head>
 
 <body>
-
 <header>
-    <h1>📝 Test Details</h1>
-
-    <button class="back-btn" onclick="goBack()">
-        ← Back
-    </button>
+  <div class="brand">ROAD <span style="color:#8faaff">2</span> ACADEMY</div>
+  <button onclick="goBack()">← Back</button>
 </header>
 
-<div class="container">
+<main>
+  <div id="pageMessage" class="card">Loading test details...</div>
 
-    <div id="loading" class="loading">
-        Loading test...
+  <section id="detailsCard" class="card hidden">
+    <h1 id="testTitle">Test Details</h1>
+    <p id="testDescription" class="muted"></p>
+    <div class="badges">
+      <span class="badge" id="examBadge"></span>
+      <span class="badge" id="subjectBadge"></span>
+      <span class="badge" id="priceBadge"></span>
     </div>
 
-    <div id="content" style="display:none;">
+    <div class="stats">
+      <div class="stat"><strong id="questionCount">—</strong><span>Questions</span></div>
+      <div class="stat"><strong id="totalMarks">—</strong><span>Total marks</span></div>
+      <div class="stat"><strong id="duration">—</strong><span>Minutes</span></div>
+      <div class="stat"><strong id="negativeMarks">—</strong><span>Negative marks</span></div>
+    </div>
+  </section>
 
-        <div class="card">
+  <section id="paymentCard" class="card hidden">
+    <h2>Purchase this test</h2>
+    <p class="muted">Complete the payment and submit the payment reference below. Access will be enabled after approval.</p>
+    <div class="price" id="testPrice">₹0</div>
 
-            <div class="title" id="title"></div>
-
-            <div class="description" id="description"></div>
-
-            <div class="badges">
-                <div class="badge" id="exam"></div>
-                <div class="badge" id="subject"></div>
-            </div>
-
-            <div class="stats">
-
-                <div class="stat">
-                    <strong id="questions">0</strong>
-                    <span>Questions</span>
-                </div>
-
-                <div class="stat">
-                    <strong id="marks">0</strong>
-                    <span>Total Marks</span>
-                </div>
-
-                <div class="stat">
-                    <strong id="duration">0</strong>
-                    <span>Minutes</span>
-                </div>
-
-                <div class="stat">
-                    <strong id="negative">0</strong>
-                    <span>Negative Marking</span>
-                </div>
-
-            </div>
-
-            <div class="instructions">
-
-                <h3>📋 Instructions</h3>
-
-                <ul>
-                    <li>
-                        The test will start only after you press
-                        <strong>Start Test</strong>.
-                    </li>
-
-                    <li>
-                        The timer will run according to the
-                        test duration.
-                    </li>
-
-                    <li>
-                        Your answers are automatically saved.
-                    </li>
-
-                    <li>
-                        You can resume an unfinished attempt.
-                    </li>
-
-                    <li>
-                        Once submitted, the attempt cannot be
-                        restarted.
-                    </li>
-
-                    <li>
-                        Negative marking will be applied according
-                        to the test settings.
-                    </li>
-                </ul>
-
-            </div>
-
-            <div id="resumeBox" class="resume">
-                🔄 You already have an unfinished attempt for
-                this test. You can resume it.
-            </div>
-
-            <button
-                id="startBtn"
-                class="start-btn"
-                onclick="startTest()">
-
-                🚀 Start Test
-
-            </button>
-
-        </div>
-
+    <div class="notice warning" id="paymentInstructions">
+      Payment instructions have not been configured yet. Please contact the Road to Academy administrator.
     </div>
 
-</div>
+    <div id="upiArea" class="hidden">
+      <p><strong>UPI ID:</strong> <span id="upiText"></span></p>
+      <div class="actions">
+        <button class="secondary" onclick="copyUpi()">Copy UPI ID</button>
+        <button class="primary" id="payButton" onclick="openUpi()">Pay with UPI</button>
+      </div>
+    </div>
+
+    <label for="paymentReference">Payment reference / UTR number</label>
+    <input id="paymentReference" maxlength="150" placeholder="Enter your payment reference" autocomplete="off">
+
+    <div class="actions">
+      <button class="primary" id="submitPaymentButton" onclick="submitPayment()">
+        Submit Payment Reference
+      </button>
+    </div>
+    <div id="paymentMessage"></div>
+  </section>
+
+  <section id="statusCard" class="card hidden">
+    <h2>Purchase status</h2>
+    <div id="purchaseStatus" class="notice"></div>
+    <p id="purchaseReference" class="muted"></p>
+    <button class="secondary" onclick="refreshPurchaseStatus()">Refresh status</button>
+  </section>
+
+  <section id="instructionsCard" class="card hidden">
+    <h2>Instructions</h2>
+    <ul>
+      <li>Check the test duration and marking scheme before starting.</li>
+      <li>Do not refresh or close the test unnecessarily while attempting it.</li>
+      <li>Submit your answers before the timer expires.</li>
+      <li>Paid tests require active access approval before starting.</li>
+    </ul>
+    <div id="accessMessage" class="notice"></div>
+    <div class="actions">
+      <button id="startButton" class="primary" onclick="startTest()" disabled>Start Test</button>
+      <button class="secondary" onclick="goBack()">Back to Tests</button>
+    </div>
+  </section>
+
+  <div id="message"></div>
+</main>
+
+<footer>© Road to Academy · CDS / NDA / CAPF Test Series</footer>
 
 <script>
+/* =========================
+   CONFIGURATION
+   ========================= */
 
-const SUPABASE_URL =
-    "https://egjrkxdyehwbzgoppiqk.supabase.co";
+const SUPABASE_URL = "https://egjrkxdyehwbzgoppiqk.supabase.co";
+const SUPABASE_KEY = "sb_publishable_nc_Xv85AMQrmgIlDEWD8CA_aSeMk-yv";
 
-const SUPABASE_KEY =
-    "sb_publishable_nc_Xv85AMQrmgIlDEWD8CA_aSeMk-yv";
+/* Replace this with your real UPI ID. */
+const PAYMENT_UPI_ID = "YOUR_UPI_ID_HERE";
 
-const supabaseClient =
-    window.supabase.createClient(
-        SUPABASE_URL,
-        SUPABASE_KEY
-    );
-
-const params =
-    new URLSearchParams(window.location.search);
-
-const testId =
-    params.get("test");
-
-let test = null;
-let questions = [];
-let session = null;
-let existingAttempt = null;
-
+const supabaseClient = window.supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_KEY
+);
 
 /* =========================
-   AUTH
-========================= */
+   PAGE STATE
+   ========================= */
 
-async function checkAuth() {
+const params = new URLSearchParams(location.search);
+const testId = params.get("test");
 
-    const {
-        data: {
-            session: currentSession
-        }
-    } =
-        await supabaseClient.auth.getSession();
+let currentUser = null;
+let currentTest = null;
+let questionCount = 0;
+let existingAttempt = null;
+let hasAccess = false;
+let isFreeTest = false;
+let paymentRequest = null;
+let entitlementCheckFailed = false;
 
-    if (!currentSession) {
+const $ = id => document.getElementById(id);
 
-        window.location.href =
-            "login.html";
-
-        return false;
-    }
-
-    session = currentSession;
-
-    return true;
+function showMessage(text, type = "") {
+  const el = $("message");
+  el.className = type ? "notice " + type : "notice";
+  el.textContent = text;
 }
 
+function showPageError(text) {
+  $("pageMessage").textContent = text;
+  $("pageMessage").classList.remove("hidden");
+}
+
+function hidePageMessage() {
+  $("pageMessage").classList.add("hidden");
+}
+
+function safeNumber(value, fallback = 0) {
+  const n = Number(value);
+  return Number.isFinite(n) ? n : fallback;
+}
+
+function formatPrice(value) {
+  return "₹" + safeNumber(value).toLocaleString("en-IN");
+}
+
+function isUpiConfigured() {
+  return PAYMENT_UPI_ID &&
+    PAYMENT_UPI_ID !== "YOUR_UPI_ID_HERE" &&
+    PAYMENT_UPI_ID.includes("@");
+}
+
+/* =========================
+   AUTHENTICATION
+   ========================= */
+
+async function checkAuth() {
+  const { data, error } = await supabaseClient.auth.getSession();
+
+  if (error) throw error;
+
+  currentUser = data.session?.user || null;
+
+  if (!currentUser) {
+    location.href = "login.html";
+    return false;
+  }
+
+  return true;
+}
 
 /* =========================
    LOAD TEST
-========================= */
+   ========================= */
 
 async function loadTest() {
+  if (!testId || !/^\d+$/.test(testId)) {
+    showPageError("Invalid test link.");
+    return;
+  }
 
-    if (!testId) {
+  try {
+    const authenticated = await checkAuth();
+    if (!authenticated) return;
 
-        showError("No test was selected.");
+    const { data: test, error } = await supabaseClient
+      .from("tests")
+      .select("*")
+      .eq("id", Number(testId))
+      .eq("is_published", true)
+      .single();
 
-        return;
+    if (error) throw error;
+    if (!test) throw new Error("This test is unavailable or unpublished.");
+
+    currentTest = test;
+    isFreeTest = safeNumber(test.price_inr) <= 0;
+
+    const { data: questions, error: questionError } = await supabaseClient
+      .from("test_questions_public")
+      .select("id")
+      .eq("test_id", Number(testId));
+
+    if (questionError) {
+      console.warn("Could not load public question count:", questionError);
+      questionCount = 0;
+    } else {
+      questionCount = questions?.length || 0;
     }
 
+    renderTestDetails();
+    hidePageMessage();
 
-    const {
-        data,
-        error
-    } =
-        await supabaseClient
-            .from("tests")
-            .select("*")
-            .eq("id", testId)
-            .eq("is_published", true)
-            .single();
-
-
-    if (error || !data) {
-
-        showError(
-            "This test does not exist or is not published."
-        );
-
-        return;
-    }
-
-    test = data;
-
-
-    const {
-        data: qData,
-        error: qError
-    } =
-        await supabaseClient
-            .from("test_questions_public")
-            .select("*")
-            .eq("test_id", testId)
-            .order("question_number", {
-                ascending: true
-            });
-
-
-    if (qError) {
-
-        showError(
-            "Could not load questions: " +
-            qError.message
-        );
-
-        return;
-    }
-
-    questions = qData || [];
-
-
+    await refreshPurchaseStatus();
     await checkExistingAttempt();
+    updateAccessUI();
 
-    render();
+  } catch (error) {
+    console.error(error);
+    showPageError(error.message || "Unable to load test details.");
+  }
 }
 
+/* =========================
+   RENDER DETAILS
+   ========================= */
+
+function renderTestDetails() {
+  $("detailsCard").classList.remove("hidden");
+  $("instructionsCard").classList.remove("hidden");
+
+  $("testTitle").textContent = currentTest.title || "Untitled Test";
+  $("testDescription").textContent =
+    currentTest.description || "Practice and evaluate your preparation.";
+
+  $("examBadge").textContent = currentTest.exam || "General";
+  $("subjectBadge").textContent = currentTest.subject || "All Subjects";
+
+  $("priceBadge").textContent = isFreeTest
+    ? "FREE"
+    : formatPrice(currentTest.price_inr);
+
+  $("questionCount").textContent = questionCount || "—";
+  $("totalMarks").textContent =
+    currentTest.total_marks ?? "—";
+  $("duration").textContent =
+    currentTest.duration_minutes ?? "—";
+  $("negativeMarks").textContent =
+    currentTest.negative_marks ?? 0;
+
+  $("testPrice").textContent = formatPrice(currentTest.price_inr);
+
+  if (!isFreeTest) {
+    $("paymentCard").classList.remove("hidden");
+
+    if (isUpiConfigured()) {
+      $("upiArea").classList.remove("hidden");
+      $("upiText").textContent = PAYMENT_UPI_ID;
+      $("paymentInstructions").textContent =
+        "Pay the displayed test price using the configured UPI ID. Then submit the payment reference. Your test access is not automatic; the administrator must approve it.";
+    } else {
+      $("upiArea").classList.add("hidden");
+      $("paymentInstructions").textContent =
+        "The administrator has not configured a payment UPI ID on this page. Contact the administrator for payment instructions before paying.";
+    }
+  } else {
+    $("paymentCard").classList.add("hidden");
+  }
+}
 
 /* =========================
-   CHECK EXISTING ATTEMPT
-========================= */
+   PURCHASE / ENTITLEMENT
+   ========================= */
+
+async function refreshPurchaseStatus() {
+  if (!currentUser || !currentTest) return;
+
+  paymentRequest = null;
+  hasAccess = false;
+  entitlementCheckFailed = false;
+
+  if (isFreeTest) {
+    hasAccess = true;
+    $("statusCard").classList.add("hidden");
+    return;
+  }
+
+  try {
+    const { data: entitlements, error: entitlementError } =
+      await supabaseClient
+        .from("test_entitlements")
+        .select("test_id,granted_at,revoked_at")
+        .eq("user_id", currentUser.id)
+        .eq("test_id", Number(currentTest.id))
+        .is("revoked_at", null)
+        .limit(1);
+
+    if (entitlementError) throw entitlementError;
+
+    hasAccess = !!(entitlements && entitlements.length > 0);
+
+    if (hasAccess) {
+      $("statusCard").classList.remove("hidden");
+      $("purchaseStatus").className = "notice success";
+      $("purchaseStatus").textContent =
+        "Purchase approved. You have access to this test.";
+      $("purchaseReference").textContent = "";
+      return;
+    }
+  } catch (error) {
+    console.error("Entitlement check failed:", error);
+    entitlementCheckFailed = true;
+    hasAccess = false;
+  }
+
+  try {
+    const { data: requests, error: requestError } =
+      await supabaseClient
+        .from("test_payment_requests")
+        .select("id,test_id,payment_reference,status,created_at")
+        .eq("user_id", currentUser.id)
+        .eq("test_id", Number(currentTest.id))
+        .order("created_at", { ascending: false })
+        .limit(1);
+
+    if (requestError) throw requestError;
+
+    paymentRequest = requests?.[0] || null;
+  } catch (error) {
+    console.warn("Could not load payment request status:", error);
+  }
+
+  $("statusCard").classList.remove("hidden");
+
+  if (entitlementCheckFailed) {
+    $("purchaseStatus").className = "notice warning";
+    $("purchaseStatus").textContent =
+      "We could not verify your purchase access. Refresh the page or contact the administrator. Paid test access remains locked until verified.";
+  } else if (!paymentRequest) {
+    $("purchaseStatus").className = "notice warning";
+    $("purchaseStatus").textContent =
+      "You have not submitted a payment reference for this test yet.";
+    $("purchaseReference").textContent = "";
+  } else {
+    const status = String(paymentRequest.status || "pending").toLowerCase();
+
+    if (status === "pending") {
+      $("purchaseStatus").className = "notice warning";
+      $("purchaseStatus").textContent =
+        "Your payment request is pending administrator approval.";
+    } else if (status === "rejected" || status === "denied") {
+      $("purchaseStatus").className = "notice error";
+      $("purchaseStatus").textContent =
+        "Your payment request was rejected. Contact the administrator if you believe this is incorrect.";
+    } else if (status === "approved") {
+      $("purchaseStatus").className = "notice warning";
+      $("purchaseStatus").textContent =
+        "Your payment request is marked approved, but active test access could not be confirmed. Please refresh or contact the administrator.";
+    } else {
+      $("purchaseStatus").className = "notice";
+      $("purchaseStatus").textContent =
+        "Payment request status: " + status;
+    }
+
+    $("purchaseReference").textContent =
+      "Submitted reference: " + (paymentRequest.payment_reference || "Not available");
+  }
+}
+
+/* =========================
+   PAYMENT ACTIONS
+   ========================= */
+
+function copyUpi() {
+  if (!isUpiConfigured()) {
+    alert("The administrator has not configured the UPI ID.");
+    return;
+  }
+
+  if (navigator.clipboard?.writeText) {
+    navigator.clipboard.writeText(PAYMENT_UPI_ID)
+      .then(() => alert("UPI ID copied."))
+      .catch(() => prompt("Copy this UPI ID:", PAYMENT_UPI_ID));
+  } else {
+    prompt("Copy this UPI ID:", PAYMENT_UPI_ID);
+  }
+}
+
+function openUpi() {
+  if (!isUpiConfigured() || !currentTest) {
+    alert("Payment instructions are not configured.");
+    return;
+  }
+
+  const amount = safeNumber(currentTest.price_inr);
+  const url = "upi://pay?" + new URLSearchParams({
+    pa: PAYMENT_UPI_ID,
+    pn: "Road to Academy",
+    tn: "Test purchase " + currentTest.id,
+    am: amount.toFixed(2),
+    cu: "INR"
+  }).toString();
+
+  location.href = url;
+}
+
+async function submitPayment() {
+  if (!currentUser || !currentTest) return;
+
+  if (isFreeTest) {
+    alert("This test is free. You do not need to submit a payment.");
+    return;
+  }
+
+  if (hasAccess) {
+    alert("You already have access to this test.");
+    return;
+  }
+
+  const reference = $("paymentReference").value.trim();
+
+  if (reference.length < 4) {
+    $("paymentMessage").className = "notice error";
+    $("paymentMessage").textContent =
+      "Enter a valid payment reference before submitting.";
+    return;
+  }
+
+  const button = $("submitPaymentButton");
+  button.disabled = true;
+  button.textContent = "Submitting...";
+
+  try {
+    const { error } = await supabaseClient.rpc(
+      "request_test_payment",
+      {
+        p_test_id: Number(currentTest.id),
+        p_payment_reference: reference
+      }
+    );
+
+    if (error) throw error;
+
+    $("paymentMessage").className = "notice success";
+    $("paymentMessage").textContent =
+      "Payment reference submitted. Access will be available after administrator approval.";
+
+    $("paymentReference").value = "";
+
+    await refreshPurchaseStatus();
+    updateAccessUI();
+
+  } catch (error) {
+    console.error(error);
+    $("paymentMessage").className = "notice error";
+    $("paymentMessage").textContent =
+      error.message || "Could not submit payment reference. Please try again.";
+  } finally {
+    button.disabled = false;
+    button.textContent = "Submit Payment Reference";
+  }
+}
+
+/* =========================
+   EXISTING ATTEMPT
+   ========================= */
 
 async function checkExistingAttempt() {
+  if (!currentUser || !currentTest) return;
 
-    const {
-        data,
-        error
-    } =
-        await supabaseClient
-            .from("attempts")
-            .select(
-                "id, started_at, submitted_at"
-            )
-            .eq("user_id", session.user.id)
-            .eq("test_id", testId)
-            .is("submitted_at", null)
-            .order("started_at", {
-                ascending: false
-            })
-            .limit(1)
-            .maybeSingle();
+  existingAttempt = null;
 
+  const { data, error } = await supabaseClient
+    .from("attempts")
+    .select("id,started_at,submitted_at")
+    .eq("user_id", currentUser.id)
+    .eq("test_id", Number(currentTest.id))
+    .is("submitted_at", null)
+    .order("started_at", { ascending: false })
+    .limit(1);
 
-    if (!error && data) {
+  if (error) {
+    console.warn("Could not check existing attempt:", error);
+    return;
+  }
 
-        existingAttempt = data;
-
-    } else {
-
-        existingAttempt = null;
-
-    }
+  existingAttempt = data?.[0] || null;
 }
 
+function updateAccessUI() {
+  const startButton = $("startButton");
+  const accessMessage = $("accessMessage");
 
-/* =========================
-   RENDER
-========================= */
+  if (isFreeTest) {
+    startButton.disabled = false;
+    startButton.textContent = existingAttempt ? "Resume Test" : "Start Test";
+    accessMessage.className = "notice success";
+    accessMessage.textContent = "This is a free test. You can start whenever you are ready.";
+    return;
+  }
 
-function render() {
-
-    document.getElementById("loading")
-        .style.display = "none";
-
-    document.getElementById("content")
-        .style.display = "block";
-
-
-    document.getElementById("title")
-        .textContent =
-        test.title || "Untitled Test";
-
-
-    document.getElementById("description")
-        .textContent =
-        test.description ||
-        "No description available.";
-
-
-    document.getElementById("exam")
-        .textContent =
-        "🎯 " + (test.exam || "Exam");
-
-
-    document.getElementById("subject")
-        .textContent =
-        "📚 " + (test.subject || "General");
-
-
-    document.getElementById("questions")
-        .textContent =
-        questions.length;
-
-
-    const totalMarks =
-        questions.reduce(
-            (sum, q) =>
-                sum + Number(q.marks || 0),
-            0
-        );
-
-
-    document.getElementById("marks")
-        .textContent =
-        totalMarks ||
-        test.total_marks ||
-        0;
-
-
-    document.getElementById("duration")
-        .textContent =
-        test.duration_minutes || 0;
-
-
-    const negative =
-        questions.length
-            ? Number(
-                questions[0].negative_marks || 0
-              )
-            : Number(
-                test.negative_marks || 0
-              );
-
-
-    document.getElementById("negative")
-        .textContent =
-        negative;
-
-
-    if (existingAttempt) {
-
-        document.getElementById("resumeBox")
-            .style.display = "block";
-
-        document.getElementById("startBtn")
-            .textContent =
-            "🔄 Resume Test";
-
-    } else {
-
-        document.getElementById("resumeBox")
-            .style.display = "none";
-
-        document.getElementById("startBtn")
-            .textContent =
-            "🚀 Start Test";
-    }
+  if (hasAccess) {
+    startButton.disabled = false;
+    startButton.textContent = existingAttempt ? "Resume Test" : "Start Test";
+    accessMessage.className = "notice success";
+    accessMessage.textContent = "Your purchase is active. You can start this test.";
+  } else {
+    startButton.disabled = true;
+    startButton.textContent = "Purchase Required";
+    accessMessage.className = "notice warning";
+    accessMessage.textContent = entitlementCheckFailed
+      ? "Access verification failed. Refresh the page or contact the administrator."
+      : "This is a paid test. Submit your payment reference and wait for access approval.";
+  }
 }
-
 
 /* =========================
    START / RESUME TEST
-========================= */
+   ========================= */
 
 async function startTest() {
+  if (!currentTest || !currentUser) return;
 
-    const button =
-        document.getElementById("startBtn");
+  if (!isFreeTest && !hasAccess) {
+    showMessage("Active purchase access is required to start this test.", "error");
+    return;
+  }
 
-    button.disabled = true;
+  const button = $("startButton");
+  button.disabled = true;
+  button.textContent = "Opening test...";
 
-    button.textContent =
-        "Starting...";
+  try {
+    const { data, error } = await supabaseClient.rpc(
+      "start_test_attempt",
+      { p_test_id: Number(currentTest.id) }
+    );
 
+    if (error) throw error;
 
-    /*
-       start_test_attempt handles both:
+    let attemptId;
 
-       - creating a new attempt
-       - returning an existing attempt
-    */
-
-    const {
-        data,
-        error
-    } =
-        await supabaseClient.rpc(
-            "start_test_attempt",
-            {
-                p_test_id:
-                    Number(testId)
-            }
-        );
-
-
-    if (error) {
-
-        alert(
-            "Could not start test:\n\n" +
-            error.message
-        );
-
-        button.disabled = false;
-
-        button.textContent =
-            existingAttempt
-                ? "🔄 Resume Test"
-                : "🚀 Start Test";
-
-        return;
+    if (typeof data === "string" || typeof data === "number") {
+      attemptId = data;
+    } else if (data && typeof data === "object") {
+      attemptId = data.attempt_id || data.id || data.attemptId;
     }
-
-
-    const attemptId =
-        data?.attempt_id;
-
 
     if (!attemptId) {
-
-        alert(
-            "Could not create the test attempt."
-        );
-
-        button.disabled = false;
-
-        return;
+      throw new Error(
+        "The server did not return an attempt ID. Check your start_test_attempt RPC response format."
+      );
     }
 
+    location.href =
+      "test.html?test=" + encodeURIComponent(currentTest.id) +
+      "&attempt=" + encodeURIComponent(attemptId);
 
-    window.location.href =
-        `test.html?test=${encodeURIComponent(testId)}&attempt=${encodeURIComponent(attemptId)}`;
+  } catch (error) {
+    console.error(error);
+    showMessage(
+      error.message || "Could not start the test. Please try again.",
+      "error"
+    );
+    button.disabled = false;
+    button.textContent = existingAttempt ? "Resume Test" : "Start Test";
+  }
 }
 
-
 /* =========================
-   BACK
-========================= */
+   NAVIGATION
+   ========================= */
 
 function goBack() {
+  const exam = String(currentTest?.exam || "").toLowerCase();
 
-    if (test && test.exam) {
-
-        const exam =
-            String(test.exam).toLowerCase();
-
-        if (exam.includes("cds")) {
-
-            window.location.href =
-                "cds-tests.html";
-
-            return;
-        }
-    }
-
-    window.location.href =
-        "tests.html";
+  if (exam.includes("cds")) {
+    location.href = "cds-tests.html";
+  } else {
+    location.href = "tests.html";
+  }
 }
 
-
 /* =========================
-   ERROR
-========================= */
+   INITIALIZE
+   ========================= */
 
-function showError(message) {
-
-    document.getElementById("loading")
-        .innerHTML = `
-            <div class="error">
-                ${escapeHtml(message)}
-            </div>
-        `;
-}
-
-
-/* =========================
-   ESCAPE HTML
-========================= */
-
-function escapeHtml(value) {
-
-    return String(value ?? "")
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;")
-        .replace(/'/g, "&#039;");
-}
-
-
-/* =========================
-   START
-========================= */
-
-(async function() {
-
-    const authenticated =
-        await checkAuth();
-
-    if (!authenticated) return;
-
-    await loadTest();
-
-})();
-
+loadTest();
 </script>
-
 </body>
 </html>
