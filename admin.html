@@ -386,7 +386,7 @@ async function grantGlobalSubscription() {
     message.textContent = "Approving subscription...";
 
     try {
-        const { data, error } = await supabaseClient.rpc(
+        const { data, error } = await db.rpc(
             "admin_grant_global_subscription",
             { p_email: email }
         );
@@ -433,7 +433,7 @@ async function revokeGlobalSubscription() {
     }
 
     try {
-        const { data, error } = await supabaseClient.rpc(
+        const { data, error } = await db.rpc(
             "admin_revoke_global_subscription",
             { p_subscription_id: id }
         );
