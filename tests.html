@@ -1,394 +1,502 @@
+
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-
 <meta charset="UTF-8">
-
-<meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0"
->
-
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>NDA Test Series | Road to Academy</title>
-
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <style>
-
-* {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-}
-
-body {
-    font-family: Arial, sans-serif;
-    background: #f4f6fa;
-    color: #111827;
-}
-
-header {
-    background: #071a3d;
-    color: white;
-    padding: 18px 25px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.logo {
-    color: #f5c542;
-    font-size: 22px;
-    font-weight: bold;
-}
-
-.back {
-    color: white;
-    text-decoration: none;
-}
-
-.container {
-    max-width: 1000px;
-    margin: 35px auto;
-    padding: 0 20px;
-}
-
-.heading {
-    margin-bottom: 25px;
-}
-
-.heading h1 {
-    color: #071a3d;
-    margin-bottom: 8px;
-}
-
-.heading p {
-    color: #666;
-}
-
-.tests {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 20px;
-}
-
-.test-card {
-    background: white;
-    padding: 24px;
-    border-radius: 14px;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.08);
-}
-
-.badge {
-    display: inline-block;
-    background: #eef3ff;
-    color: #071a3d;
-    padding: 6px 10px;
-    border-radius: 6px;
-    font-size: 12px;
-    font-weight: bold;
-    margin-bottom: 12px;
-}
-
-.test-card h2 {
-    color: #071a3d;
-    font-size: 20px;
-    margin-bottom: 10px;
-}
-
-.description {
-    color: #666;
-    line-height: 1.5;
-    margin-bottom: 18px;
-}
-
-.details {
-    display: flex;
-    gap: 18px;
-    flex-wrap: wrap;
-    margin-bottom: 20px;
-    color: #555;
-    font-size: 14px;
-}
-
-.start {
-    display: block;
-    text-align: center;
-    background: #071a3d;
-    color: white;
-    text-decoration: none;
-    padding: 12px;
-    border-radius: 8px;
-    font-weight: bold;
-}
-
-.start:hover {
-    background: #102c61;
-}
-
-.empty {
-    background: white;
-    padding: 40px;
-    border-radius: 12px;
-    text-align: center;
-    color: #666;
-}
-
-.error {
-    background: #fff0f0;
-    color: #b00020;
-    padding: 20px;
-    border-radius: 10px;
-}
-
-@media(max-width:700px) {
-
-    .tests {
-        grid-template-columns: 1fr;
-    }
-
-}
-
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Arial,sans-serif;background:#f4f6fa;color:#111827}
+header{background:#071a3d;color:white;padding:18px 25px;display:flex;justify-content:space-between;align-items:center;gap:12px}
+.logo{color:#f5c542;font-size:22px;font-weight:bold}
+.back{color:white;text-decoration:none}
+.container{max-width:1000px;margin:35px auto;padding:0 20px}
+.heading{margin-bottom:25px}
+.heading h1{color:#071a3d;margin-bottom:8px}
+.heading p{color:#666;line-height:1.5}
+.tests{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px}
+.test-card{background:white;padding:24px;border-radius:14px;box-shadow:0 4px 15px #00000012;min-width:0}
+.badge{display:inline-block;background:#eef3ff;color:#071a3d;padding:6px 10px;border-radius:6px;font-size:12px;font-weight:bold;margin-bottom:12px}
+.test-card h2{color:#071a3d;font-size:20px;margin-bottom:10px}
+.description{color:#666;line-height:1.5;margin-bottom:18px}
+.details{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:18px;color:#555;font-size:14px}
+.price{font-size:23px;font-weight:bold;color:#071a3d;margin:0 0 15px}
+.start,button{display:block;width:100%;text-align:center;background:#071a3d;color:white;text-decoration:none;padding:12px;border:0;border-radius:8px;font-weight:bold;cursor:pointer;font-size:14px}
+.start:hover,button:hover{background:#102c61}
+button:disabled{opacity:.6;cursor:not-allowed}
+.secondary{background:#eef3ff;color:#071a3d;margin-top:8px}
+.secondary:hover{background:#dce7ff}
+input{width:100%;padding:12px;border:1px solid #ccd3df;border-radius:8px;margin:7px 0 12px;font-size:15px}
+label{font-size:13px;font-weight:bold;color:#374151}
+.panel{border-top:1px solid #e5e7eb;margin-top:18px;padding-top:16px}
+.panel h3{font-size:16px;margin-bottom:10px;color:#071a3d}
+.note{font-size:13px;color:#606b7a;line-height:1.6;margin:8px 0 12px;overflow-wrap:anywhere}
+.status{font-size:13px;padding:10px;border-radius:8px;margin:10px 0;line-height:1.5;overflow-wrap:anywhere}
+.info{background:#eef3ff;color:#173c7a}
+.success{background:#e8f8ee;color:#176534}
+.warning{background:#fff5df;color:#855500}
+.error{background:#fff0f0;color:#b00020;padding:14px;border-radius:10px;overflow-wrap:anywhere}
+.empty{background:white;padding:40px;border-radius:12px;text-align:center;color:#666;grid-column:1/-1}
+@media(max-width:700px){.tests{grid-template-columns:1fr}.container{margin:24px auto}header{padding:16px}.logo{font-size:18px}}
 </style>
-
 </head>
 
 <body>
-
 <header>
-
-    <div class="logo">
-        ROAD 2 ACADEMY
-    </div>
-
-    <a
-        href="dashboard.html"
-        class="back"
-    >
-        ← Dashboard
-    </a>
-
+  <div class="logo">ROAD TO ACADEMY</div>
+  <a href="dashboard.html" class="back">← Dashboard</a>
 </header>
 
+<main class="container">
+  <div class="heading">
+    <h1>NDA Test Series</h1>
+    <p>Practice NDA-level tests and track your performance.</p>
+    <p id="accountInfo" class="note">Checking login...</p>
+  </div>
 
-<div class="container">
-
-    <div class="heading">
-
-        <h1>NDA Test Series</h1>
-
-        <p>
-            Practice NDA-level tests and track your performance.
-        </p>
-
-    </div>
-
-
-    <div
-        class="tests"
-        id="tests"
-    >
-
-        <div class="empty">
-            Loading tests...
-        </div>
-
-    </div>
-
-</div>
-
+  <div class="tests" id="tests">
+    <div class="empty">Loading tests...</div>
+  </div>
+</main>
 
 <script>
+"use strict";
 
-/* ==================================
-   SUPABASE
-================================== */
+/* ============ CONFIGURATION ============ */
 
 const SUPABASE_URL =
-    "https://egjrkxdyehwbzgoppiqk.supabase.co";
+  "https://egjrkxdyehwbzgoppiqk.supabase.co";
 
 const SUPABASE_KEY =
-    "sb_publishable_nc_Xv85AMQrmgIlDEWD8CA_aSeMk-yv";
+  "sb_publishable_nc_Xv85AMQrmgIlDEWD8CA_aSeMk-yv";
 
-const supabaseClient =
-    supabase.createClient(
-        SUPABASE_URL,
-        SUPABASE_KEY
-    );
+const UPI_ID = "adityaxshx@fam";
+const PAYEE_NAME = "Road to Academy";
 
+const supabaseClient = supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_KEY
+);
 
-/* ==================================
-   LOAD TESTS
-================================== */
+let currentUser = null;
+let entitlementTestIds = new Set();
+let paymentRows = [];
+let pageTests = [];
 
-async function loadTests() {
-
-    /* Check login */
-
-    const {
-        data: { session }
-    } = await supabaseClient.auth.getSession();
-
-
-    if (!session) {
-
-        window.location.href =
-            "login.html";
-
-        return;
-
-    }
-
-
-    /* Get published NDA tests */
-
-    const {
-        data: tests,
-        error
-    } = await supabaseClient
-        .from("tests")
-        .select(`
-            id,
-            title,
-            exam,
-            subject,
-            description,
-            duration_minutes,
-            total_marks,
-            negative_marks
-        `)
-        .eq("exam", "NDA")
-        .eq("is_published", true)
-        .order("id", {
-            ascending: true
-        });
-
-
-    const container =
-        document.getElementById("tests");
-
-
-    if (error) {
-
-        console.error(error);
-
-        container.innerHTML = `
-            <div class="error">
-                Unable to load tests.
-                <br><br>
-                ${escapeHTML(error.message)}
-            </div>
-        `;
-
-        return;
-
-    }
-
-
-    if (!tests || tests.length === 0) {
-
-        container.innerHTML = `
-            <div class="empty">
-                No NDA tests are published yet.
-            </div>
-        `;
-
-        return;
-
-    }
-
-
-    /* Clear loading */
-
-    container.innerHTML = "";
-
-
-    /* Create cards */
-
-    tests.forEach(test => {
-
-        const card =
-            document.createElement("div");
-
-        card.className =
-            "test-card";
-
-
-        card.innerHTML = `
-
-            <div class="badge">
-                ${escapeHTML(test.subject || "NDA")}
-            </div>
-
-            <h2>
-                ${escapeHTML(test.title)}
-            </h2>
-
-            <p class="description">
-                ${escapeHTML(
-                    test.description ||
-                    "NDA practice test."
-                )}
-            </p>
-
-            <div class="details">
-
-                <span>
-                    ⏱ ${test.duration_minutes} min
-                </span>
-
-                <span>
-                    📝 ${test.total_marks} marks
-                </span>
-
-                <span>
-                    ➖ ${test.negative_marks} negative
-                </span>
-
-            </div>
-
-            <a
-                class="start"
-                href="test-details.html?test=${encodeURIComponent(test.id)}"
-            >
-                View Test Details →
-            </a>
-
-        `;
-
-
-        container.appendChild(card);
-
-    });
-
-}
-
-
-/* ==================================
-   HTML ESCAPE
-================================== */
+/* ============ HELPERS ============ */
 
 function escapeHTML(value) {
-
-    return String(value ?? "")
-        .replaceAll("&", "&amp;")
-        .replaceAll("<", "&lt;")
-        .replaceAll(">", "&gt;")
-        .replaceAll('"', "&quot;")
-        .replaceAll("'", "&#039;");
-
+  return String(value ?? "")
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
 }
 
+function isFree(test) {
+  return Number(test.price_inr ?? 0) <= 0;
+}
 
-/* ==================================
-   START
-================================== */
+function money(amount) {
+  return new Intl.NumberFormat("en-IN", {
+    style: "currency",
+    currency: "INR",
+    maximumFractionDigits: 2
+  }).format(Number(amount || 0));
+}
+
+function showMessage(element, message, type = "info") {
+  element.className = "status " + type;
+  element.textContent = message;
+}
+
+function testURL(testId) {
+  return "test-details.html?test=" + encodeURIComponent(testId);
+}
+
+function latestPayment(testId) {
+  return paymentRows.find(
+    row => String(row.test_id) === String(testId)
+  );
+}
+
+function hasAccess(test) {
+  return isFree(test) ||
+    entitlementTestIds.has(String(test.id));
+}
+
+/* ============ LOAD ACCESS DATA ============ */
+
+async function loadAccessData() {
+  const [entitlementResult, paymentResult] = await Promise.all([
+    supabaseClient
+      .from("test_entitlements")
+      .select("test_id, revoked_at")
+      .eq("user_id", currentUser.id)
+      .is("revoked_at", null),
+
+    supabaseClient
+      .from("test_payment_requests")
+      .select("id, test_id, status, created_at")
+      .eq("user_id", currentUser.id)
+      .order("created_at", { ascending: false })
+  ]);
+
+  entitlementTestIds = new Set();
+  paymentRows = [];
+
+  if (entitlementResult.error) {
+    console.error("Entitlement loading error:", entitlementResult.error);
+  } else {
+    (entitlementResult.data || []).forEach(row => {
+      entitlementTestIds.add(String(row.test_id));
+    });
+  }
+
+  if (paymentResult.error) {
+    console.error("Payment loading error:", paymentResult.error);
+  } else {
+    paymentRows = paymentResult.data || [];
+  }
+
+  return {
+    entitlementError: entitlementResult.error,
+    paymentError: paymentResult.error
+  };
+}
+
+/* ============ UPI PAYMENT LINK ============ */
+
+function createUPILink(test) {
+  const amount = Number(test.price_inr);
+
+  if (!Number.isFinite(amount) || amount <= 0) {
+    return "";
+  }
+
+  return "upi://pay?pa=" + encodeURIComponent(UPI_ID) +
+    "&pn=" + encodeURIComponent(PAYEE_NAME) +
+    "&am=" + encodeURIComponent(amount.toFixed(2)) +
+    "&cu=INR" +
+    "&tn=" + encodeURIComponent("NDA Test " + test.id);
+}
+
+/* ============ SUBMIT PAYMENT REFERENCE ============ */
+
+async function submitPayment(testId, button) {
+  const input = document.getElementById("reference-" + testId);
+  const message = document.getElementById("message-" + testId);
+  const reference = input.value.trim();
+
+  if (!reference) {
+    showMessage(message, "Enter your transaction reference.", "warning");
+    input.focus();
+    return;
+  }
+
+  if (reference.length > 200) {
+    showMessage(message, "Transaction reference is too long.", "warning");
+    return;
+  }
+
+  if (latestPayment(testId)?.status === "pending") {
+    showMessage(message, "Your request is already pending review.", "warning");
+    return;
+  }
+
+  button.disabled = true;
+  button.textContent = "Submitting...";
+
+  try {
+    const { error } = await supabaseClient.rpc(
+      "request_test_payment",
+      {
+        p_test_id: Number(testId),
+        p_payment_reference: reference
+      }
+    );
+
+    if (error) throw error;
+
+    input.value = "";
+
+    showMessage(
+      message,
+      "Payment request submitted. Your test remains locked until access is granted.",
+      "success"
+    );
+
+    await refreshPageData();
+  } catch (error) {
+    console.error(error);
+    showMessage(
+      message,
+      "Could not submit request: " + (error.message || "Unknown error"),
+      "error"
+    );
+  } finally {
+    button.disabled = false;
+    button.textContent = "Submit Payment Reference";
+  }
+}
+
+/* ============ REDEEM ACCESS CODE ============ */
+
+async function redeemCode(testId, button) {
+  const input = document.getElementById("code-" + testId);
+  const message = document.getElementById("message-" + testId);
+  const code = input.value.trim();
+
+  if (!code) {
+    showMessage(message, "Enter your access code.", "warning");
+    input.focus();
+    return;
+  }
+
+  button.disabled = true;
+  button.textContent = "Checking code...";
+
+  try {
+    const { data, error } = await supabaseClient.rpc(
+      "redeem_test_access_code",
+      { p_code: code }
+    );
+
+    if (error) throw error;
+
+    await loadAccessData();
+
+    if (entitlementTestIds.has(String(testId))) {
+      input.value = "";
+      showMessage(message, "Access verified! Your test is unlocked.", "success");
+    } else {
+      console.log("Code redemption response:", data);
+      showMessage(
+        message,
+        "Access could not be confirmed. Refresh or contact the administrator.",
+        "warning"
+      );
+    }
+
+    renderTests();
+  } catch (error) {
+    console.error(error);
+    showMessage(
+      message,
+      "Redemption failed: " + (error.message || "Unknown error"),
+      "error"
+    );
+  } finally {
+    button.disabled = false;
+    button.textContent = "Redeem Access Code";
+  }
+}
+
+/* ============ RENDER TESTS ============ */
+
+function renderTests() {
+  const container = document.getElementById("tests");
+  container.innerHTML = "";
+
+  if (!pageTests.length) {
+    container.innerHTML =
+      '<div class="empty">No NDA tests are published yet.</div>';
+    return;
+  }
+
+  pageTests.forEach(test => {
+    const card = document.createElement("article");
+    card.className = "test-card";
+
+    const free = isFree(test);
+    const unlocked = hasAccess(test);
+    const payment = latestPayment(test.id);
+
+    let accessHTML = "";
+
+    if (unlocked) {
+      accessHTML = `
+        <div class="status success">
+          ${free ? "Free test" : "Paid-test access verified"}
+        </div>
+        <a class="start" href="${testURL(test.id)}">
+          View Test Details →
+        </a>`;
+    } else {
+      let statusHTML = "";
+
+      if (payment?.status === "pending") {
+        statusHTML = `
+          <div class="status warning">
+            Payment request pending review. Please wait for admin approval.
+          </div>`;
+      } else if (payment?.status === "rejected") {
+        statusHTML = `
+          <div class="status error">
+            Previous request rejected. Contact the administrator if necessary.
+          </div>`;
+      }
+
+      const upiLink = createUPILink(test);
+
+      accessHTML = `
+        ${statusHTML}
+
+        <div class="panel">
+          <h3>1. Pay using UPI</h3>
+          <p class="note">UPI ID: <strong>${escapeHTML(UPI_ID)}</strong></p>
+          <p class="note">Amount: <strong>${money(test.price_inr)}</strong></p>
+
+          <a class="start" href="${upiLink}">
+            Pay ${money(test.price_inr)} via UPI
+          </a>
+
+          <p class="note">
+            Review the recipient and amount in your UPI app before paying.
+            After payment, copy the transaction reference from your receipt.
+          </p>
+        </div>
+
+        <div class="panel">
+          <h3>2. Submit transaction reference</h3>
+          <label for="reference-${test.id}">UPI transaction reference</label>
+          <input id="reference-${test.id}" maxlength="200"
+            autocomplete="off" placeholder="Enter transaction reference">
+
+          <button type="button" data-action="payment" data-id="${test.id}"
+            ${payment?.status === "pending" ? "disabled" : ""}>
+            Submit Payment Reference
+          </button>
+        </div>
+
+        <div class="panel">
+          <h3>3. Redeem access code</h3>
+          <p class="note">
+            Enter the access code provided for your approved purchase.
+          </p>
+          <label for="code-${test.id}">Access code</label>
+          <input id="code-${test.id}" maxlength="200"
+            autocomplete="off" placeholder="Enter access code">
+
+          <button type="button" class="secondary"
+            data-action="redeem" data-id="${test.id}">
+            Redeem Access Code
+          </button>
+        </div>
+
+        <div id="message-${test.id}" class="status info">
+          Your test unlocks after access is verified.
+        </div>`;
+    }
+
+    card.innerHTML = `
+      <div class="badge">${escapeHTML(test.subject || "NDA")}</div>
+      <h2>${escapeHTML(test.title)}</h2>
+      <p class="description">
+        ${escapeHTML(test.description || "NDA practice test.")}
+      </p>
+
+      <div class="details">
+        <span>⏱ ${escapeHTML(test.duration_minutes)} min</span>
+        <span>📝 ${escapeHTML(test.total_marks)} marks</span>
+        <span>➖ ${escapeHTML(test.negative_marks)} negative</span>
+      </div>
+
+      <div class="price">${free ? "FREE" : money(test.price_inr)}</div>
+      ${accessHTML}
+    `;
+
+    container.appendChild(card);
+  });
+}
+
+/* ============ REFRESH ============ */
+
+async function refreshPageData() {
+  await loadAccessData();
+  renderTests();
+}
+
+/* ============ INITIALIZE ============ */
+
+async function loadTests() {
+  const container = document.getElementById("tests");
+
+  try {
+    const { data: sessionData, error: sessionError } =
+      await supabaseClient.auth.getSession();
+
+    if (sessionError) throw sessionError;
+
+    if (!sessionData.session) {
+      window.location.href = "login.html";
+      return;
+    }
+
+    currentUser = sessionData.session.user;
+
+    document.getElementById("accountInfo").textContent =
+      "Logged in as " + (currentUser.email || "student");
+
+    const { data: tests, error } = await supabaseClient
+      .from("tests")
+      .select(`
+        id,
+        title,
+        exam,
+        subject,
+        description,
+        duration_minutes,
+        total_marks,
+        negative_marks,
+        price_inr
+      `)
+      .eq("exam", "NDA")
+      .eq("is_published", true)
+      .order("id", { ascending: true });
+
+    if (error) throw error;
+
+    pageTests = tests || [];
+    await refreshPageData();
+  } catch (error) {
+    console.error(error);
+
+    container.innerHTML =
+      '<div class="error">Unable to load tests. ' +
+      escapeHTML(error.message || "Please try again.") +
+      '</div>';
+  }
+}
+
+/* ============ BUTTON HANDLERS ============ */
+
+document.getElementById("tests").addEventListener("click", event => {
+  const button = event.target.closest("button[data-action]");
+  if (!button || !currentUser) return;
+
+  const testId = button.dataset.id;
+
+  if (button.dataset.action === "payment") {
+    submitPayment(testId, button);
+  }
+
+  if (button.dataset.action === "redeem") {
+    redeemCode(testId, button);
+  }
+});
+
+supabaseClient.auth.onAuthStateChange((event) => {
+  if (event === "SIGNED_OUT") {
+    window.location.href = "login.html";
+  }
+});
 
 loadTests();
-
 </script>
-
 </body>
-
 </html>
