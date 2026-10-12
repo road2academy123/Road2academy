@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Series Details | Road to Academy</title>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+*{box-sizing:border-box}
+
+body{
+  margin:0;
+  background:#f3f6fb;
+  color:#182338;
+  font-family:Arial,sans-serif;
+}
+
+header{
+  background:#13233f;
+  color:white;
+  padding:22px 16px;
+}
+
+.header-inner,main{
+  max-width:900px;
+  margin:auto;
+}
+
+header h1{margin:0 0 8px}
+header p{margin:0;color:#d5dfef}
+
+main{
+  padding:20px 14px 40px;
+}
+
+.card{
+  background:white;
+  border:1px solid #e0e6ef;
+  border-radius:14px;
+  padding:20px;
+  margin-bottom:16px;
+  overflow-wrap:anywhere;
+}
+
+button,.button{
+  display:inline-block;
+  width:100%;
+  padding:13px;
+  border:0;
+  border-radius:9px;
+  background:#245bd5;
+  color:white;
+  font:inherit;
+  font-weight:bold;
+  text-align:center;
+  text-decoration:none;
+  cursor:pointer;
+  margin-top:8px;
+}
+
+button:disabled{
+  opacity:.55;
+  cursor:not-allowed;
+}
+
+input{
+  width:100%;
+  padding:13px;
+  border:1px solid #cbd5e1;
+  border-radius:9px;
+  font:inherit;
+  margin:8px 0;
+}
+
+.back{
+  display:inline-block;
+  color:#245bd5;
+  text-decoration:none;
+  font-weight:bold;
+  margin-bottom:16px;
+}
+
+.price{
+  font-size:25px;
+  font-weight:bold;
+  color:#13233f;
+}
+
+.small{
+  color:#65738a;
+  font-size:13px;
+  line-height:1.6;
+}
+
+.pill{
+  display:inline-block;
+  padding:6px 10px;
+  border-radius:20px;
+  background:#e8eefb;
+  color:#244da5;
+  font-size:12px;
+  font-weight:bold;
+}
+
+.pill.unlocked{
+  background:#dcfce7;
+  color:#166534;
+}
+
+.pill.locked{
+  background:#fee2e2;
+  color:#991b1b;
+}
+
+.test{
+  border-top:1px solid #e3e8ef;
+  padding:15px 0;
+}
+
+.test:first-child{border-top:0}
+
+.test h3{
+  margin:0 0 7px;
+  font-size:17px;
+}
+
+.test a{
+  display:inline-block;
+  margin-top:9px;
+  color:#245bd5;
+  font-weight:bold;
+  text-decoration:none;
+}
+
+.status{
+  margin-top:10px;
+  white-space:pre-wrap;
+  overflow-wrap:anywhere;
+  font-size:14px;
+  line-height:1.6;
+}
+
+.status.error{color:#b42318}
+.status.success{color:#15803d}
+
+.instructions{
+  padding-left:20px;
+  line-height:1.8;
+}
+
+.hidden{display:none!important}
+
+@media(min-width:600px){
+  .button,button{width:auto;min-width:180px}
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <div class="header-inner">
+    <h1>ROAD TO ACADEMY</h1>
+    <p>Test Series — NDA / CDS / CAPF</p>
+  </div>
+</header>
+
+<main>
+
+<a class="back" href="series.html">← Back to Test Series</a>
+
+<section class="card">
+  <div id="pageStatus" class="status">Loading series details...</div>
+
+  <div id="seriesInfo" class="hidden">
+    <span id="accessBadge" class="pill locked">LOCKED</span>
+
+    <h2 id="seriesTitle">Series Details</h2>
+
+    <p id="seriesDescription"></p>
+
+    <div class="price" id="seriesPrice">₹0</div>
+
+    <p class="small">
+      This is the listed price of the complete test series.
+      Access is granted through the Road to Academy series
+      access-code system.
+    </p>
+
+    <p id="accessMessage" class="status"></p>
+  </div>
+</section>
+
+<section class="card">
+  <h2>Tests Included in This Series</h2>
+  <p class="small">
+    Explore the tests included in this series. Opening a test
+    continues through the existing Road to Academy test page
+    and its access checks.
+  </p>
+
+  <div id="testList">Loading included tests...</div>
+</section>
+
+<section class="card">
+  <h2>Unlock This Series</h2>
+
+  <p>
+    Have an access code from the Road to Academy admin?
+    Follow these steps to unlock your series.
+  </p>
+
+  <ol class="instructions">
+    <li>Sign in to your Road to Academy account.</li>
+    <li>Obtain the access code provided for this series.</li>
+    <li>Enter the code below and select Redeem Code.</li>
+    <li>After successful redemption, your series access status will refresh.</li>
+  </ol>
+
+  <div id="redeemArea">
+    <input
+      id="accessCode"
+      type="text"
+      placeholder="Enter your series access code"
+      autocomplete="off"
+      autocapitalize="characters"
+      spellcheck="false"
+    >
+
+    <button id="redeemBtn" type="button">Redeem Code</button>
+  </div>
+
+  <div id="redeemStatus" class="status" role="status"
+       aria-live="polite"></div>
+
+  <p class="small">
+    A listed price does not mean that payment has been completed.
+    Only a valid code accepted by the existing redemption system
+    can grant the corresponding series access.
+  </p>
+</section>
+
+</main>
+
+<script>
+const SUPABASE_URL =
+  "https://egjrkxdyehwbzgoppiqk.supabase.co";
+
+const SUPABASE_KEY =
+  "sb_publishable_nc_Xv85AMQrmgIlDEWD8CA_aSeMk-yv";
+
+const db = supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_KEY
+);
+
+const $ = id => document.getElementById(id);
+
+const params = new URLSearchParams(location.search);
+const seriesId = params.get("series");
+
+let user = null;
+let currentSeries = null;
+let isUnlocked = false;
+let isRedeeming = false;
+
+function safe(value) {
+  return String(value ?? "").replace(/[&<>"']/g, c => ({
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    '"': "&quot;",
+    "'": "&#39;"
+  }[c]));
+}
+
+function setPageStatus(message, error = false) {
+  $("pageStatus").textContent = message;
+  $("pageStatus").className =
+    "status" + (error ? " error" : "");
+}
+
+function setRedeemStatus(message, type = "") {
+  $("redeemStatus").textContent = message;
+  $("redeemStatus").className =
+    "status" + (type ? " " + type : "");
+}
+
+function setAccessStatus(unlocked) {
+  isUnlocked = unlocked;
+
+  const badge = $("accessBadge");
+
+  badge.textContent = unlocked ? "UNLOCKED" : "LOCKED";
+  badge.className =
+    "pill " + (unlocked ? "unlocked" : "locked");
+
+  $("accessMessage").textContent = unlocked
+    ? "You have access to this series. Open an included test below."
+    : "This series is locked for your account. Redeem a valid series access code to unlock it.";
+
+  $("redeemArea").classList.toggle("hidden", unlocked);
+}
+
+async function loadSeriesDetails() {
+  if (!seriesId || !/^\d+$/.test(seriesId)) {
+    setPageStatus("Invalid series link. Return to the Test Series page.", true);
+    $("testList").textContent = "No series selected.";
+    return;
+  }
+
+  const { data: { session }, error: sessionError } =
+    await db.auth.getSession();
+
+  if (sessionError || !session) {
+    setPageStatus("Please sign in to view series details.", true);
+    $("testList").textContent = "Sign in to view included tests.";
+
+    const loginLink = document.createElement("a");
+    loginLink.href = "login.html";
+    loginLink.className = "button";
+    loginLink.textContent = "Sign In";
+    $("pageStatus").appendChild(document.createElement("br"));
+    $("pageStatus").appendChild(loginLink);
+    return;
+  }
+
+  user = session.user;
+
+  const { data: series, error: seriesError } = await db
+    .from("test_series")
+    .select("id,title,description,price_inr")
+    .eq("id", seriesId)
+    .eq("is_published", true)
+    .maybeSingle();
+
+  if (seriesError) {
+    setPageStatus(
+      "Could not load series: " + seriesError.message,
+      true
+    );
+    $("testList").textContent = "Unable to load included tests.";
+    return;
+  }
+
+  if (!series) {
+    setPageStatus("This series does not exist or is not published.", true);
+    $("testList").textContent = "No series available.";
+    return;
+  }
+
+  currentSeries = series;
+
+  $("seriesTitle").textContent = series.title || "Test Series";
+  $("seriesDescription").textContent =
+    series.description || "No description has been added yet.";
+
+  const price = Number(series.price_inr);
+  $("seriesPrice").textContent =
+    "₹" + (Number.isFinite(price) ? price.toLocaleString("en-IN") : "0");
+
+  $("seriesInfo").classList.remove("hidden");
+  setPageStatus("");
+
+  await refreshAccessStatus();
+  await loadIncludedTests();
+}
+
+async function refreshAccessStatus() {
+  const { data, error } = await db
+    .from("series_entitlements")
+    .select("series_id,revoked_at")
+    .eq("user_id", user.id)
+    .eq("series_id", currentSeries.id);
+
+  if (error) {
+    setRedeemStatus(
+      "Could not verify series access: " + error.message,
+      "error"
+    );
+    return false;
+  }
+
+  const unlocked = (data || []).some(
+    entitlement => !entitlement.revoked_at
+  );
+
+  setAccessStatus(unlocked);
+  return unlocked;
+}
+
+async function loadIncludedTests() {
+  $("testList").textContent = "Loading included tests...";
+
+  const { data: mappings, error: mappingError } = await db
+    .from("series_tests")
+    .select("test_id")
+    .eq("series_id", currentSeries.id);
+
+  if (mappingError) {
+    $("testList").textContent =
+      "Could not load included tests: " + mappingError.message;
+    return;
+  }
+
+  const ids = [...new Set(
+    (mappings || []).map(item => item.test_id)
+  )];
+
+  if (!ids.length) {
+    $("testList").textContent =
+      "No tests have been added to this series yet.";
+    return;
+  }
+
+  const { data: tests, error: testsError } = await db
+    .from("tests")
+    .select("id,title,exam,is_published")
+    .in("id", ids)
+    .eq("is_published", true);
+
+  if (testsError) {
+    $("testList").textContent =
+      "Could not load test details: " + testsError.message;
+    return;
+  }
+
+  if (!tests || !tests.length) {
+    $("testList").textContent =
+      "No published tests are currently available in this series.";
+    return;
+  }
+
+  $("testList").innerHTML = tests.map(test => `
+    <article class="test">
+      <h3>${safe(test.title || "Test #" + test.id)}</h3>
+      <div class="small">
+        ${safe(test.exam || "Exam not specified")}
+      </div>
+      <a href="test.html?test=${encodeURIComponent(test.id)}">
+        Open Test →
+      </a>
+      ${isUnlocked ? `
+        <div class="small">Included in your unlocked series.</div>
+      ` : `
+        <div class="small">
+          Series access: locked. The existing test page will
+          determine whether your account can access this test,
+          including through an individual purchase.
+        </div>
+      `}
+    </article>
+  `).join("");
+}
+
+$("redeemBtn").addEventListener("click", async () => {
+  if (isRedeeming) return;
+
+  if (!user || !currentSeries) {
+    setRedeemStatus(
+      "Please sign in and load the series first.",
+      "error"
+    );
+    return;
+  }
+
+  if (isUnlocked) {
+    setRedeemStatus("This series is already unlocked.", "success");
+    return;
+  }
+
+  const code = $("accessCode").value.trim();
+
+  if (!code) {
+    setRedeemStatus("Please enter your access code.", "error");
+    return;
+  }
+
+  isRedeeming = true;
+  $("redeemBtn").disabled = true;
+  setRedeemStatus("Checking access code...");
+
+  try {
+    // Preserve the existing redemption RPC.
+    const { data, error } = await db.rpc(
+      "redeem_series_access_code",
+      { p_code: code }
+    );
+
+    if (error) {
+      setRedeemStatus(
+        "Redemption failed: " + error.message,
+        "error"
+      );
+      return;
+    }
+
+    if (data !== true) {
+      setRedeemStatus(
+        "The code was invalid, expired, revoked, or fully used.",
+        "error"
+      );
+      return;
+    }
+
+    // Verify that this specific series is now unlocked.
+    const unlocked = await refreshAccessStatus();
+
+    if (unlocked) {
+      $("accessCode").value = "";
+      setRedeemStatus(
+        "Success! This series is now unlocked.",
+        "success"
+      );
+      await loadIncludedTests();
+    } else {
+      setRedeemStatus(
+        "The redemption function accepted the code, but access to this particular series could not be confirmed. Check that the code belongs to this series or contact the admin.",
+        "error"
+      );
+    }
+  } catch (err) {
+    setRedeemStatus(
+      "Unexpected error: " + (err.message || String(err)),
+      "error"
+    );
+  } finally {
+    isRedeeming = false;
+    $("redeemBtn").disabled = false;
+  }
+});
+
+loadSeriesDetails();
+</script>
+
+</body>
+</html>
