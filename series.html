@@ -5,7 +5,9 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Test Series | Road to Academy</title>
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
 <style>
 *{box-sizing:border-box}
 body{margin:0;background:#f3f6fb;color:#182338;font-family:Arial,sans-serif}
@@ -17,27 +19,31 @@ button{background:#245bd5;color:white;border:0;font-weight:bold;cursor:pointer}
 button:disabled{opacity:.5;cursor:not-allowed}
 .test{padding:12px 0;border-top:1px solid #e3e8ef}
 .test a{color:#245bd5;font-weight:bold;text-decoration:none}
-.small{font-size:13px;color:#65738a}
+.small{font-size:13px;color:#65738a;line-height:1.6}
 .status{white-space:pre-wrap;color:#9a2525}
 .pill{display:inline-block;padding:5px 9px;border-radius:20px;background:#e8eefb;font-size:12px}
+.details-link{display:block;width:100%;padding:12px;margin:12px 0;background:#13233f;color:white;text-align:center;text-decoration:none;border-radius:9px;font-weight:bold}
+.price{font-weight:bold}
 </style>
 </head>
+
 <body>
 <header>
   <h1>ROAD TO ACADEMY</h1>
   <p>Test Series — NDA / CDS / CAPF</p>
 </header>
+
 <main>
   <section class="card">
-    <h2>Redeem your series code</h2>
+    <h2>Redeem Your Series Code</h2>
     <p class="small">Sign in first. Enter the access code provided by the Road to Academy admin.</p>
     <input id="code" placeholder="Example: RA-SER-XXXXXXXXXXXX" autocomplete="off">
-    <button id="redeemBtn">Redeem code</button>
+    <button id="redeemBtn">Redeem Code</button>
     <div id="status" class="status"></div>
   </section>
 
   <section class="card">
-    <h2>Available test series</h2>
+    <h2>Available Test Series</h2>
     <div id="seriesList">Loading series...</div>
   </section>
 </main>
@@ -51,6 +57,7 @@ const $ = id => document.getElementById(id);
 const say = msg => $("status").textContent = msg;
 
 let user = null;
+let redeeming = false;
 
 function safe(text) {
   return String(text ?? "").replace(/[&<>"']/g, c => ({
@@ -60,39 +67,47 @@ function safe(text) {
 
 async function init() {
   const {data:{session}, error} = await db.auth.getSession();
+
   if(error || !session) {
     $("seriesList").textContent = "Please sign in to view your series.";
     say("You need to sign in before redeeming a code.");
     return;
   }
+
   user = session.user;
   await loadSeries();
 }
 
 async function loadSeries() {
   $("seriesList").textContent = "Loading...";
+
   const [seriesResult, entitlementResult] = await Promise.all([
     db.from("test_series")
       .select("id,title,description,price_inr")
       .eq("is_published", true)
       .order("id", {ascending:false}),
+
     db.from("series_entitlements")
       .select("series_id,revoked_at")
       .eq("user_id", user.id)
   ]);
 
   if(seriesResult.error) {
-    $("seriesList").textContent = "Could not load series: " + seriesResult.error.message;
+    $("seriesList").textContent =
+      "Could not load series: " + seriesResult.error.message;
     return;
   }
+
   if(entitlementResult.error) {
-    $("seriesList").textContent = "Could not check access: " + entitlementResult.error.message;
+    $("seriesList").textContent =
+      "Could not check access: " + entitlementResult.error.message;
     return;
   }
 
   const owned = new Set((entitlementResult.data || [])
     .filter(e => !e.revoked_at)
     .map(e => String(e.series_id)));
+
   const series = seriesResult.data || [];
 
   if(!series.length) {
@@ -102,19 +117,33 @@ async function loadSeries() {
 
   $("seriesList").innerHTML = series.map(s => `
     <article class="card">
-      <span class="pill">${owned.has(String(s.id)) ? "UNLOCKED" : "LOCKED"}</span>
+      <span class="pill">
+        ${owned.has(String(s.id)) ? "UNLOCKED" : "LOCKED"}
+      </span>
+
       <h3>${safe(s.title)}</h3>
-      <p>${safe(s.description || "")}</p>
-      <p><strong>Series price: ₹${Number(s.price_inr || 0)}</strong></p>
-      <div id="tests-${s.id}" class="small">Loading included tests...</div>
+      <p>${safe(s.description || "No description available.")}</p>
+      <p class="price">Series Price: ₹${Number(s.price_inr || 0).toLocaleString("en-IN")}</p>
+
+      <a class="details-link"
+         href="series-details.html?series=${encodeURIComponent(s.id)}">
+         View Series Details →
+      </a>
+
+      <div id="tests-${s.id}" class="small">
+        Loading included tests...
+      </div>
     </article>
   `).join("");
 
-  await Promise.all(series.map(s => loadSeriesTests(s, owned.has(String(s.id)))));
+  await Promise.all(
+    series.map(s => loadSeriesTests(s, owned.has(String(s.id))))
+  );
 }
 
 async function loadSeriesTests(series, unlocked) {
-  const target = $(`tests-${series.id}`);
+  const target = $("tests-" + series.id);
+
   const {data:mappings, error} = await db
     .from("series_tests")
     .select("test_id")
@@ -125,7 +154,8 @@ async function loadSeriesTests(series, unlocked) {
     return;
   }
 
-  const ids = (mappings || []).map(m => m.test_id);
+  const ids = [...new Set((mappings || []).map(m => m.test_id))];
+
   if(!ids.length) {
     target.textContent = "No tests have been added to this series yet.";
     return;
@@ -142,56 +172,70 @@ async function loadSeriesTests(series, unlocked) {
     return;
   }
 
-  const available = tests || [];
-  if(!available.length) {
-    target.textContent = "No published tests are currently available in this series.";
+  if(!tests || !tests.length) {
+    target.textContent = "No published tests are currently available.";
     return;
   }
 
-  target.innerHTML = available.map(t => `
-    <div class="test">
-      <strong>${safe(t.title || "Test #" + t.id)}</strong>
-      <div class="small">${safe(t.exam || "")} · Test ID ${t.id}</div>
-      ${unlocked
-        ? `<a href="test.html?test=${encodeURIComponent(t.id)}">Open test →</a>`
-        : `<span class="small">Redeem a series code to unlock this test.</span>`}
-    </div>
-  `).join("");
+  target.innerHTML = `
+    <strong>${tests.length} published test(s) included</strong>
+    ${tests.map(t => `
+      <div class="test">
+        ${safe(t.title || "Test #" + t.id)}
+        <div class="small">${safe(t.exam || "")}</div>
+        ${unlocked
+          ? `<a href="test.html?test=${encodeURIComponent(t.id)}">Open Test →</a>`
+          : `<span class="small">View details to learn how to unlock this series.</span>`}
+      </div>
+    `).join("")}
+  `;
 }
 
 $("redeemBtn").onclick = async () => {
+  if(redeeming) return;
+
   if(!user) {
     say("Please sign in first.");
     return;
   }
 
   const code = $("code").value.trim();
+
   if(!code) {
     say("Enter your access code.");
     return;
   }
 
+  redeeming = true;
   $("redeemBtn").disabled = true;
   say("Checking code...");
 
-  const {data, error} = await db.rpc("redeem_series_access_code", {
-    p_code: code
-  });
+  try {
+    const {data, error} = await db.rpc("redeem_series_access_code", {
+      p_code: code
+    });
 
-  $("redeemBtn").disabled = false;
+    if(error) {
+      say("Redemption failed: " + error.message);
+      return;
+    }
 
-  if(error) {
-    say("Redemption failed: " + error.message);
-    return;
+    if(data !== true) {
+      say("Invalid, expired, revoked, or fully used code.");
+      return;
+    }
+
+    $("code").value = "";
+    say("Code accepted. Refreshing your series access...");
+
+    await loadSeries();
+    say("Code accepted. Check the series details to confirm access.");
+  } catch(err) {
+    say("Unexpected error: " + (err.message || String(err)));
+  } finally {
+    redeeming = false;
+    $("redeemBtn").disabled = false;
   }
-  if(data !== true) {
-    say("Invalid, expired, revoked, or fully used code.");
-    return;
-  }
-
-  $("code").value = "";
-  say("Series unlocked successfully!");
-  await loadSeries();
 };
 
 init();
