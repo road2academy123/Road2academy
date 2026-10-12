@@ -13,9 +13,11 @@ header{background:#071a3d;color:white;padding:16px 22px;display:flex;justify-con
 .logo{color:#f5c542;font-weight:bold;font-size:20px}
 .header-actions,.actions{display:flex;gap:8px;flex-wrap:wrap}
 button,a{cursor:pointer}
-.header-btn,.actions button,.create-btn{border:0;border-radius:7px;padding:10px 13px;font-weight:bold;text-decoration:none}
+button:disabled{opacity:.55;cursor:not-allowed}
+.header-btn,.actions button,.create-btn{border:0;border-radius:7px;padding:10px 13px;font-weight:bold}
+.header-btn{text-decoration:none}
 .analytics-btn{background:#d4af37;color:#071a3d}
-.students-btn,.edit-btn{background:#e8eefc;color:#071a3d}
+.students-btn,.edit-btn,.duplicate-btn{background:#e8eefc;color:#071a3d}
 .logout,.delete-btn,.reject-btn{background:#d62828;color:white}
 .container{max-width:1150px;margin:28px auto;padding:0 16px}
 h1{color:#071a3d;margin-bottom:8px}
@@ -44,7 +46,6 @@ textarea{min-height:80px}
 .questions-btn{background:#071a3d;color:white}
 .publish-btn{background:#f5c542;color:#071a3d}
 .unpublish-btn{background:#ddd;color:#333}
-.duplicate-btn{background:#e8eefc;color:#071a3d}
 .approve-btn{background:#168044;color:white}
 .badge{display:inline-block;padding:5px 8px;border-radius:6px;font-size:12px;font-weight:bold}
 .pending{background:#fff4d6;color:#8a6500}
@@ -53,11 +54,13 @@ textarea{min-height:80px}
 .empty{text-align:center;color:#667085;padding:22px}
 .attempt{padding:13px 0;border-bottom:1px solid #eee;display:flex;justify-content:space-between;gap:12px}
 .attempt:last-child{border:0}
+.series-link{display:inline-block;margin-bottom:20px;background:#071a3d;color:white;padding:12px 16px;border-radius:8px;text-decoration:none;font-weight:bold}
 @media(max-width:800px){.stats{grid-template-columns:1fr 1fr}.quick-grid{grid-template-columns:1fr 1fr}}
 @media(max-width:550px){.stats,.quick-grid,.form-grid{grid-template-columns:1fr}.full{grid-column:auto}.attempt{flex-direction:column}header{align-items:flex-start}}
 </style>
 </head>
 <body>
+
 <header>
   <div class="logo">🛡️ ROAD TO ACADEMY — ADMIN</div>
   <div class="header-actions">
@@ -97,16 +100,14 @@ textarea{min-height:80px}
 <div id="recentAttempts" class="muted">Loading...</div>
 </section>
 
-  
-<a href="admin-series.html">Manage Test Series</a>
+<a href="admin-series.html" class="series-link">📚 Manage Test Series</a>
 
-  
 <section class="card" id="createTest">
 <h2>➕ Create New Test</h2>
 <form id="testForm">
 <div class="form-grid">
   <div class="field"><label for="title">Test Title</label><input id="title" required placeholder="NDA Mathematics Test 03"></div>
-  <div class="field"><label for="exam">Exam</label><select id="exam"><option>NDA</option><option>CDS</option></select></div>
+  <div class="field"><label for="exam">Exam</label><select id="exam"><option>NDA</option><option>CDS</option><option>CAPF</option></select></div>
   <div class="field"><label for="subject">Subject</label><input id="subject" placeholder="Mathematics"></div>
   <div class="field"><label for="duration">Duration (minutes)</label><input id="duration" type="number" min="1" value="30" required></div>
   <div class="field"><label for="marks">Total Marks</label><input id="marks" type="number" min="1" value="100" required></div>
@@ -124,56 +125,25 @@ textarea{min-height:80px}
 <div id="testList">Loading tests...</div>
 </section>
 
-<!-- GLOBAL SUBSCRIPTION MANAGEMENT -->
 <section class="card" id="globalSubscriptionSection">
-    <h2>🌐 Global Subscriptions</h2>
-    <p>
-        Grant a student access to eligible paid NDA, CDS
-        and CAPF tests for 90 days.
-    </p>
-
-    <label for="subscriptionEmail">Student Gmail</label>
-    <input
-        type="email"
-        id="subscriptionEmail"
-        placeholder="student@gmail.com"
-        required
-    >
-
-    <button
-        type="button"
-        id="grantSubscriptionButton"
-        onclick="grantGlobalSubscription()"
-    >
-        Approve 90-Day Subscription
-    </button>
-
-    <p id="subscriptionMessage" role="status"></p>
-
-    <hr>
-
-    <h3>Revoke Subscription</h3>
-    <label for="subscriptionIdToRevoke">
-        Subscription ID
-    </label>
-    <input
-        type="number"
-        id="subscriptionIdToRevoke"
-        min="1"
-        placeholder="Enter subscription ID"
-    >
-
-    <button
-        type="button"
-        onclick="revokeGlobalSubscription()"
-    >
-        Revoke Subscription
-    </button>
+<h2>🌐 Global Subscriptions</h2>
+<p>Grant a student access to eligible paid NDA, CDS and CAPF tests for 90 days.</p>
+<br>
+<label for="subscriptionEmail">Student Gmail</label>
+<input type="email" id="subscriptionEmail" placeholder="student@gmail.com">
+<button type="button" id="grantSubscriptionButton" class="create-btn" onclick="grantGlobalSubscription()">Approve 90-Day Subscription</button>
+<p id="subscriptionMessage" role="status" class="message" hidden></p>
+<hr style="margin:20px 0">
+<h3>Revoke Subscription</h3>
+<br>
+<label for="subscriptionIdToRevoke">Subscription ID</label>
+<input type="number" id="subscriptionIdToRevoke" min="1" placeholder="Enter subscription ID">
+<button type="button" class="create-btn" onclick="revokeGlobalSubscription()">Revoke Subscription</button>
 </section>
 
 <section class="card" id="payments">
 <h2>💳 Payment Requests</h2>
-<p class="muted">Verify the actual payment in your payment provider before approving. Approval creates a one-time access code.</p>
+<p class="muted">Verify the actual payment before approving. Approval creates a one-time access code.</p>
 <div class="actions" style="margin:14px 0">
 <button class="create-btn" onclick="loadPayments()">↻ Refresh Requests</button>
 <select id="paymentFilter" onchange="renderPayments()" style="width:auto">
@@ -192,6 +162,7 @@ const SUPABASE_URL="https://egjrkxdyehwbzgoppiqk.supabase.co";
 const SUPABASE_KEY="sb_publishable_nc_Xv85AMQrmgIlDEWD8CA_aSeMk-yv";
 const db=supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
 let paymentRequests=[];
+let deletingTest=false;
 
 function esc(v){
  return String(v??"").replaceAll("&","&amp;").replaceAll("<","&lt;")
@@ -202,6 +173,7 @@ function showMessage(text,type){
  const el=document.getElementById("message");
  el.hidden=false;el.className="message "+type;el.textContent=text;
 }
+
 async function checkAdmin(){
  const {data:{session},error}=await db.auth.getSession();
  if(error){alert("Session error: "+error.message);return false}
@@ -212,9 +184,10 @@ async function checkAdmin(){
  if(!role||role.role!=="admin"){alert("Admin access required.");location.href="dashboard.html";return false}
  return true;
 }
+
 async function loadAdminDashboard(){
  const {data,error}=await db.rpc("get_admin_analytics",{p_request:"dashboard"});
- if(error){console.error(error);return}
+ if(error){console.error("Analytics error:",error);return}
  if(!data)return;
  document.getElementById("totalStudents").textContent=data.students??0;
  document.getElementById("totalTests").textContent=data.tests??0;
@@ -225,6 +198,7 @@ async function loadAdminDashboard(){
  document.getElementById("averageAccuracy").textContent=Number(data.average_accuracy??0).toFixed(1)+"%";
  renderRecentAttempts(data.recent_attempts||[]);
 }
+
 function renderRecentAttempts(items){
  const el=document.getElementById("recentAttempts");
  if(!items.length){el.innerHTML='<div class="empty">No student attempts yet.</div>';return}
@@ -254,7 +228,8 @@ document.getElementById("testForm").addEventListener("submit",async e=>{
   const {data,error}=await db.from("tests").insert(payload).select().single();
   if(error)throw error;
   showMessage("Test created! ID: "+data.id,"success");
-  e.target.reset();document.getElementById("duration").value=30;
+  e.target.reset();
+  document.getElementById("duration").value=30;
   document.getElementById("marks").value=100;
   document.getElementById("negative").value="0.25";
   document.getElementById("price").value=0;
@@ -264,14 +239,15 @@ document.getElementById("testForm").addEventListener("submit",async e=>{
 });
 
 async function loadTests(){
- const el=document.getElementById("testList");el.textContent="Loading tests...";
+ const el=document.getElementById("testList");
+ el.textContent="Loading tests...";
  const {data,error}=await db.from("tests").select("*").order("id",{ascending:false});
  if(error){el.textContent="Failed to load tests: "+error.message;return}
  if(!data?.length){el.innerHTML='<div class="empty">No tests created yet.</div>';return}
  el.innerHTML=data.map(t=>`
  <div class="test">
  <h3>${esc(t.title)}</h3>
- <div class="details">${esc(t.exam)} · ${esc(t.subject||"General")} · ${t.duration_minutes} min · ${t.total_marks} marks
+ <div class="details">${esc(t.exam)} · ${esc(t.subject||"General")} · ${esc(t.duration_minutes)} min · ${esc(t.total_marks)} marks
  <br>Price: <b>${Number(t.price_inr||0)>0?money(t.price_inr):"Free"}</b>
  <br>Status: <span class="badge ${t.is_published?"approved":"pending"}">${t.is_published?"Published":"Draft"}</span>
  </div><div class="actions">
@@ -279,27 +255,84 @@ async function loadTests(){
  <button class="duplicate-btn" onclick="duplicateTest(${Number(t.id)})">Duplicate</button>
  <button class="questions-btn" onclick="manageQuestions(${Number(t.id)})">📝 Questions</button>
  <button class="${t.is_published?"unpublish-btn":"publish-btn"}" onclick="togglePublish(${Number(t.id)},${Boolean(t.is_published)})">${t.is_published?"Unpublish":"Publish"}</button>
- <button class="delete-btn" onclick="deleteTest(${Number(t.id)})">Delete</button>
+ <button class="delete-btn" ${deletingTest?"disabled":""} onclick="deleteTest(${Number(t.id)})">Delete</button>
  </div></div>`).join("");
 }
+
 async function togglePublish(id,current){
  if(!confirm((current?"Unpublish":"Publish")+" this test?"))return;
  const {error}=await db.from("tests").update({is_published:!current}).eq("id",id);
- if(error){alert(error.message);return}
+ if(error){alert("Update failed: "+error.message);return}
  await loadTests();await loadAdminDashboard();
 }
+
+/* PERMANENT TEST DELETION */
 async function deleteTest(id){
- if(!confirm("Delete this test? This may fail if related records prevent deletion."))return;
- const {error}=await db.from("tests").delete().eq("id",id);
- if(error){alert("Delete failed: "+error.message);return}
- await loadTests();await loadAdminDashboard();
+ if(deletingTest)return;
+
+ const testId=Number(id);
+ if(!Number.isSafeInteger(testId)||testId<=0){
+  alert("Invalid test ID.");return;
+ }
+
+ const confirmed=confirm(
+  "PERMANENTLY DELETE TEST #"+testId+"?\n\n"+
+  "Linked records will also be deleted:\n"+
+  "• Questions\n"+
+  "• Test attempts\n"+
+  "• Test-series links\n"+
+  "• Access codes\n"+
+  "• Test entitlements\n"+
+  "• Payment requests\n\n"+
+  "This cannot be undone. Continue?"
+ );
+ if(!confirmed)return;
+
+ deletingTest=true;
+ document.querySelectorAll(".delete-btn").forEach(b=>b.disabled=true);
+
+ try{
+  const {data,error}=await db
+   .from("tests")
+   .delete()
+   .eq("id",testId)
+   .select("id");
+
+  if(error)throw error;
+
+  if(!data||data.length===0){
+   alert(
+    "No test was deleted.\n\n"+
+    "The test may not exist, or database permissions/RLS "+
+    "may be preventing deletion."
+   );
+   return;
+  }
+
+  alert("Test #"+testId+" was permanently deleted with its linked records.");
+
+  await Promise.all([loadTests(),loadAdminDashboard(),loadPayments()]);
+
+ }catch(error){
+  console.error("Permanent test deletion failed:",error);
+  alert(
+   "DELETE FAILED\n\n"+
+   (error.message||"Unknown database error")+
+   "\n\nCheck the foreign-key constraints and admin permissions. "+
+   "Do not repeatedly retry until the cause is identified."
+  );
+ }finally{
+  deletingTest=false;
+  document.querySelectorAll(".delete-btn").forEach(b=>b.disabled=false);
+ }
 }
+
 function editTest(id){location.href="admin-edit.html?test="+id}
 function manageQuestions(id){location.href="admin-questions.html?test="+id}
 
 async function duplicateTest(id){
  const {data:src,error}=await db.from("tests").select("*").eq("id",id).single();
- if(error){alert(error.message);return}
+ if(error){alert("Could not load source test: "+error.message);return}
  const title=prompt("Title for the duplicated test:",src.title+" - Copy");
  if(!title?.trim())return;
  if(!confirm("Duplicate this test and its questions? The new test should remain unpublished."))return;
@@ -310,12 +343,14 @@ async function duplicateTest(id){
 }
 
 async function loadPayments(){
- const el=document.getElementById("paymentList");el.textContent="Loading payment requests...";
+ const el=document.getElementById("paymentList");
+ el.textContent="Loading payment requests...";
  const {data,error}=await db.rpc("get_admin_payment_requests");
  if(error){el.textContent="Could not load payment requests: "+error.message;return}
  paymentRequests=Array.isArray(data)?data:[];
  renderPayments();
 }
+
 function renderPayments(){
  const el=document.getElementById("paymentList");
  const filter=document.getElementById("paymentFilter").value;
@@ -338,124 +373,83 @@ function renderPayments(){
  </div>`:""}
  </div>`).join("");
 }
+
 async function approvePayment(id){
  if(!confirm("Have you independently verified that payment was received for this exact test and amount? Only approve after verification."))return;
  try{
   const {data,error}=await db.rpc("approve_test_payment",{p_request_id:Number(id)});
   if(error)throw error;
   if(!data?.access_code)throw Error("Approval returned no access code. Check the request status with Supabase before retrying.");
-  // This is the only time the plaintext code is returned. Save it securely now.
   alert("PAYMENT APPROVED\n\nRequest: "+data.request_id+
   "\nTest ID: "+data.test_id+
   "\n\nONE-TIME ACCESS CODE:\n\n"+data.access_code+
-  "\n\nCopy and securely deliver this code to the intended student now. It cannot be retrieved from its hash later.");
+  "\n\nSecurely deliver this code to the intended student now.");
   await loadPayments();
  }catch(err){alert("Approval failed: "+err.message)}
 }
+
 async function rejectPayment(id){
  if(!confirm("Reject payment request #"+id+"? Verify the reference first."))return;
  const {data,error}=await db.rpc("reject_test_payment",{p_request_id:Number(id)});
  if(error){alert("Rejection failed: "+error.message);return}
  await loadPayments();
 }
+
 async function logout(){
- await db.auth.signOut();location.href="login.html";
+ await db.auth.signOut();
+ location.href="login.html";
 }
+
+async function grantGlobalSubscription(){
+ const emailInput=document.getElementById("subscriptionEmail");
+ const message=document.getElementById("subscriptionMessage");
+ const button=document.getElementById("grantSubscriptionButton");
+ const email=emailInput.value.trim().toLowerCase();
+
+ message.hidden=false;
+ if(!email){message.className="message error";message.textContent="Enter the student's email.";return}
+
+ button.disabled=true;
+ message.className="message";
+ message.textContent="Approving subscription...";
+
+ try{
+  const {data,error}=await db.rpc("admin_grant_global_subscription",{p_email:email});
+  if(error)throw error;
+  const expiry=new Date(data.expires_at).toLocaleString();
+  message.className="message success";
+  message.textContent=`Subscription approved for ${data.email}. Subscription ID: ${data.subscription_id}. Expires: ${expiry}`;
+  emailInput.value="";
+ }catch(error){
+  console.error(error);
+  message.className="message error";
+  message.textContent="Approval failed: "+error.message;
+ }finally{
+  button.disabled=false;
+ }
+}
+
+async function revokeGlobalSubscription(){
+ const idInput=document.getElementById("subscriptionIdToRevoke");
+ const id=Number(idInput.value);
+ if(!Number.isSafeInteger(id)||id<=0){alert("Enter a valid subscription ID.");return}
+ if(!confirm("Revoke this global subscription? Existing individual test purchases will remain unchanged."))return;
+
+ try{
+  const {data,error}=await db.rpc("admin_revoke_global_subscription",{p_subscription_id:id});
+  if(error)throw error;
+  alert("Subscription revoked successfully. ID: "+data.subscription_id);
+  idInput.value="";
+ }catch(error){
+  console.error(error);
+  alert("Revocation failed: "+error.message);
+ }
+}
+
 (async()=>{
  if(!await checkAdmin())return;
  await Promise.all([loadAdminDashboard(),loadTests(),loadPayments()]);
 })();
-  
-async function grantGlobalSubscription() {
-    const emailInput = document.getElementById(
-        "subscriptionEmail"
-    );
-
-    const message = document.getElementById(
-        "subscriptionMessage"
-    );
-
-    const button = document.getElementById(
-        "grantSubscriptionButton"
-    );
-
-    const email = emailInput.value.trim().toLowerCase();
-
-    if (!email) {
-        message.textContent = "Enter the student's email.";
-        return;
-    }
-
-    button.disabled = true;
-    message.textContent = "Approving subscription...";
-
-    try {
-        const { data, error } = await db.rpc(
-            "admin_grant_global_subscription",
-            { p_email: email }
-        );
-
-        if (error) throw error;
-
-        const expiry = new Date(
-            data.expires_at
-        ).toLocaleString();
-
-        message.textContent =
-            `Subscription approved for ${data.email}. ` +
-            `Subscription ID: ${data.subscription_id}. ` +
-            `Expires: ${expiry}`;
-
-        emailInput.value = "";
-    } catch (error) {
-        console.error(error);
-
-        message.textContent =
-            "Approval failed: " + error.message;
-    } finally {
-        button.disabled = false;
-    }
-}
-
-async function revokeGlobalSubscription() {
-    const idInput = document.getElementById(
-        "subscriptionIdToRevoke"
-    );
-
-    const id = Number(idInput.value);
-
-    if (!Number.isSafeInteger(id) || id <= 0) {
-        alert("Enter a valid subscription ID.");
-        return;
-    }
-
-    if (!confirm(
-        "Revoke this global subscription? " +
-        "Existing individual test purchases will remain unchanged."
-    )) {
-        return;
-    }
-
-    try {
-        const { data, error } = await db.rpc(
-            "admin_revoke_global_subscription",
-            { p_subscription_id: id }
-        );
-
-        if (error) throw error;
-
-        alert(
-            "Subscription revoked successfully. ID: " +
-            data.subscription_id
-        );
-
-        idInput.value = "";
-    } catch (error) {
-        console.error(error);
-        alert("Revocation failed: " + error.message);
-    }
-}
-
 </script>
 </body>
 </html>
