@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -12,598 +11,345 @@
 
 <style>
 
-:root {
-    --bg: #f7f8fa;
-    --surface: #ffffff;
-    --text: #20232d;
-    --muted: #777e8e;
-    --border: #eceef2;
-    --purple: #7455e8;
-    --purple-dark: #6040d2;
-    --green: #20a779;
-    --gold: #f5b942;
-    --shadow: 0 8px 30px rgba(30,35,55,.055);
-    --shadow-hover: 0 16px 38px rgba(30,35,55,.11);
+*{
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
 }
 
-* {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-}
-
-body {
-    font-family: Inter,-apple-system,BlinkMacSystemFont,
-    "Segoe UI",sans-serif;
-    background: var(--bg);
-    color: var(--text);
-    line-height: 1.55;
+body{
+    font-family:Arial,sans-serif;
+    background:#f4f6fa;
+    color:#17213a;
 }
 
 /* HEADER */
 
-header {
-    background: rgba(255,255,255,.94);
-    backdrop-filter: blur(15px);
-    -webkit-backdrop-filter: blur(15px);
-    color: var(--text);
-    padding: 15px 5%;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 15px;
-    border-bottom: 1px solid var(--border);
-    position: sticky;
-    top: 0;
-    z-index: 100;
+header{
+    background:#17356f;
+    color:white;
+    padding:16px 25px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:15px;
 }
 
-.logo {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    font-size: 21px;
-    font-weight: 800;
-    letter-spacing: -.6px;
+.logo{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    font-size:21px;
+    font-weight:bold;
 }
 
-.logo img {
-    height: 43px;
-    width: 43px;
-    border-radius: 13px;
-    object-fit: cover;
+.logo img{
+    height:40px;
+    width:40px;
+    border-radius:50%;
+    object-fit:cover;
 }
 
-.header-right {
-    display: flex;
-    align-items: center;
-    gap: 17px;
+.header-right{
+    display:flex;
+    align-items:center;
+    gap:12px;
 }
 
-.header-name {
-    font-weight: 700;
-    font-size: 14px;
+.header-name{
+    font-weight:bold;
 }
 
-.logout {
-    background: #fff1f0;
-    color: #d84c48;
-    border: 1px solid #ffe0dd;
-    padding: 10px 19px;
-    border-radius: 10px;
-    cursor: pointer;
-    font-weight: 700;
-    font-size: 13px;
-    transition: .25s ease;
-}
-
-.logout:hover {
-    background: #ffe1df;
-    transform: translateY(-2px);
+.logout{
+    background:white;
+    color:#17356f;
+    border:0;
+    padding:9px 15px;
+    border-radius:8px;
+    cursor:pointer;
+    font-weight:bold;
 }
 
 /* CONTAINER */
 
-.container {
-    max-width: 1160px;
-    margin: 38px auto;
-    padding: 0 22px;
+.container{
+    max-width:1100px;
+    margin:30px auto;
+    padding:0 18px;
 }
 
 /* WELCOME */
 
-.welcome {
-    margin-bottom: 32px;
-    padding: 12px 0;
+.welcome{
+    margin-bottom:25px;
 }
 
-.welcome h1 {
-    font-size: clamp(26px,4vw,35px);
-    font-weight: 800;
-    letter-spacing: -1.2px;
-    margin-bottom: 9px;
-    color: #20232d;
+.welcome h1{
+    font-size:29px;
+    margin-bottom:7px;
 }
 
-.welcome h1 span {
-    color: var(--purple);
+.welcome p{
+    color:#667085;
 }
 
-.welcome p {
-    color: var(--muted);
-    font-size: 15px;
+/* STATS */
+
+.stats{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:15px;
+    margin-bottom:25px;
 }
 
-/* STATISTICS */
-
-.stats {
-    display: grid;
-    grid-template-columns: repeat(4,1fr);
-    gap: 18px;
-    margin-bottom: 30px;
+.stat{
+    background:white;
+    padding:22px;
+    border-radius:13px;
+    box-shadow:0 4px 15px rgba(0,0,0,.06);
 }
 
-.stat {
-    background: var(--surface);
-    padding: 24px;
-    border-radius: 17px;
-    border: 1px solid var(--border);
-    box-shadow: var(--shadow);
-    position: relative;
-    overflow: hidden;
-    transition: .3s ease;
+.stat h2{
+    color:#17356f;
+    font-size:28px;
+    margin-bottom:7px;
 }
 
-.stat::before {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 4px;
-    background: linear-gradient(90deg,#7455e8,#a58bff);
-}
-
-.stat:nth-child(2)::before {
-    background: linear-gradient(90deg,#20a779,#6adbb1);
-}
-
-.stat:nth-child(3)::before {
-    background: linear-gradient(90deg,#efa936,#ffcf70);
-}
-
-.stat:nth-child(4)::before {
-    background: linear-gradient(90deg,#ec7294,#ffabc0);
-}
-
-.stat:hover {
-    transform: translateY(-5px);
-    box-shadow: var(--shadow-hover);
-}
-
-.stat h2 {
-    color: var(--purple);
-    font-size: 31px;
-    font-weight: 800;
-    letter-spacing: -1px;
-    margin-bottom: 6px;
-}
-
-.stat:nth-child(2) h2 {
-    color: var(--green);
-}
-
-.stat:nth-child(3) h2 {
-    color: #dc9b29;
-}
-
-.stat:nth-child(4) h2 {
-    color: #df6389;
-}
-
-.stat p {
-    color: var(--muted);
-    font-size: 13px;
-    font-weight: 600;
+.stat p{
+    color:#667085;
 }
 
 /* RESUME */
 
-.resume {
-    background: linear-gradient(120deg,#6846db,#9375f5);
-    color: white;
-    padding: 29px;
-    border-radius: 19px;
-    margin-bottom: 30px;
-    box-shadow: 0 12px 30px rgba(116,85,232,.2);
-    display: none;
-    position: relative;
-    overflow: hidden;
+.resume{
+    background:#17356f;
+    color:white;
+    padding:24px;
+    border-radius:14px;
+    margin-bottom:25px;
+    box-shadow:0 4px 15px rgba(0,0,0,.08);
+    display:none;
 }
 
-.resume::after {
-    content: "";
-    position: absolute;
-    width: 180px;
-    height: 180px;
-    border: 35px solid rgba(255,255,255,.09);
-    border-radius: 50%;
-    right: -45px;
-    top: -65px;
+.resume h2{
+    margin-bottom:8px;
 }
 
-.resume h2 {
-    font-size: 23px;
-    margin-bottom: 8px;
-    position: relative;
-    z-index: 1;
+.resume p{
+    color:#dce6f8;
+    margin-bottom:17px;
 }
 
-.resume p {
-    color: #eee8ff;
-    margin-bottom: 20px;
-    position: relative;
-    z-index: 1;
+.resume-btn{
+    display:inline-block;
+    background:white;
+    color:#17356f;
+    text-decoration:none;
+    padding:11px 18px;
+    border-radius:8px;
+    font-weight:bold;
 }
 
-.resume-btn {
-    display: inline-block;
-    background: white;
-    color: #6948db;
-    text-decoration: none;
-    padding: 12px 22px;
-    border-radius: 10px;
-    font-weight: 800;
-    font-size: 14px;
-    transition: .25s ease;
-    position: relative;
-    z-index: 1;
+/* SECTION */
+
+.section{
+    background:white;
+    padding:24px;
+    border-radius:14px;
+    margin-bottom:25px;
+    box-shadow:0 4px 15px rgba(0,0,0,.06);
 }
 
-.resume-btn:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 7px 20px rgba(0,0,0,.15);
-}
-
-/* SECTIONS */
-
-.section {
-    background: var(--surface);
-    padding: 27px;
-    border-radius: 19px;
-    margin-bottom: 27px;
-    border: 1px solid var(--border);
-    box-shadow: var(--shadow);
-}
-
-.section h2 {
-    color: var(--text);
-    font-size: 21px;
-    font-weight: 800;
-    letter-spacing: -.5px;
-    margin-bottom: 23px;
+.section h2{
+    color:#17356f;
+    margin-bottom:18px;
 }
 
 /* EXAMS */
 
-.exam-grid {
-    display: grid;
-    grid-template-columns: repeat(2,minmax(0,1fr));
-    gap: 18px;
+.exam-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:18px;
 }
 
-.exam-card {
-    border: 1px solid var(--border);
-    border-radius: 16px;
-    padding: 24px;
-    background: linear-gradient(145deg,#fff,#faf9ff);
-    transition: .3s ease;
-    position: relative;
-    overflow: hidden;
+.exam-card{
+    border:1px solid #e0e4ea;
+    border-radius:12px;
+    padding:22px;
 }
 
-.exam-card:hover {
-    transform: translateY(-5px);
-    border-color: #d7cbff;
-    box-shadow: var(--shadow-hover);
+.exam-card h3{
+    margin-bottom:8px;
+    font-size:20px;
 }
 
-.exam-card h3 {
-    margin-bottom: 10px;
-    font-size: 21px;
-    font-weight: 800;
-}
-
-.exam-card p {
-    color: var(--muted);
-    margin-bottom: 21px;
-    line-height: 1.7;
-    font-size: 14px;
+.exam-card p{
+    color:#667085;
+    margin-bottom:18px;
+    line-height:1.5;
 }
 
 /* BUTTONS */
 
-.btn {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 7px;
-    border: 0;
-    border-radius: 10px;
-    padding: 12px 19px;
-    cursor: pointer;
-    font-weight: 750;
-    font-size: 13px;
-    text-decoration: none;
-    transition: all .25s ease;
+.btn{
+    display:inline-block;
+    border:0;
+    border-radius:8px;
+    padding:11px 17px;
+    cursor:pointer;
+    font-weight:bold;
+    text-decoration:none;
 }
 
-.btn:hover {
-    transform: translateY(-3px);
+.primary{
+    background:#17356f;
+    color:white;
 }
 
-.primary {
-    background: linear-gradient(135deg,#7455e8,#9276f3);
-    color: white;
-    box-shadow: 0 5px 13px rgba(116,85,232,.17);
+.secondary{
+    background:#e9edf5;
+    color:#17356f;
 }
 
-.primary:hover {
-    box-shadow: 0 8px 20px rgba(116,85,232,.3);
+.gold{
+    background:#d4af37;
+    color:#17213a;
 }
 
-.secondary {
-    background: #f0efff;
-    color: #6948db;
-    border: 1px solid #e7e1ff;
+/* QUICK LINKS */
+
+.quick-grid{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:15px;
 }
 
-.secondary:hover {
-    background: #e5dfff;
+.quick-card{
+    border:1px solid #e0e4ea;
+    border-radius:12px;
+    padding:20px;
 }
 
-.gold {
-    background: linear-gradient(135deg,#f5c45e,#f8d58c);
-    color: #493515;
-    box-shadow: 0 5px 13px rgba(245,185,66,.15);
+.quick-card h3{
+    margin-bottom:7px;
 }
 
-.gold:hover {
-    box-shadow: 0 8px 18px rgba(245,185,66,.3);
-}
-
-/* QUICK ACCESS */
-
-.quick-grid {
-    display: grid;
-    grid-template-columns: repeat(2,minmax(0,1fr));
-    gap: 17px;
-}
-
-.quick-card {
-    border: 1px solid var(--border);
-    border-radius: 15px;
-    padding: 23px;
-    background: #fff;
-    transition: .3s ease;
-}
-
-.quick-card:hover {
-    transform: translateY(-4px);
-    border-color: #dcd2ff;
-    box-shadow: var(--shadow-hover);
-}
-
-.quick-card h3 {
-    margin-bottom: 9px;
-    font-size: 17px;
-    font-weight: 800;
-}
-
-.quick-card p {
-    color: var(--muted);
-    margin-bottom: 18px;
-    font-size: 13px;
-    line-height: 1.7;
+.quick-card p{
+    color:#667085;
+    margin-bottom:15px;
+    font-size:14px;
 }
 
 /* ATTEMPTS */
 
-.attempt {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 15px;
-    padding: 19px 5px;
-    border-bottom: 1px solid var(--border);
-    transition: .2s ease;
+.attempt{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:15px;
+    padding:15px 0;
+    border-bottom:1px solid #e8ebef;
 }
 
-.attempt:last-child {
-    border-bottom: 0;
+.attempt:last-child{
+    border-bottom:0;
 }
 
-.attempt-title {
-    font-weight: 750;
-    font-size: 15px;
-    margin-bottom: 7px;
+.attempt-title{
+    font-weight:bold;
+    margin-bottom:5px;
 }
 
-.attempt-info {
-    color: var(--muted);
-    font-size: 13px;
-    line-height: 1.7;
+.attempt-info{
+    color:#667085;
+    font-size:14px;
+    line-height:1.5;
 }
 
-.attempt-score {
-    font-size: 21px;
-    font-weight: 800;
-    color: var(--purple);
-    margin-bottom: 3px;
+.attempt-score{
+    font-size:19px;
+    font-weight:bold;
+    color:#17356f;
 }
 
-.result-link {
-    font-size: 13px;
-    color: var(--purple);
-    font-weight: 700;
-    text-decoration: none;
-    transition: .2s;
-}
-
-.result-link:hover {
-    color: var(--purple-dark);
-    text-decoration: underline;
+.result-link{
+    font-size:13px;
+    color:#17356f;
+    text-decoration:none;
 }
 
 /* EMPTY / LOADING */
 
-.empty {
-    color: var(--muted);
-    text-align: center;
-    padding: 35px 20px;
-    background: #fafaff;
-    border-radius: 13px;
-    font-size: 14px;
+.empty{
+    color:#667085;
+    text-align:center;
+    padding:25px;
 }
 
-.loading {
-    color: var(--muted);
-    padding: 15px 0;
+.loading{
+    color:#667085;
 }
 
 /* FOOTER */
 
-.footer {
-    text-align: center;
-    color: #969cab;
-    font-size: 13px;
-    padding: 15px 0 32px;
-}
-
-/* INTERACTIONS */
-
-a:focus-visible,
-button:focus-visible {
-    outline: 3px solid rgba(116,85,232,.35);
-    outline-offset: 3px;
-}
-
-::selection {
-    background: #e6deff;
-    color: #5335bd;
-}
-
-/* TABLET */
-
-@media(max-width:850px) {
-
-    .stats {
-        grid-template-columns: repeat(2,1fr);
-    }
-
-    .container {
-        margin-top: 27px;
-    }
-
+.footer{
+    text-align:center;
+    color:#98a2b3;
+    font-size:13px;
+    padding:10px 0 30px;
 }
 
 /* MOBILE */
 
-@media(max-width:650px) {
+@media(max-width:750px){
 
-    header {
-        padding: 13px 18px;
+    header{
+        flex-direction:column;
+        align-items:flex-start;
     }
 
-    .logo {
-        font-size: 18px;
+    .stats{
+        grid-template-columns:1fr 1fr;
     }
 
-    .logo img {
-        width: 38px;
-        height: 38px;
+    .exam-grid{
+        grid-template-columns:1fr;
     }
 
-    .header-right {
-        width: 100%;
-        justify-content: space-between;
+    .quick-grid{
+        grid-template-columns:1fr;
     }
 
-    .container {
-        padding: 0 14px;
-        margin: 23px auto;
-    }
-
-    .welcome {
-        margin-bottom: 22px;
-    }
-
-    .exam-grid {
-        grid-template-columns: 1fr;
-    }
-
-    .quick-grid {
-        grid-template-columns: 1fr;
-    }
-
-    .section {
-        padding: 20px;
-        border-radius: 16px;
-    }
-
-    .attempt {
-        align-items: flex-start;
-        flex-direction: column;
-        gap: 10px;
-    }
-
-    .resume {
-        padding: 24px;
+    .attempt{
+        align-items:flex-start;
+        flex-direction:column;
     }
 
 }
 
-@media(max-width:450px) {
+@media(max-width:450px){
 
-    .stats {
-        grid-template-columns: repeat(2,minmax(0,1fr));
-        gap: 11px;
+    .stats{
+        grid-template-columns:1fr;
     }
 
-    .stat {
-        padding: 19px 15px;
+    .welcome h1{
+        font-size:24px;
     }
 
-    .stat h2 {
-        font-size: 26px;
-    }
-
-    .stat p {
-        font-size: 12px;
-    }
-
-    .welcome h1 {
-        font-size: 25px;
-    }
-
-    .section h2 {
-        font-size: 19px;
-    }
-
-    .exam-card {
-        padding: 21px;
-    }
-
-    .btn {
-        padding: 11px 15px;
+    .section{
+        padding:18px;
     }
 
 }
 
 </style>
+
 </head>
 
 <body>
+
 
 <!-- HEADER -->
 
@@ -620,13 +366,20 @@ button:focus-visible {
 
     </div>
 
+
     <div class="header-right">
 
-        <span id="headerName" class="header-name">
+        <span
+            id="headerName"
+            class="header-name"
+        >
             Student
         </span>
 
-        <button class="logout" onclick="logout()">
+        <button
+            class="logout"
+            onclick="logout()"
+        >
             Logout
         </button>
 
@@ -634,7 +387,10 @@ button:focus-visible {
 
 </header>
 
+
+
 <div class="container">
+
 
     <!-- WELCOME -->
 
@@ -651,37 +407,77 @@ button:focus-visible {
 
     </div>
 
+
+
     <!-- STATISTICS -->
 
     <div class="stats">
 
         <div class="stat">
-            <h2 id="testsTaken">0</h2>
-            <p>Tests Taken</p>
+
+            <h2 id="testsTaken">
+                0
+            </h2>
+
+            <p>
+                Tests Taken
+            </p>
+
         </div>
 
-        <div class="stat">
-            <h2 id="averageScore">0</h2>
-            <p>Average Score</p>
-        </div>
 
         <div class="stat">
-            <h2 id="bestScore">0</h2>
-            <p>Best Score</p>
+
+            <h2 id="averageScore">
+                0
+            </h2>
+
+            <p>
+                Average Score
+            </p>
+
         </div>
 
+
         <div class="stat">
-            <h2 id="accuracy">0%</h2>
-            <p>Average Accuracy</p>
+
+            <h2 id="bestScore">
+                0
+            </h2>
+
+            <p>
+                Best Score
+            </p>
+
+        </div>
+
+
+        <div class="stat">
+
+            <h2 id="accuracy">
+                0%
+            </h2>
+
+            <p>
+                Average Accuracy
+            </p>
+
         </div>
 
     </div>
 
+
+
     <!-- RESUME TEST -->
 
-    <div id="resumeSection" class="resume">
+    <div
+        id="resumeSection"
+        class="resume"
+    >
 
-        <h2>▶ Continue Your Test</h2>
+        <h2>
+            ▶ Continue Your Test
+        </h2>
 
         <p id="resumeText">
             You have an unfinished test.
@@ -697,139 +493,193 @@ button:focus-visible {
 
     </div>
 
+
+
     <!-- PRACTICE TESTS -->
 
     <div class="section">
 
-        <h2>📚 Practice Tests</h2>
+        <h2>
+            📚 Practice Tests
+        </h2>
+
 
         <div class="exam-grid">
 
+
+            <!-- NDA -->
+
             <div class="exam-card">
 
-                <h3>🇮🇳 NDA</h3>
+                <h3>
+                    🇮🇳 NDA
+                </h3>
 
                 <p>
                     Practice Mathematics and other
                     NDA preparation tests.
                 </p>
 
-                <a class="btn primary" href="tests.html">
-                    View NDA Tests →
+                <a
+                    class="btn primary"
+                    href="tests.html"
+                >
+                    View NDA Tests
                 </a>
 
             </div>
 
+
+
+            <!-- CDS -->
+
             <div class="exam-card">
 
-                <h3>🎖️ CDS</h3>
+                <h3>
+                    🎖️ CDS
+                </h3>
 
                 <p>
                     Practice CDS English and other
                     preparation tests.
                 </p>
 
-                <a class="btn primary" href="cds-tests.html">
-                    View CDS Tests →
+                <a
+                    class="btn primary"
+                    href="cds-tests.html"
+                >
+                    View CDS Tests
                 </a>
 
             </div>
+<div class="exam-card">
 
-            <div class="exam-card">
-
-                <h3>💯 Test Series</h3>
+                <h3>
+                   💯 Test Series
+                </h3>
 
                 <p>
                     Group Of tests in one place !!
                 </p>
 
-                <a class="btn primary" href="series.html">
-                    View Series →
+                <a
+                    class="btn primary"
+                    href="series.html"
+                >
+                    View Series
                 </a>
 
-            </div>
-
+</div>
         </div>
 
     </div>
+
+
 
     <!-- QUICK ACCESS -->
 
     <div class="section">
 
-        <h2>⚡ Quick Access</h2>
+        <h2>
+            ⚡ Quick Access
+        </h2>
+
 
         <div class="quick-grid">
 
+<div class="quick-card">
+    <h3>🛍️ My Purchases</h3>
+
+    <p>
+        View your purchased tests, payment status
+        and available test access.
+    </p>
+
+    <a href="my-purchases.html" class="btn gold">
+        View My Purchases
+    </a>
+</div>
+
+
             <div class="quick-card">
 
-                <h3>🛍️ My Purchases</h3>
-
-                <p>
-                    View your purchased tests, payment status
-                    and available test access.
-                </p>
-
-                <a href="my-purchases.html" class="btn gold">
-                    View My Purchases →
-                </a>
-
-            </div>
-
-            <div class="quick-card">
-
-                <h3>🏆 Leaderboard</h3>
+                <h3>
+                    🏆 Leaderboard
+                </h3>
 
                 <p>
                     Compare your performance
                     with other students.
                 </p>
 
-                <a href="leaderboard.html" class="btn gold">
-                    View Leaderboard →
+                <a
+                    href="leaderboard.html"
+                    class="btn gold"
+                >
+                    View Leaderboard
                 </a>
 
             </div>
 
+
+
             <div class="quick-card">
 
-                <h3>👤 My Profile</h3>
+                <h3>
+                    👤 My Profile
+                </h3>
 
                 <p>
                     View your performance,
                     statistics and progress.
                 </p>
 
-                <a href="profile.html" class="btn primary">
-                    Open Profile →
+                <a
+                    href="profile.html"
+                    class="btn primary"
+                >
+                    Open Profile
                 </a>
 
             </div>
 
+
+
             <div class="quick-card">
 
-                <h3>📊 All Attempts</h3>
+                <h3>
+                    📊 All Attempts
+                </h3>
 
                 <p>
                     View your complete test
                     attempt history.
                 </p>
 
-                <a href="attempts.html" class="btn secondary">
-                    View Attempts →
+                <a
+                    href="attempts.html"
+                    class="btn secondary"
+                >
+                    View Attempts
                 </a>
 
             </div>
+
 
         </div>
 
     </div>
 
+
+
     <!-- RECENT ATTEMPTS -->
 
     <div class="section">
 
-        <h2>📊 Recent Attempts</h2>
+        <h2>
+            📊 Recent Attempts
+        </h2>
+
 
         <div id="recentAttempts">
 
@@ -839,21 +689,34 @@ button:focus-visible {
 
         </div>
 
+
         <br>
 
-        <a href="attempts.html" class="btn secondary">
-            View All Attempts →
+
+        <a
+            href="attempts.html"
+            class="btn secondary"
+        >
+            View All Attempts
         </a>
 
     </div>
 
+
 </div>
+
+
 
 <div class="footer">
+
     Road 2 Academy • Keep learning. Keep improving. 🚀
+
 </div>
 
+
+
 <script>
+
 
 /* =========================
    SUPABASE
@@ -865,56 +728,82 @@ const SUPABASE_URL =
 const SUPABASE_ANON_KEY =
     "sb_publishable_nc_Xv85AMQrmgIlDEWD8CA_aSeMk-yv";
 
+
 const supabaseClient =
     supabase.createClient(
         SUPABASE_URL,
         SUPABASE_ANON_KEY
     );
 
+
+
 /* =========================
    INITIALIZE
 ========================= */
 
-async function init() {
+async function init(){
 
     const {
-        data: { session }
-    } = await supabaseClient.auth.getSession();
+        data:{session}
+    } =
+    await supabaseClient.auth.getSession();
 
-    if (!session) {
 
-        window.location.href = "login.html";
+    if(!session){
+
+        window.location.href =
+            "login.html";
+
         return;
-
     }
 
-    const user = session.user;
+
+    const user =
+        session.user;
+
 
     const name =
         user.user_metadata?.full_name ||
         user.email?.split("@")[0] ||
         "Student";
 
-    document.getElementById("userName").textContent = name;
 
-    document.getElementById("headerName").textContent = name;
+    document.getElementById(
+        "userName"
+    ).textContent =
+        name;
 
-    await loadStatistics(user.id);
 
-    await loadResumeTest(user.id);
+    document.getElementById(
+        "headerName"
+    ).textContent =
+        name;
+
+
+    await loadStatistics(
+        user.id
+    );
+
+
+    await loadResumeTest(
+        user.id
+    );
 
 }
+
+
 
 /* =========================
    LOAD STATISTICS
 ========================= */
 
-async function loadStatistics(userId) {
+async function loadStatistics(userId){
 
     const {
         data,
         error
-    } = await supabaseClient
+    } =
+    await supabaseClient
 
         .from("attempts")
 
@@ -935,102 +824,181 @@ async function loadStatistics(userId) {
             )
         `)
 
-        .eq("user_id", userId)
+        .eq(
+            "user_id",
+            userId
+        )
 
-        .not("submitted_at", "is", null)
+        .not(
+            "submitted_at",
+            "is",
+            null
+        )
 
-        .order("submitted_at", {
-            ascending: false
-        });
+        .order(
+            "submitted_at",
+            {
+                ascending:false
+            }
+        );
 
-    if (error) {
 
-        console.error("Statistics error:", error);
+    if(error){
 
-        document.getElementById("recentAttempts").innerHTML = `
-            <div class="empty">
+        console.error(
+            "Statistics error:",
+            error
+        );
+
+
+        document.getElementById(
+            "recentAttempts"
+        ).innerHTML =
+
+            `<div class="empty">
                 Unable to load attempts.
-            </div>
-        `;
+            </div>`;
 
         return;
-
     }
 
-    const attempts = data || [];
 
-    calculateStatistics(attempts);
+    const attempts =
+        data || [];
 
-    renderRecentAttempts(attempts.slice(0, 5));
+
+    calculateStatistics(
+        attempts
+    );
+
+
+    renderRecentAttempts(
+        attempts.slice(0,5)
+    );
 
 }
+
+
 
 /* =========================
    CALCULATE STATISTICS
 ========================= */
 
-function calculateStatistics(attempts) {
+function calculateStatistics(
+    attempts
+){
 
-    const testsTaken = attempts.length;
+    const testsTaken =
+        attempts.length;
 
-    document.getElementById("testsTaken").textContent =
+
+    document.getElementById(
+        "testsTaken"
+    ).textContent =
         testsTaken;
 
-    if (!testsTaken) {
 
-        document.getElementById("averageScore").textContent = "0";
+    if(!testsTaken){
 
-        document.getElementById("bestScore").textContent = "0";
+        document.getElementById(
+            "averageScore"
+        ).textContent =
+            "0";
 
-        document.getElementById("accuracy").textContent = "0%";
+
+        document.getElementById(
+            "bestScore"
+        ).textContent =
+            "0";
+
+
+        document.getElementById(
+            "accuracy"
+        ).textContent =
+            "0%";
+
 
         return;
-
     }
 
-    const scores = attempts.map(
-        a => Number(a.score || 0)
-    );
 
-    const accuracies = attempts.map(
-        a => Number(a.accuracy || 0)
-    );
+    const scores =
+        attempts.map(
+            a =>
+                Number(
+                    a.score || 0
+                )
+        );
+
+
+    const accuracies =
+        attempts.map(
+            a =>
+                Number(
+                    a.accuracy || 0
+                )
+        );
+
 
     const averageScore =
         scores.reduce(
-            (sum, value) => sum + value,
+            (sum,value) =>
+                sum + value,
             0
         ) / scores.length;
 
-    const bestScore = Math.max(...scores);
+
+    const bestScore =
+        Math.max(
+            ...scores
+        );
+
 
     const averageAccuracy =
         accuracies.reduce(
-            (sum, value) => sum + value,
+            (sum,value) =>
+                sum + value,
             0
         ) / accuracies.length;
 
-    document.getElementById("averageScore").textContent =
+
+    document.getElementById(
+        "averageScore"
+    ).textContent =
         averageScore.toFixed(2);
 
-    document.getElementById("bestScore").textContent =
+
+    document.getElementById(
+        "bestScore"
+    ).textContent =
         bestScore.toFixed(2);
 
-    document.getElementById("accuracy").textContent =
-        averageAccuracy.toFixed(1) + "%";
+
+    document.getElementById(
+        "accuracy"
+    ).textContent =
+        averageAccuracy.toFixed(1)
+        + "%";
 
 }
+
+
 
 /* =========================
    RECENT ATTEMPTS
 ========================= */
 
-function renderRecentAttempts(attempts) {
+function renderRecentAttempts(
+    attempts
+){
 
     const container =
-        document.getElementById("recentAttempts");
+        document.getElementById(
+            "recentAttempts"
+        );
 
-    if (!attempts.length) {
+
+    if(!attempts.length){
 
         container.innerHTML = `
 
@@ -1047,82 +1015,127 @@ function renderRecentAttempts(attempts) {
         `;
 
         return;
-
     }
 
-    container.innerHTML = attempts.map(attempt => {
 
-        const test = attempt.tests;
+    container.innerHTML =
 
-        const title = test?.title || "Test";
+        attempts.map(
+            attempt => {
 
-        const exam = test?.exam || "";
 
-        const date = attempt.submitted_at
-            ? new Date(attempt.submitted_at).toLocaleDateString()
-            : "—";
+                const test =
+                    attempt.tests;
 
-        return `
 
-            <div class="attempt">
+                const title =
+                    test?.title ||
+                    "Test";
 
-                <div>
 
-                    <div class="attempt-title">
-                        ${escapeHtml(title)}
+                const exam =
+                    test?.exam ||
+                    "";
+
+
+                const date =
+                    attempt.submitted_at
+
+                    ?
+
+                    new Date(
+                        attempt.submitted_at
+                    ).toLocaleDateString()
+
+                    :
+
+                    "—";
+
+
+                return `
+
+                    <div class="attempt">
+
+
+                        <div>
+
+                            <div class="attempt-title">
+
+                                ${escapeHtml(
+                                    title
+                                )}
+
+                            </div>
+
+
+                            <div class="attempt-info">
+
+                                ${escapeHtml(
+                                    exam
+                                )}
+
+                                •
+                                ${date}
+
+                                •
+
+                                ${attempt.correct_answers}
+                                correct /
+
+                                ${attempt.total_questions}
+                                questions
+
+                            </div>
+
+                        </div>
+
+
+                        <div>
+
+                            <div class="attempt-score">
+
+                                ${Number(
+                                    attempt.score || 0
+                                ).toFixed(2)}
+
+                            </div>
+
+
+                            <a
+                                href="result.html?attempt=${attempt.id}"
+                                class="result-link"
+                            >
+                                View Result →
+                            </a>
+
+                        </div>
+
+
                     </div>
 
-                    <div class="attempt-info">
+                `;
 
-                        ${escapeHtml(exam)}
+            }
 
-                        • ${date}
-
-                        •
-
-                        ${Number(attempt.correct_answers || 0)}
-                        correct /
-
-                        ${Number(attempt.total_questions || 0)}
-                        questions
-
-                    </div>
-
-                </div>
-
-                <div>
-
-                    <div class="attempt-score">
-                        ${Number(attempt.score || 0).toFixed(2)}
-                    </div>
-
-                    <a
-                        href="result.html?attempt=${encodeURIComponent(attempt.id)}"
-                        class="result-link"
-                    >
-                        View Result →
-                    </a>
-
-                </div>
-
-            </div>
-
-        `;
-
-    }).join("");
+        ).join("");
 
 }
+
+
 
 /* =========================
    FIND UNFINISHED TEST
 ========================= */
 
-async function loadResumeTest(userId) {
+async function loadResumeTest(
+    userId
+){
 
     const {
         data,
         error
-    } = await supabaseClient
+    } =
+    await supabaseClient
 
         .from("attempts")
 
@@ -1137,101 +1150,160 @@ async function loadResumeTest(userId) {
             )
         `)
 
-        .eq("user_id", userId)
+        .eq(
+            "user_id",
+            userId
+        )
 
-        .is("submitted_at", null)
+        .is(
+            "submitted_at",
+            null
+        )
 
-        .order("started_at", {
-            ascending: false
-        })
+        .order(
+            "started_at",
+            {
+                ascending:false
+            }
+        )
 
         .limit(1);
 
-    if (error) {
 
-        console.error("Resume test error:", error);
+    if(error){
 
-        return;
-
-    }
-
-    if (!data || !data.length) {
+        console.error(
+            "Resume test error:",
+            error
+        );
 
         return;
-
     }
 
-    const attempt = data[0];
 
-    const test = attempt.tests;
-
-    if (!test) {
+    if(!data || !data.length){
 
         return;
-
     }
+
+
+    const attempt =
+        data[0];
+
+
+    const test =
+        attempt.tests;
+
+
+    if(!test){
+
+        return;
+    }
+
 
     const resumeSection =
-        document.getElementById("resumeSection");
+        document.getElementById(
+            "resumeSection"
+        );
+
 
     const resumeText =
-        document.getElementById("resumeText");
+        document.getElementById(
+            "resumeText"
+        );
+
 
     const resumeButton =
-        document.getElementById("resumeButton");
+        document.getElementById(
+            "resumeButton"
+        );
 
-    resumeSection.style.display = "block";
+
+    resumeSection.style.display =
+        "block";
+
 
     resumeText.textContent =
+
         `${test.title} • ${test.exam || "Test"}`
         + " — You have an unfinished attempt.";
 
+
     resumeButton.href =
-        `test.html?test=${encodeURIComponent(attempt.test_id)}`
-        + `&attempt=${encodeURIComponent(attempt.id)}`;
+
+        `test.html?test=${encodeURIComponent(
+            attempt.test_id
+        )}&attempt=${encodeURIComponent(
+            attempt.id
+        )}`;
 
 }
+
+
 
 /* =========================
    HTML ESCAPE
 ========================= */
 
-function escapeHtml(value) {
+function escapeHtml(
+    value
+){
 
-    if (
+    if(
         value === null ||
         value === undefined
-    ) {
+    ){
 
         return "";
 
     }
 
+
     return String(value)
 
-        .replace(/&/g, "&amp;")
+        .replace(
+            /&/g,
+            "&amp;"
+        )
 
-        .replace(/</g, "&lt;")
+        .replace(
+            /</g,
+            "&lt;"
+        )
 
-        .replace(/>/g, "&gt;")
+        .replace(
+            />/g,
+            "&gt;"
+        )
 
-        .replace(/"/g, "&quot;")
+        .replace(
+            /"/g,
+            "&quot;"
+        )
 
-        .replace(/'/g, "&#039;");
+        .replace(
+            /'/g,
+            "&#039;"
+        );
 
 }
+
+
 
 /* =========================
    LOGOUT
 ========================= */
 
-async function logout() {
+async function logout(){
 
     await supabaseClient.auth.signOut();
 
-    window.location.href = "login.html";
+    window.location.href =
+        "login.html";
 
 }
+
+
 
 /* =========================
    START
