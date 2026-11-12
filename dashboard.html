@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -11,7 +12,6 @@
 
 <style>
 
-
 :root {
     --bg: #f7f8fa;
     --surface: #ffffff;
@@ -22,8 +22,8 @@
     --purple-dark: #6040d2;
     --green: #20a779;
     --gold: #f5b942;
-    --shadow: 0 8px 30px rgba(30, 35, 55, 0.055);
-    --shadow-hover: 0 16px 38px rgba(30, 35, 55, 0.11);
+    --shadow: 0 8px 30px rgba(30,35,55,.055);
+    --shadow-hover: 0 16px 38px rgba(30,35,55,.11);
 }
 
 * {
@@ -33,8 +33,8 @@
 }
 
 body {
-    font-family: Inter, -apple-system, BlinkMacSystemFont,
-        "Segoe UI", sans-serif;
+    font-family: Inter,-apple-system,BlinkMacSystemFont,
+    "Segoe UI",sans-serif;
     background: var(--bg);
     color: var(--text);
     line-height: 1.55;
@@ -118,7 +118,7 @@ header {
 }
 
 .welcome h1 {
-    font-size: clamp(26px, 4vw, 35px);
+    font-size: clamp(26px,4vw,35px);
     font-weight: 800;
     letter-spacing: -1.2px;
     margin-bottom: 9px;
@@ -134,11 +134,11 @@ header {
     font-size: 15px;
 }
 
-/* STATS */
+/* STATISTICS */
 
 .stats {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(4,1fr);
     gap: 18px;
     margin-bottom: 30px;
 }
@@ -161,19 +161,19 @@ header {
     left: 0;
     width: 100%;
     height: 4px;
-    background: linear-gradient(90deg, #7455e8, #a58bff);
+    background: linear-gradient(90deg,#7455e8,#a58bff);
 }
 
 .stat:nth-child(2)::before {
-    background: linear-gradient(90deg, #20a779, #6adbb1);
+    background: linear-gradient(90deg,#20a779,#6adbb1);
 }
 
 .stat:nth-child(3)::before {
-    background: linear-gradient(90deg, #efa936, #ffcf70);
+    background: linear-gradient(90deg,#efa936,#ffcf70);
 }
 
 .stat:nth-child(4)::before {
-    background: linear-gradient(90deg, #ec7294, #ffabc0);
+    background: linear-gradient(90deg,#ec7294,#ffabc0);
 }
 
 .stat:hover {
@@ -210,7 +210,7 @@ header {
 /* RESUME */
 
 .resume {
-    background: linear-gradient(120deg, #6846db, #9375f5);
+    background: linear-gradient(120deg,#6846db,#9375f5);
     color: white;
     padding: 29px;
     border-radius: 19px;
@@ -265,7 +265,7 @@ header {
     box-shadow: 0 7px 20px rgba(0,0,0,.15);
 }
 
-/* SECTION */
+/* SECTIONS */
 
 .section {
     background: var(--surface);
@@ -288,7 +288,7 @@ header {
 
 .exam-grid {
     display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-columns: repeat(2,minmax(0,1fr));
     gap: 18px;
 }
 
@@ -296,7 +296,7 @@ header {
     border: 1px solid var(--border);
     border-radius: 16px;
     padding: 24px;
-    background: linear-gradient(145deg, #fff, #faf9ff);
+    background: linear-gradient(145deg,#fff,#faf9ff);
     transition: .3s ease;
     position: relative;
     overflow: hidden;
@@ -343,7 +343,7 @@ header {
 }
 
 .primary {
-    background: linear-gradient(135deg, #7455e8, #9276f3);
+    background: linear-gradient(135deg,#7455e8,#9276f3);
     color: white;
     box-shadow: 0 5px 13px rgba(116,85,232,.17);
 }
@@ -363,7 +363,7 @@ header {
 }
 
 .gold {
-    background: linear-gradient(135deg, #f5c45e, #f8d58c);
+    background: linear-gradient(135deg,#f5c45e,#f8d58c);
     color: #493515;
     box-shadow: 0 5px 13px rgba(245,185,66,.15);
 }
@@ -372,11 +372,11 @@ header {
     box-shadow: 0 8px 18px rgba(245,185,66,.3);
 }
 
-/* QUICK LINKS */
+/* QUICK ACCESS */
 
 .quick-grid {
     display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-columns: repeat(2,minmax(0,1fr));
     gap: 17px;
 }
 
@@ -480,7 +480,7 @@ header {
     padding: 15px 0 32px;
 }
 
-/* SMOOTH INTERACTIONS */
+/* INTERACTIONS */
 
 a:focus-visible,
 button:focus-visible {
@@ -496,18 +496,21 @@ button:focus-visible {
 /* TABLET */
 
 @media(max-width:850px) {
+
     .stats {
-        grid-template-columns: repeat(2, 1fr);
+        grid-template-columns: repeat(2,1fr);
     }
 
     .container {
         margin-top: 27px;
     }
+
 }
 
 /* MOBILE */
 
 @media(max-width:650px) {
+
     header {
         padding: 13px 18px;
     }
@@ -557,11 +560,13 @@ button:focus-visible {
     .resume {
         padding: 24px;
     }
+
 }
 
 @media(max-width:450px) {
+
     .stats {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
+        grid-template-columns: repeat(2,minmax(0,1fr));
         gap: 11px;
     }
 
@@ -592,15 +597,13 @@ button:focus-visible {
     .btn {
         padding: 11px 15px;
     }
+
 }
 
-
 </style>
-
 </head>
 
 <body>
-
 
 <!-- HEADER -->
 
@@ -617,20 +620,13 @@ button:focus-visible {
 
     </div>
 
-
     <div class="header-right">
 
-        <span
-            id="headerName"
-            class="header-name"
-        >
+        <span id="headerName" class="header-name">
             Student
         </span>
 
-        <button
-            class="logout"
-            onclick="logout()"
-        >
+        <button class="logout" onclick="logout()">
             Logout
         </button>
 
@@ -638,10 +634,7 @@ button:focus-visible {
 
 </header>
 
-
-
 <div class="container">
-
 
     <!-- WELCOME -->
 
@@ -658,77 +651,37 @@ button:focus-visible {
 
     </div>
 
-
-
     <!-- STATISTICS -->
 
     <div class="stats">
 
         <div class="stat">
-
-            <h2 id="testsTaken">
-                0
-            </h2>
-
-            <p>
-                Tests Taken
-            </p>
-
+            <h2 id="testsTaken">0</h2>
+            <p>Tests Taken</p>
         </div>
 
-
         <div class="stat">
-
-            <h2 id="averageScore">
-                0
-            </h2>
-
-            <p>
-                Average Score
-            </p>
-
+            <h2 id="averageScore">0</h2>
+            <p>Average Score</p>
         </div>
 
-
         <div class="stat">
-
-            <h2 id="bestScore">
-                0
-            </h2>
-
-            <p>
-                Best Score
-            </p>
-
+            <h2 id="bestScore">0</h2>
+            <p>Best Score</p>
         </div>
 
-
         <div class="stat">
-
-            <h2 id="accuracy">
-                0%
-            </h2>
-
-            <p>
-                Average Accuracy
-            </p>
-
+            <h2 id="accuracy">0%</h2>
+            <p>Average Accuracy</p>
         </div>
 
     </div>
 
-
-
     <!-- RESUME TEST -->
 
-    <div
-        id="resumeSection"
-        class="resume"
-    >
+    <div id="resumeSection" class="resume">
 
-        <h2>
-            ▶ Continue Your Test
-        </h2>
+        <h2>▶ Continue Your Test</h2>
 
         <p id="resumeText">
             You have an unfinished test.
@@ -744,193 +697,139 @@ button:focus-visible {
 
     </div>
 
-
-
     <!-- PRACTICE TESTS -->
 
     <div class="section">
 
-        <h2>
-            📚 Practice Tests
-        </h2>
-
+        <h2>📚 Practice Tests</h2>
 
         <div class="exam-grid">
 
-
-            <!-- NDA -->
-
             <div class="exam-card">
 
-                <h3>
-                    🇮🇳 NDA
-                </h3>
+                <h3>🇮🇳 NDA</h3>
 
                 <p>
                     Practice Mathematics and other
                     NDA preparation tests.
                 </p>
 
-                <a
-                    class="btn primary"
-                    href="tests.html"
-                >
-                    View NDA Tests
+                <a class="btn primary" href="tests.html">
+                    View NDA Tests →
                 </a>
 
             </div>
 
-
-
-            <!-- CDS -->
-
             <div class="exam-card">
 
-                <h3>
-                    🎖️ CDS
-                </h3>
+                <h3>🎖️ CDS</h3>
 
                 <p>
                     Practice CDS English and other
                     preparation tests.
                 </p>
 
-                <a
-                    class="btn primary"
-                    href="cds-tests.html"
-                >
-                    View CDS Tests
+                <a class="btn primary" href="cds-tests.html">
+                    View CDS Tests →
                 </a>
 
             </div>
-<div class="exam-card">
 
-                <h3>
-                   💯 Test Series
-                </h3>
+            <div class="exam-card">
+
+                <h3>💯 Test Series</h3>
 
                 <p>
                     Group Of tests in one place !!
                 </p>
 
-                <a
-                    class="btn primary"
-                    href="series.html"
-                >
-                    View Series
+                <a class="btn primary" href="series.html">
+                    View Series →
                 </a>
 
-</div>
+            </div>
+
         </div>
 
     </div>
-
-
 
     <!-- QUICK ACCESS -->
 
     <div class="section">
 
-        <h2>
-            ⚡ Quick Access
-        </h2>
-
+        <h2>⚡ Quick Access</h2>
 
         <div class="quick-grid">
 
-<div class="quick-card">
-    <h3>🛍️ My Purchases</h3>
+            <div class="quick-card">
 
-    <p>
-        View your purchased tests, payment status
-        and available test access.
-    </p>
+                <h3>🛍️ My Purchases</h3>
 
-    <a href="my-purchases.html" class="btn gold">
-        View My Purchases
-    </a>
-</div>
+                <p>
+                    View your purchased tests, payment status
+                    and available test access.
+                </p>
 
+                <a href="my-purchases.html" class="btn gold">
+                    View My Purchases →
+                </a>
+
+            </div>
 
             <div class="quick-card">
 
-                <h3>
-                    🏆 Leaderboard
-                </h3>
+                <h3>🏆 Leaderboard</h3>
 
                 <p>
                     Compare your performance
                     with other students.
                 </p>
 
-                <a
-                    href="leaderboard.html"
-                    class="btn gold"
-                >
-                    View Leaderboard
+                <a href="leaderboard.html" class="btn gold">
+                    View Leaderboard →
                 </a>
 
             </div>
 
-
-
             <div class="quick-card">
 
-                <h3>
-                    👤 My Profile
-                </h3>
+                <h3>👤 My Profile</h3>
 
                 <p>
                     View your performance,
                     statistics and progress.
                 </p>
 
-                <a
-                    href="profile.html"
-                    class="btn primary"
-                >
-                    Open Profile
+                <a href="profile.html" class="btn primary">
+                    Open Profile →
                 </a>
 
             </div>
 
-
-
             <div class="quick-card">
 
-                <h3>
-                    📊 All Attempts
-                </h3>
+                <h3>📊 All Attempts</h3>
 
                 <p>
                     View your complete test
                     attempt history.
                 </p>
 
-                <a
-                    href="attempts.html"
-                    class="btn secondary"
-                >
-                    View Attempts
+                <a href="attempts.html" class="btn secondary">
+                    View Attempts →
                 </a>
 
             </div>
-
 
         </div>
 
     </div>
 
-
-
     <!-- RECENT ATTEMPTS -->
 
     <div class="section">
 
-        <h2>
-            📊 Recent Attempts
-        </h2>
-
+        <h2>📊 Recent Attempts</h2>
 
         <div id="recentAttempts">
 
@@ -940,34 +839,21 @@ button:focus-visible {
 
         </div>
 
-
         <br>
 
-
-        <a
-            href="attempts.html"
-            class="btn secondary"
-        >
-            View All Attempts
+        <a href="attempts.html" class="btn secondary">
+            View All Attempts →
         </a>
 
     </div>
 
-
 </div>
-
-
 
 <div class="footer">
-
     Road 2 Academy • Keep learning. Keep improving. 🚀
-
 </div>
 
-
-
 <script>
-
 
 /* =========================
    SUPABASE
@@ -979,82 +865,56 @@ const SUPABASE_URL =
 const SUPABASE_ANON_KEY =
     "sb_publishable_nc_Xv85AMQrmgIlDEWD8CA_aSeMk-yv";
 
-
 const supabaseClient =
     supabase.createClient(
         SUPABASE_URL,
         SUPABASE_ANON_KEY
     );
 
-
-
 /* =========================
    INITIALIZE
 ========================= */
 
-async function init(){
+async function init() {
 
     const {
-        data:{session}
-    } =
-    await supabaseClient.auth.getSession();
+        data: { session }
+    } = await supabaseClient.auth.getSession();
 
+    if (!session) {
 
-    if(!session){
-
-        window.location.href =
-            "login.html";
-
+        window.location.href = "login.html";
         return;
+
     }
 
-
-    const user =
-        session.user;
-
+    const user = session.user;
 
     const name =
         user.user_metadata?.full_name ||
         user.email?.split("@")[0] ||
         "Student";
 
+    document.getElementById("userName").textContent = name;
 
-    document.getElementById(
-        "userName"
-    ).textContent =
-        name;
+    document.getElementById("headerName").textContent = name;
 
+    await loadStatistics(user.id);
 
-    document.getElementById(
-        "headerName"
-    ).textContent =
-        name;
-
-
-    await loadStatistics(
-        user.id
-    );
-
-
-    await loadResumeTest(
-        user.id
-    );
+    await loadResumeTest(user.id);
 
 }
-
-
 
 /* =========================
    LOAD STATISTICS
 ========================= */
 
-async function loadStatistics(userId){
+async function loadStatistics(userId) {
 
     const {
         data,
         error
-    } =
-    await supabaseClient
+    } = await supabaseClient
 
         .from("attempts")
 
@@ -1075,181 +935,102 @@ async function loadStatistics(userId){
             )
         `)
 
-        .eq(
-            "user_id",
-            userId
-        )
+        .eq("user_id", userId)
 
-        .not(
-            "submitted_at",
-            "is",
-            null
-        )
+        .not("submitted_at", "is", null)
 
-        .order(
-            "submitted_at",
-            {
-                ascending:false
-            }
-        );
+        .order("submitted_at", {
+            ascending: false
+        });
 
+    if (error) {
 
-    if(error){
+        console.error("Statistics error:", error);
 
-        console.error(
-            "Statistics error:",
-            error
-        );
-
-
-        document.getElementById(
-            "recentAttempts"
-        ).innerHTML =
-
-            `<div class="empty">
+        document.getElementById("recentAttempts").innerHTML = `
+            <div class="empty">
                 Unable to load attempts.
-            </div>`;
+            </div>
+        `;
 
         return;
+
     }
 
+    const attempts = data || [];
 
-    const attempts =
-        data || [];
+    calculateStatistics(attempts);
 
-
-    calculateStatistics(
-        attempts
-    );
-
-
-    renderRecentAttempts(
-        attempts.slice(0,5)
-    );
+    renderRecentAttempts(attempts.slice(0, 5));
 
 }
-
-
 
 /* =========================
    CALCULATE STATISTICS
 ========================= */
 
-function calculateStatistics(
-    attempts
-){
+function calculateStatistics(attempts) {
 
-    const testsTaken =
-        attempts.length;
+    const testsTaken = attempts.length;
 
-
-    document.getElementById(
-        "testsTaken"
-    ).textContent =
+    document.getElementById("testsTaken").textContent =
         testsTaken;
 
+    if (!testsTaken) {
 
-    if(!testsTaken){
+        document.getElementById("averageScore").textContent = "0";
 
-        document.getElementById(
-            "averageScore"
-        ).textContent =
-            "0";
+        document.getElementById("bestScore").textContent = "0";
 
-
-        document.getElementById(
-            "bestScore"
-        ).textContent =
-            "0";
-
-
-        document.getElementById(
-            "accuracy"
-        ).textContent =
-            "0%";
-
+        document.getElementById("accuracy").textContent = "0%";
 
         return;
+
     }
 
+    const scores = attempts.map(
+        a => Number(a.score || 0)
+    );
 
-    const scores =
-        attempts.map(
-            a =>
-                Number(
-                    a.score || 0
-                )
-        );
-
-
-    const accuracies =
-        attempts.map(
-            a =>
-                Number(
-                    a.accuracy || 0
-                )
-        );
-
+    const accuracies = attempts.map(
+        a => Number(a.accuracy || 0)
+    );
 
     const averageScore =
         scores.reduce(
-            (sum,value) =>
-                sum + value,
+            (sum, value) => sum + value,
             0
         ) / scores.length;
 
-
-    const bestScore =
-        Math.max(
-            ...scores
-        );
-
+    const bestScore = Math.max(...scores);
 
     const averageAccuracy =
         accuracies.reduce(
-            (sum,value) =>
-                sum + value,
+            (sum, value) => sum + value,
             0
         ) / accuracies.length;
 
-
-    document.getElementById(
-        "averageScore"
-    ).textContent =
+    document.getElementById("averageScore").textContent =
         averageScore.toFixed(2);
 
-
-    document.getElementById(
-        "bestScore"
-    ).textContent =
+    document.getElementById("bestScore").textContent =
         bestScore.toFixed(2);
 
-
-    document.getElementById(
-        "accuracy"
-    ).textContent =
-        averageAccuracy.toFixed(1)
-        + "%";
+    document.getElementById("accuracy").textContent =
+        averageAccuracy.toFixed(1) + "%";
 
 }
-
-
 
 /* =========================
    RECENT ATTEMPTS
 ========================= */
 
-function renderRecentAttempts(
-    attempts
-){
+function renderRecentAttempts(attempts) {
 
     const container =
-        document.getElementById(
-            "recentAttempts"
-        );
+        document.getElementById("recentAttempts");
 
-
-    if(!attempts.length){
+    if (!attempts.length) {
 
         container.innerHTML = `
 
@@ -1266,127 +1047,82 @@ function renderRecentAttempts(
         `;
 
         return;
+
     }
 
+    container.innerHTML = attempts.map(attempt => {
 
-    container.innerHTML =
+        const test = attempt.tests;
 
-        attempts.map(
-            attempt => {
+        const title = test?.title || "Test";
 
+        const exam = test?.exam || "";
 
-                const test =
-                    attempt.tests;
+        const date = attempt.submitted_at
+            ? new Date(attempt.submitted_at).toLocaleDateString()
+            : "—";
 
+        return `
 
-                const title =
-                    test?.title ||
-                    "Test";
+            <div class="attempt">
 
+                <div>
 
-                const exam =
-                    test?.exam ||
-                    "";
+                    <div class="attempt-title">
+                        ${escapeHtml(title)}
+                    </div>
 
+                    <div class="attempt-info">
 
-                const date =
-                    attempt.submitted_at
+                        ${escapeHtml(exam)}
 
-                    ?
+                        • ${date}
 
-                    new Date(
-                        attempt.submitted_at
-                    ).toLocaleDateString()
+                        •
 
-                    :
+                        ${Number(attempt.correct_answers || 0)}
+                        correct /
 
-                    "—";
-
-
-                return `
-
-                    <div class="attempt">
-
-
-                        <div>
-
-                            <div class="attempt-title">
-
-                                ${escapeHtml(
-                                    title
-                                )}
-
-                            </div>
-
-
-                            <div class="attempt-info">
-
-                                ${escapeHtml(
-                                    exam
-                                )}
-
-                                •
-                                ${date}
-
-                                •
-
-                                ${attempt.correct_answers}
-                                correct /
-
-                                ${attempt.total_questions}
-                                questions
-
-                            </div>
-
-                        </div>
-
-
-                        <div>
-
-                            <div class="attempt-score">
-
-                                ${Number(
-                                    attempt.score || 0
-                                ).toFixed(2)}
-
-                            </div>
-
-
-                            <a
-                                href="result.html?attempt=${attempt.id}"
-                                class="result-link"
-                            >
-                                View Result →
-                            </a>
-
-                        </div>
-
+                        ${Number(attempt.total_questions || 0)}
+                        questions
 
                     </div>
 
-                `;
+                </div>
 
-            }
+                <div>
 
-        ).join("");
+                    <div class="attempt-score">
+                        ${Number(attempt.score || 0).toFixed(2)}
+                    </div>
+
+                    <a
+                        href="result.html?attempt=${encodeURIComponent(attempt.id)}"
+                        class="result-link"
+                    >
+                        View Result →
+                    </a>
+
+                </div>
+
+            </div>
+
+        `;
+
+    }).join("");
 
 }
-
-
 
 /* =========================
    FIND UNFINISHED TEST
 ========================= */
 
-async function loadResumeTest(
-    userId
-){
+async function loadResumeTest(userId) {
 
     const {
         data,
         error
-    } =
-    await supabaseClient
+    } = await supabaseClient
 
         .from("attempts")
 
@@ -1401,160 +1137,101 @@ async function loadResumeTest(
             )
         `)
 
-        .eq(
-            "user_id",
-            userId
-        )
+        .eq("user_id", userId)
 
-        .is(
-            "submitted_at",
-            null
-        )
+        .is("submitted_at", null)
 
-        .order(
-            "started_at",
-            {
-                ascending:false
-            }
-        )
+        .order("started_at", {
+            ascending: false
+        })
 
         .limit(1);
 
+    if (error) {
 
-    if(error){
-
-        console.error(
-            "Resume test error:",
-            error
-        );
+        console.error("Resume test error:", error);
 
         return;
+
     }
 
-
-    if(!data || !data.length){
+    if (!data || !data.length) {
 
         return;
+
     }
 
+    const attempt = data[0];
 
-    const attempt =
-        data[0];
+    const test = attempt.tests;
 
-
-    const test =
-        attempt.tests;
-
-
-    if(!test){
+    if (!test) {
 
         return;
-    }
 
+    }
 
     const resumeSection =
-        document.getElementById(
-            "resumeSection"
-        );
-
+        document.getElementById("resumeSection");
 
     const resumeText =
-        document.getElementById(
-            "resumeText"
-        );
-
+        document.getElementById("resumeText");
 
     const resumeButton =
-        document.getElementById(
-            "resumeButton"
-        );
+        document.getElementById("resumeButton");
 
-
-    resumeSection.style.display =
-        "block";
-
+    resumeSection.style.display = "block";
 
     resumeText.textContent =
-
         `${test.title} • ${test.exam || "Test"}`
         + " — You have an unfinished attempt.";
 
-
     resumeButton.href =
-
-        `test.html?test=${encodeURIComponent(
-            attempt.test_id
-        )}&attempt=${encodeURIComponent(
-            attempt.id
-        )}`;
+        `test.html?test=${encodeURIComponent(attempt.test_id)}`
+        + `&attempt=${encodeURIComponent(attempt.id)}`;
 
 }
-
-
 
 /* =========================
    HTML ESCAPE
 ========================= */
 
-function escapeHtml(
-    value
-){
+function escapeHtml(value) {
 
-    if(
+    if (
         value === null ||
         value === undefined
-    ){
+    ) {
 
         return "";
 
     }
 
-
     return String(value)
 
-        .replace(
-            /&/g,
-            "&amp;"
-        )
+        .replace(/&/g, "&amp;")
 
-        .replace(
-            /</g,
-            "&lt;"
-        )
+        .replace(/</g, "&lt;")
 
-        .replace(
-            />/g,
-            "&gt;"
-        )
+        .replace(/>/g, "&gt;")
 
-        .replace(
-            /"/g,
-            "&quot;"
-        )
+        .replace(/"/g, "&quot;")
 
-        .replace(
-            /'/g,
-            "&#039;"
-        );
+        .replace(/'/g, "&#039;");
 
 }
-
-
 
 /* =========================
    LOGOUT
 ========================= */
 
-async function logout(){
+async function logout() {
 
     await supabaseClient.auth.signOut();
 
-    window.location.href =
-        "login.html";
+    window.location.href = "login.html";
 
 }
-
-
 
 /* =========================
    START
